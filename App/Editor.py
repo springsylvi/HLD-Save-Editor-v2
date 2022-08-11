@@ -1,4 +1,5 @@
 from json import loads, dumps
+import base64
 
 
 class Savedata():
@@ -7,14 +8,20 @@ class Savedata():
     """
 
     def __init__(self, data):
-        self.data = data
+        self.savedata_map = data
 
     def get_field(self, field):
-        return self.data.get(field)
+        return self.savedata_map.get(field)
 
     def set_field(self, field, value):
         # TODO - check if field is a valid string
-        self.data[field] = value
+        self.savedata_map[field] = value
+
+    # parse data from .sav file
+    def parse_savefile(jsondata):
+        savedata_map = {}
+        # TODO - convert jsondata to fields and add to savedata_map
+        return savedata_map
 
 
 class Editor():
@@ -30,8 +37,11 @@ class Editor():
         self.savedata = None
 
     def load(self, filename):
-        # replace special chars and parse json
-        pass
+        # read file
+        savefile = open(filename, "rb", buffering=0)
+        jsondata = base64.standard_b64decode(savefile.read())[60:-1].decode()
+        # create savedata object
+        self.savedata = Savedata(Savedata.parse_savefile(jsondata))
 
     def save(self, filename=None):
         if filename is None:

@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
 
 class Interface():
     """
@@ -7,24 +8,23 @@ class Interface():
     """
 
     # file -> load
-    def load():
-        # TODO - popup window
-        filename = "temp"
+    def load(self):
+        filename = filedialog.askopenfilename(initialdir=self.app.savefile_path)
         self.editor.load(filename)
 
 
     # file -> save
-    def save():
+    def save(self):
         pass
 
 
     # file -> save as
-    def saveas():
+    def saveas(self):
         pass
 
     
     # file -> export
-    def export():
+    def export(self):
         pass
     
 
