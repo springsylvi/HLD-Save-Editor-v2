@@ -1,0 +1,36 @@
+flag edit: GUI options for all known flags
+-tooltips for each flag
+-converts options to raw savedata when writing to file (caches until next write?)
+
+dropdown menus:
+-file menu: load, save, export
+-options menu: save file path, etc.
+
+
+
+3 classes:
+-App: Main setup
+-Interface: GUI
+-Editor: Savefile management
+
+
+todo:
+-design GUI
+-design hlds format
+-implement everything
+
+
+!!! design changes
+save vs save as
+
+have a separate file format (savedata, .hlds) for editing that removes the machine specific header and minimises read/write costs
+only store local prefix, share these files instead of savefiles
+
+can load/save hlds, import hlds from .sav, write hlds to save 0/1/2/3
+
+construct Savedata from either hlds or by parsing .sav
+
+
+
+app passes itself + editor intsance to interface for use with callbacks
+editor deals with savedata, app deals with settings i.e. changing savefile path
