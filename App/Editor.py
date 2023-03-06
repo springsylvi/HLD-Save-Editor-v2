@@ -1,6 +1,7 @@
 from json import loads, dumps
 import base64
 from os.path import splitext
+import datetime
 
 
 class Savedata():
@@ -47,7 +48,7 @@ class Savedata():
               "hasMap": ["num"],
               "healthKits": ["list", "num"],
               "healthUp": ["num"],
-              "mapMod": ["map", "num", "num"],
+              "mapMod": ["map", "num", "list", "num"],
               "newcomerHoardeMessageShown": ["num"],
               "noSpawn": ["list", "num"],
               "noviceMode": ["num"],
@@ -94,11 +95,18 @@ class Savedata():
     # parse data from .sav file
     def parse_savefile(jsondata):
         savedata_map = loads(jsondata)
-        # TODO - convert jsondata to fields and add to savedata_map
+        # parse list/map structures
         for key, value in savedata_map.items():
             fieldtype = Savedata.fields[key]
             if len(fieldtype) > 1:
                 savedata_map[key] = Savedata.parse_savedata_collection(value, fieldtype)
+        # handle special cases
+        try:
+            # bossGearbit format is "G(room_id)(boss_instance_id)(bit_num)"
+            savedata_map["bossGearbits"] = [[int(x[1:4]), int(x[4:-1]), int(x[-1])] for x in savedata_map["bossGearbits"]] # TODO -  add support for non 3-digit room numbers
+        except:
+            pass
+        # TODO - dateTime?
         print(savedata_map)
         return savedata_map
 
@@ -108,9 +116,26 @@ class Savedata():
 
 
     # convert list/map in savedata format to list/map object
-    def parse_savedata_collection(raw, type):
-        # TODO !!!
-        return None
+    def parse_savedata_collection(raw, fieldtype):
+        if fieldtype[0] == "list":
+            if "&" in raw:
+                sep = "&"
+            else:
+                sep = "+"
+            list_obj = raw.split(sep)[:-1]
+            if fieldtype[1] == "num":
+                list_obj = [float(x) for x in list_obj]
+            return list_obj
+        if fieldtype[0] == "map":
+            raw = raw.replace("'", "") # picking up keys sometimes creates stray ' characters
+            map_obj = {x.split("=")[0] : x.split("=")[1] for x in raw.split(">")[:-1]}
+            if fieldtype[1] == "num":
+                map_obj = {float(a) : b for a, b in map_obj.items()}
+            if fieldtype[2] == "num":
+                map_obj = {a : float(b) for a, b in map_obj.items()}
+            if fieldtype[2] == "list":
+                map_obj = {a : Savedata.parse_savedata_collection(b, fieldtype[2:4]) for a, b in map_obj.items()}
+            return map_obj
 
 
 class Editor():
