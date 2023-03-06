@@ -83,14 +83,25 @@ class Savedata():
 
     # parse data from .hlds file
     def parse_hlds(hldsdata):
-        savedata_map = {1:2} #placeholder
-        # TODO - parse hlds
+        savedata_map = loads(hldsdata)
+        # convert string keys to numbers
+        for key, value in savedata_map.items():
+            if type(value) == dict:
+                new = {}
+                for a, b in value.items():
+                    try:
+                        a = float(a)
+                    except:
+                        pass
+                    new[a] = b
+                savedata_map[key] = new
+        print(savedata_map)
         return savedata_map
 
     # save data to .hlds file
-    def save_hlds(filename):
-        pass
-        # TODO - save hlds
+    def save_hlds(self, hldsfile):
+        hlds = dumps(self.savedata_map)
+        hldsfile.write(hlds)
 
     # parse data from .sav file
     def parse_savefile(jsondata):
@@ -111,17 +122,16 @@ class Savedata():
         return savedata_map
 
     # export data to .sav file
-    def export_savefile(filename):
-        pass
+    def export_savefile(self, savefile):
+        for key, value in savedata_map.items():
+            pass
+            # TODO
 
 
     # convert list/map in savedata format to list/map object
     def parse_savedata_collection(raw, fieldtype):
         if fieldtype[0] == "list":
-            if "&" in raw:
-                sep = "&"
-            else:
-                sep = "+"
+            sep = "&" if "&" in raw else "+"
             list_obj = raw.split(sep)[:-1]
             if fieldtype[1] == "num":
                 list_obj = [float(x) for x in list_obj]
@@ -167,8 +177,8 @@ class Editor():
         
 
     def save(self, filename=None):
-        savefile = open(filename, "wt")
-        # TODO - write hlds
+        hldsfile = open(filename, "wt")
+        self.savedata.save_hlds(hldsfile)
 
     def export(self, slot):
         print(slot)
