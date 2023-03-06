@@ -25,7 +25,7 @@ class Interface():
                 filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
             self.editor.save(filename)
         except Exception as e:
-            showerror(title="Error", message=e)
+            showerror(title=type(e), message=e)
 
 
     # file -> save as
@@ -34,12 +34,24 @@ class Interface():
             filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
             self.editor.save(filename)
         except Exception as e:
-            showerror(title="Error", message=e)
+            showerror(title=type(e), message=e)
 
     
     # file -> export
     def export(self, slot):
-        self.editor.export(slot)
+        try:
+            self.editor.export(slot)
+        except Exception as e:
+            showerror(title=type(e), message=e)
+
+
+    # options -> import header
+    def import_header(self):
+        try:
+            filename = filedialog.askopenfilename(initialdir=self.app.savefile_path, filetypes=[("Savefile", "*.sav")])
+            self.editor.get_header(filename)
+        except Exception as e:
+            showerror(title=type(e), message=e)
     
 
     def __init__(self, editor, app):
@@ -53,6 +65,8 @@ class Interface():
         self.filemenu = Menu(self.menu)
         self.exportmenu = Menu(self.filemenu)
         self.menu.add_cascade(label="File", menu=self.filemenu)
+        self.optionmenu = Menu(self.menu)
+        self.menu.add_cascade(label="Options", menu=self.optionmenu)
 
         self.filemenu.add_command(label="Load", command=self.load, accelerator="Ctrl+L")
         self.filemenu.add_command(label="Save", command=self.save, accelerator="Ctrl+S")
@@ -63,10 +77,12 @@ class Interface():
         self.exportmenu.add_command(label="Slot 3", command=lambda: self.export(3), accelerator="Ctrl+3")
         self.exportmenu.add_command(label="Slot 4", command=lambda: self.export(4), accelerator="Ctrl+4")
 
-        self.tk.bind("<Control-KeyPress-1>", lambda x: self.export(1))
-        self.tk.bind("<Control-KeyPress-2>", lambda x: self.export(2))
-        self.tk.bind("<Control-KeyPress-3>", lambda x: self.export(3))
-        self.tk.bind("<Control-KeyPress-4>", lambda x: self.export(4))
+        self.optionmenu.add_command(label="Import Header", command=self.import_header)
+
+        self.tk.bind("<Control-KeyPress-1>", lambda x: self.export(0))
+        self.tk.bind("<Control-KeyPress-2>", lambda x: self.export(1))
+        self.tk.bind("<Control-KeyPress-3>", lambda x: self.export(2))
+        self.tk.bind("<Control-KeyPress-4>", lambda x: self.export(3))
         self.tk.bind("<Control-l>", self.load)
         self.tk.bind("<Control-s>", self.save)
         self.tk.config(menu=self.menu)

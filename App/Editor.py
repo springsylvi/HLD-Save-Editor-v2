@@ -1,7 +1,8 @@
 from json import loads, dumps
 import base64
-from os.path import splitext
+from os.path import splitext, join
 import datetime
+import configparser
 
 
 class Savedata():
@@ -122,10 +123,14 @@ class Savedata():
         return savedata_map
 
     # export data to .sav file
-    def export_savefile(self, savefile):
-        for key, value in savedata_map.items():
+    def export_savefile(self, savefile, header):
+        savedata_text = ""
+        for key, value in self.savedata_map.items():
             pass
             # TODO
+        savedata_enc = base64.standard_b64encode(header + savedata_text.encode())
+        #savefile.write(savedata_enc)
+        # TODO - cache output?
 
 
     # convert list/map in savedata format to list/map object
@@ -155,8 +160,9 @@ class Editor():
     Editor instance created on startup, contains the currently loaded Savedata instance.
     """
 
-    def __init__(self, savefile_path):
+    def __init__(self, savefile_path, config):
         self.path = savefile_path
+        self.config = config
         self.filename = None # name of loaded .hlds file
         self.savedata = None
 
@@ -174,16 +180,34 @@ class Editor():
             return
         else:
             raise FileNotFoundError("Invald file type")
+        savefile.close()
         
-
     def save(self, filename=None):
-        hldsfile = open(filename, "wt")
-        self.savedata.save_hlds(hldsfile)
+        if self.savedata is None:
+            raise Exception("No Savefile Loaded")
+        with open(filename, "wt") as hldsfile:
+            self.savedata.save_hlds(hldsfile)
 
     def export(self, slot):
-        print(slot)
-        # TODO
+        if self.savedata is None:
+            raise Exception("No Savefile Loaded")
+        header_text = self.config.get("main", "header", fallback=None)
+        if header_text is None:
+            raise Exception("Cannot export savefile without header. Set header from the options menu first.")
+        header = base64.standard_b64decode(header_text)
+        with open(join(self.path, "HyperLight_RecordOfTheDrifter_{0}.sav".format(slot)), "wb", buffering=0) as savefile:
+            self.savedata.export_savefile(savefile, header)
+        print("exported data to slot {0}".format(slot))
 
+    # add header from savefile to config
+    def get_header(self, filename):
+        savefile = open(filename, "rb", buffering=0)
+        header = base64.standard_b64decode(savefile.read())[0:60]
+        header_text = base64.standard_b64encode(header).decode()
+        print(header_text)
+        self.config["main"]["header"] = header_text
+        savefile.close()
+        
     def __str__(self):
         if self.savedata:
             return self.savedata

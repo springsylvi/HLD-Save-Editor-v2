@@ -1,6 +1,7 @@
-import configparser, platform, getpass, os
+import platform, getpass, os
 from Interface import *
 from Editor import *
+from atexit import register
 
 class App:
 	"""
@@ -50,7 +51,7 @@ class App:
 		self.config = App.read_config()
 		self.savefile_path = App.get_savefile_path(self.config)
 		# create Editor instance
-		self.editor = Editor(self.savefile_path)
+		self.editor = Editor(self.savefile_path, self.config)
 	
 
 	def main(self):
@@ -58,6 +59,11 @@ class App:
 		self.ui = Interface(self.editor, self)
 		self.ui.tk.mainloop()
 
+	def config_cleanup(self):
+		with open("config.ini", "w+") as config_file:
+			self.config.write(config_file)
+
 
 app = App()
+register(app.config_cleanup)
 app.main()
