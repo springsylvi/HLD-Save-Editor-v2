@@ -96,7 +96,6 @@ class Savedata():
                         pass
                     new[a] = b
                 savedata_map[key] = new
-        print(savedata_map)
         return savedata_map
 
     # save data to .hlds file
@@ -119,17 +118,24 @@ class Savedata():
         except:
             pass
         # TODO - dateTime?
-        print(savedata_map)
         return savedata_map
 
     # export data to .sav file
     def export_savefile(self, savefile, header):
-        savedata_text = ""
-        for key, value in self.savedata_map.items():
+        # handle special cases
+        try:
+            # bossGearbit format is "G(room_id)(boss_instance_id)(bit_num)"
+            self.savedata_map["bossGearbits"] = ["G" + str(x[0]) + str(x[1]) + str(x[2]) for x in self.savedata_map["bossGearbits"]]
+        except:
             pass
-            # TODO
+        # format list/map objects
+        for key, value in self.savedata_map.items():
+            fieldtype = Savedata.fields[key]
+            if len(fieldtype) > 1:
+                self.savedata_map[key] = Savedata.export_savedata_collection(value, fieldtype, "+")
+        savedata_text = dumps(self.savedata_map) + " "
         savedata_enc = base64.standard_b64encode(header + savedata_text.encode())
-        #savefile.write(savedata_enc)
+        savefile.write(savedata_enc)
         # TODO - cache output?
 
 
@@ -151,6 +157,19 @@ class Savedata():
             if fieldtype[2] == "list":
                 map_obj = {a : Savedata.parse_savedata_collection(b, fieldtype[2:4]) for a, b in map_obj.items()}
             return map_obj
+
+    # convert list/map object to savedata format
+    def export_savedata_collection(obj, fieldtype, listsep):
+        if fieldtype[0] == "list":
+            ret = ""
+            for x in obj:
+                ret += str(x) + listsep
+            return ret
+        if fieldtype[0] == "map":
+            ret = ""
+            for a, b in obj.items():
+                ret += str(a) + "=" + (Savedata.export_savedata_collection(b, fieldtype[2:4], "&") if fieldtype[2] == "list" else str(b)) + ">"
+            return ret
 
 
 class Editor():
