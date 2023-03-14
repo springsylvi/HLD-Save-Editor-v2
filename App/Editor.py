@@ -75,10 +75,10 @@ class Savedata():
     def __init__(self, data):
         self.savedata_map = data
 
-    def get_field(self, field):
+    def get(self, field):
         return self.savedata_map.get(field)
 
-    def set_field(self, field, value):
+    def set(self, field, value):
         if (field in fields):
             self.savedata_map[field] = value
 
