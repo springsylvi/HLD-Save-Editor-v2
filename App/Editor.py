@@ -11,66 +11,66 @@ class Savedata():
     """
 
     # all valid fields and their types.
-    # types are a sequence of any of str, num, list, map.
+    # types are a sequence of any of str, int, float, list, map.
     # list takes 1 arg, map takes 2
-    fields = {"badass": ["num"],
-              "bosses": ["map", "num", "list", "num"],
+    fields = {"badass": ["float"],
+              "bosses": ["map", "int", "list", "int"],
               "bossGearbits": ["list", "str"],
-              "cape": ["num"],
-              "cCapes": ["list", "num"],
-              "CH": ["num"],
-              "charDeaths": ["num"],
-              "checkAmmo": ["num"],
-              "checkBat": ["num"],
-              "checkCID": ["num"],
-              "checkHP": ["num"],
-              "checkRoom": ["num"],
-              "checkStash": ["num"],
-              "checkX": ["num"],
-              "checkY": ["num"],
-              "cl": ["map", "num", "list", "num"],
-              "compShell": ["num"],
-              "cShells": ["list", "num"],
-              "cSwords": ["list", "num"],
-              "cues": ["list", "num"],
-              "dateTime": ["num"],
-              "destruct": ["map", "num", "list", "num"],
-              "drifterkey": ["num"],
-              "enemies": ["map", "num", "list", "num"],
-              "eq00": ["num"],
-              "eq01": ["num"],
-              "events": ["list", "num"],
-              "fireplaceSave": ["num"],
+              "cape": ["float"],
+              "cCapes": ["list", "int"],
+              "CH": ["float"],
+              "charDeaths": ["float"],
+              "checkAmmo": ["float"],
+              "checkBat": ["float"],
+              "checkCID": ["float"],
+              "checkHP": ["float"],
+              "checkRoom": ["float"],
+              "checkStash": ["float"],
+              "checkX": ["float"],
+              "checkY": ["float"],
+              "cl": ["map", "int", "list", "int"],
+              "compShell": ["float"],
+              "cShells": ["list", "int"],
+              "cSwords": ["list", "int"],
+              "cues": ["list", "int"],
+              "dateTime": ["float"],
+              "destruct": ["map", "int", "list", "float"],
+              "drifterkey": ["float"],
+              "enemies": ["map", "int", "list", "float"], # TODO - list contains multiple types (int, float, str), needs to handle special case
+              "eq00": ["float"],
+              "eq01": ["float"],
+              "events": ["list", "int"],
+              "fireplaceSave": ["float"],
               "gameName": ["str"],
-              "gear": ["num"],
-              "gearReminderTimes": ["num"],
-              "gunReminderTimes": ["num"],
-              "halluc": ["num"],
-              "hasMap": ["num"],
-              "healthKits": ["list", "num"],
-              "healthUp": ["num"],
-              "mapMod": ["map", "num", "list", "num"],
-              "newcomerHoardeMessageShown": ["num"],
-              "noSpawn": ["list", "num"],
-              "noviceMode": ["num"],
-              "permaS": ["map", "num", "num"],
-              "playT": ["num"],
-              "rooms": ["list", "num"],
-              "sc": ["list", "num"],
-              "scUp": ["list", "num"],
-              "scK": ["map", "num", "num"],
-              "skill": ["list", "num"],
-              "specialUp": ["num"],
-              "successfulCollectTimes": ["num"],
-              "successfulHealTimes": ["num"],
-              "successfulWarpTimes": ["num"],
-              "sword": ["num"],
-              "tablet": ["list", "num"],
-              "tutHeal": ["num"],
-              "values": ["map", "str", "num"],
-              "warp": ["list", "num"],
-              "well": ["list", "num"],
-              "wellMap": ["list", "num"]}
+              "gear": ["float"],
+              "gearReminderTimes": ["float"],
+              "gunReminderTimes": ["float"],
+              "halluc": ["float"],
+              "hasMap": ["float"],
+              "healthKits": ["list", "int"],
+              "healthUp": ["float"],
+              "mapMod": ["map", "int", "list", "int"],
+              "newcomerHoardeMessageShown": ["float"],
+              "noSpawn": ["list", "int"],
+              "noviceMode": ["float"],
+              "permaS": ["map", "int", "int"],
+              "playT": ["float"],
+              "rooms": ["list", "int"],
+              "sc": ["list", "int"],
+              "scUp": ["list", "int"],
+              "scK": ["map", "int", "int"],
+              "skill": ["list", "int"],
+              "specialUp": ["float"],
+              "successfulCollectTimes": ["float"],
+              "successfulHealTimes": ["float"],
+              "successfulWarpTimes": ["float"],
+              "sword": ["float"],
+              "tablet": ["list", "int"],
+              "tutHeal": ["float"],
+              "values": ["map", "str", "int"],
+              "warp": ["list", "int"],
+              "well": ["list", "int"],
+              "wellMap": ["list", "int"]}
 
     def __init__(self, data):
         self.savedata_map = data
@@ -78,9 +78,11 @@ class Savedata():
     def get(self, field):
         return self.savedata_map.get(field)
 
-    def set(self, field, value):
-        if (field in fields):
+    def set_field(self, field, value):
+        if (field in Savedata.fields):
             self.savedata_map[field] = value
+        else:
+            raise Exception("Invalid field name")
 
     # parse data from .hlds file
     def parse_hlds(hldsdata):
@@ -114,7 +116,8 @@ class Savedata():
         # handle special cases
         try:
             # bossGearbit format is "G(room_id)(boss_instance_id)(bit_num)"
-            savedata_map["bossGearbits"] = [[int(x[1:4]), int(x[4:-1]), int(x[-1])] for x in savedata_map["bossGearbits"]] # TODO -  add support for non 3-digit room numbers
+            savedata_map["bossGearbits"] = [[int(x[1:4]), int(x[4:-1]), int(x[-1])] for x in savedata_map["bossGearbits"]]
+            # TODO - add support for non 3-digit room numbers
         except:
             pass
         # TODO - dateTime?
@@ -122,44 +125,53 @@ class Savedata():
 
     # export data to .sav file
     def export_savefile(self, savefile, header):
+        temp_sdmap = self.savedata_map.copy()
         # handle special cases
         try:
             # bossGearbit format is "G(room_id)(boss_instance_id)(bit_num)"
-            self.savedata_map["bossGearbits"] = ["G" + str(x[0]) + str(x[1]) + str(x[2]) for x in self.savedata_map["bossGearbits"]]
+            temp_sdmap["bossGearbits"] = ["G" + str(x[0]) + str(x[1]) + str(x[2]) for x in self.savedata_map["bossGearbits"]]
         except:
             pass
         # format list/map objects
         for key, value in self.savedata_map.items():
             fieldtype = Savedata.fields[key]
             if len(fieldtype) > 1:
-                self.savedata_map[key] = Savedata.export_savedata_collection(value, fieldtype, "+")
-        savedata_text = dumps(self.savedata_map) + " "
+                temp_sdmap[key] = Savedata.export_savedata_collection(value, fieldtype, "+")
+        savedata_text = dumps(temp_sdmap) + " "
         savedata_enc = base64.standard_b64encode(header + savedata_text.encode())
         savefile.write(savedata_enc)
         # TODO - cache output?
 
 
     # convert list/map in savedata format to list/map object
+    # TODO - tidy up this function
     def parse_savedata_collection(raw, fieldtype):
         if fieldtype[0] == "list":
             sep = "&" if "&" in raw else "+"
             list_obj = raw.split(sep)[:-1]
-            if fieldtype[1] == "num":
+            if fieldtype[1] == "float":
                 list_obj = [float(x) for x in list_obj]
+            if fieldtype[1] == "int":
+                list_obj = [int(x) for x in list_obj]
             return list_obj
         if fieldtype[0] == "map":
             raw = raw.replace("'", "") # picking up keys sometimes creates stray ' characters
             map_obj = {x.split("=")[0] : x.split("=")[1] for x in raw.split(">")[:-1]}
-            if fieldtype[1] == "num":
+            if fieldtype[1] == "float":
                 map_obj = {float(a) : b for a, b in map_obj.items()}
-            if fieldtype[2] == "num":
+            if fieldtype[1] == "int":
+                map_obj = {int(a) : b for a, b in map_obj.items()}
+            if fieldtype[2] == "float":
                 map_obj = {a : float(b) for a, b in map_obj.items()}
+            if fieldtype[2] == "int":
+                map_obj = {a : int(b) for a, b in map_obj.items()}
             if fieldtype[2] == "list":
                 map_obj = {a : Savedata.parse_savedata_collection(b, fieldtype[2:4]) for a, b in map_obj.items()}
             return map_obj
 
     # convert list/map object to savedata format
     def export_savedata_collection(obj, fieldtype, listsep):
+        print(fieldtype)
         if fieldtype[0] == "list":
             ret = ""
             for x in obj:
@@ -201,7 +213,7 @@ class Editor():
             raise FileNotFoundError("Invald file type")
         savefile.close()
         
-    def save(self, filename=None):
+    def save(self, filename):
         if self.savedata is None:
             raise Exception("No Savefile Loaded")
         with open(filename, "wt") as hldsfile:
