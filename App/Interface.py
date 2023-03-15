@@ -9,7 +9,6 @@ class Interface():
     GUI manager
     """
 
-
     # file -> load
     def load(self, event=None):
         try:
@@ -27,7 +26,7 @@ class Interface():
         try:
             filename = self.editor.filename
             if filename is None:
-                filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")]) # don't ask if user wants to overwrite save
+                filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
             if filename is None:
                 return
             self.editor.save(filename)
@@ -173,9 +172,9 @@ class Interface():
             cb2.grid(padx=5, column=1, row=i+1, sticky="w")
         sc.grid(column=3, row=0, sticky="n")
 
+        # TODO - fix checkbutton not initialising to variable state
         misc_collect = Frame(collect)
-        hasmap, fpsave = [IntVar(master=misc_collect, value=savedata.get(x)) for x in ["hasMap", "fireplaceSave"]]
-        print(hasmap.get())
+        hasmap, fpsave = [IntVar(master=misc_collect, value=savedata.get("hasMap")), IntVar(master=misc_collect, value=savedata.get("fireplaceSave"))]
         misc_collect_label = Label(misc_collect, text="Other Values")
         hasmap_cb = Checkbutton(misc_collect, text="Map Collected", variable=hasmap, command=lambda: self.sync_savedata("hasMap", hasmap))
         fpsave_cb = Checkbutton(misc_collect, text="Game Completed", variable=fpsave, command=lambda: self.sync_savedata("fireplaceSave", fpsave))
@@ -211,26 +210,26 @@ class Interface():
         modulesE_label = Label(modules, text="East")
         modulesS_label = Label(modules, text="South")
         modulesW_label = Label(modules, text="West")
-        for k, v in HLDConstants.north_modules.items():
+        for k, v in HLDConstants.north_modules:
             ids = savedata.get("cl").get(6)
             x = IntVar(master=modules, value=k in ids if ids is not None else 0)
             modulesN.append(x)
-            modulesN_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modules", modulesN)))
-        for k, v in HLDConstants.east_modules.items():
+            modulesN_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modulesN", modulesN)))
+        for k, v in HLDConstants.east_modules:
             ids = savedata.get("cl").get(7)
             x = IntVar(master=modules, value=k in ids if ids is not None else 0)
             modulesE.append(x)
-            modulesE_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modules", modulesE)))
-        for k, v in HLDConstants.south_modules.items():
+            modulesE_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modulesE", modulesE)))
+        for k, v in HLDConstants.south_modules:
             ids = savedata.get("cl").get(8)
             x = IntVar(master=modules, value=k in ids if ids is not None else 0)
             modulesS.append(x)
-            modulesS_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modules", modulesS)))
-        for k, v in HLDConstants.west_modules.items():
+            modulesS_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modulesS", modulesS)))
+        for k, v in HLDConstants.west_modules:
             ids = savedata.get("cl").get(9)
             x = IntVar(master=modules, value=k in ids if ids is not None else 0)
             modulesW.append(x)
-            modulesW_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modules", modulesW)))
+            modulesW_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modulesW", modulesW)))
         modules_label.grid(padx=5, column=0, row=0, columnspan=4)
         modulesN_label.grid(padx=5, column=0, row=1)
         modulesE_label.grid(padx=5, column=1, row=1)
@@ -246,13 +245,18 @@ class Interface():
     # copy changes in UI to savedata dict
     def sync_savedata(self, field, value):
 
-        print(field, value.get())
         lists = {
             "well": HLDConstants.pillar_ids,
             "warp": HLDConstants.area_ids,
             "skill": HLDConstants.skill_ids,
             "sc": HLDConstants.gun_ids,
             "scUp": HLDConstants.gun_ids
+            }
+        module_cltypes = {
+            "modulesN": (HLDConstants.north_modules, 6),
+            "modulesE": (HLDConstants.east_modules, 7),
+            "modulesS": (HLDConstants.south_modules, 8),
+            "modulesW": (HLDConstants.west_modules, 9)
             }
 
         if field in lists.keys():
@@ -264,9 +268,13 @@ class Interface():
             self.editor.savedata.set_field(field, sd)
         elif field in ["hasMap", "fireplaceSave"]:
             self.editor.savedata.set_field(field, float(value.get()))
-        elif field == "modules":
-            pass
-            #TODO
+        elif field[:-1] == "modules":
+            const_data = module_cltypes[field]
+            sd = []
+            for i in range(len(const_data[0])):
+                if value[i].get():
+                    sd.append(const_data[0][i][0])
+            self.editor.savedata.set_map_value("cl", const_data[1], sd)
         else:
             print("?")
 

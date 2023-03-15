@@ -84,6 +84,13 @@ class Savedata():
         else:
             raise Exception("Invalid field name")
 
+    # set an element of a map object
+    def set_map_value(self, field, key, value):
+        if (field in Savedata.fields):
+            self.savedata_map[field][key] = value
+        else:
+            raise Exception("Invalid field name")
+
     # parse data from .hlds file
     def parse_hlds(hldsdata):
         savedata_map = loads(hldsdata)
