@@ -3,74 +3,13 @@ import base64
 from os.path import splitext, join
 import datetime
 import configparser
+from HLDConstants import HLDConstants
 
 
 class Savedata():
     """
     Contains savedata as a dictionary.
     """
-
-    # all valid fields and their types.
-    # types are a sequence of any of str, int, float, list, map.
-    # list takes 1 arg, map takes 2
-    fields = {"badass": ["float"],
-              "bosses": ["map", "int", "list", "int"],
-              "bossGearbits": ["list", "str"],
-              "cape": ["float"],
-              "cCapes": ["list", "int"],
-              "CH": ["float"],
-              "charDeaths": ["float"],
-              "checkAmmo": ["float"],
-              "checkBat": ["float"],
-              "checkCID": ["float"],
-              "checkHP": ["float"],
-              "checkRoom": ["float"],
-              "checkStash": ["float"],
-              "checkX": ["float"],
-              "checkY": ["float"],
-              "cl": ["map", "int", "list", "int"],
-              "compShell": ["float"],
-              "cShells": ["list", "int"],
-              "cSwords": ["list", "int"],
-              "cues": ["list", "int"],
-              "dateTime": ["float"],
-              "destruct": ["map", "int", "list", "float"],
-              "drifterkey": ["float"],
-              "enemies": ["map", "int", "list", "float"], # TODO - list contains multiple types (int, float, str), needs to handle special case
-              "eq00": ["float"],
-              "eq01": ["float"],
-              "events": ["list", "int"],
-              "fireplaceSave": ["float"],
-              "gameName": ["str"],
-              "gear": ["float"],
-              "gearReminderTimes": ["float"],
-              "gunReminderTimes": ["float"],
-              "halluc": ["float"],
-              "hasMap": ["float"],
-              "healthKits": ["list", "int"],
-              "healthUp": ["float"],
-              "mapMod": ["map", "int", "list", "int"],
-              "newcomerHoardeMessageShown": ["float"],
-              "noSpawn": ["list", "int"],
-              "noviceMode": ["float"],
-              "permaS": ["map", "int", "int"],
-              "playT": ["float"],
-              "rooms": ["list", "int"],
-              "sc": ["list", "int"],
-              "scUp": ["list", "int"],
-              "scK": ["map", "int", "int"],
-              "skill": ["list", "int"],
-              "specialUp": ["float"],
-              "successfulCollectTimes": ["float"],
-              "successfulHealTimes": ["float"],
-              "successfulWarpTimes": ["float"],
-              "sword": ["float"],
-              "tablet": ["list", "int"],
-              "tutHeal": ["float"],
-              "values": ["map", "str", "int"],
-              "warp": ["list", "int"],
-              "well": ["list", "int"],
-              "wellMap": ["list", "int"]}
 
     def __init__(self, data):
         self.savedata_map = data
@@ -79,14 +18,14 @@ class Savedata():
         return self.savedata_map.get(field)
 
     def set_field(self, field, value):
-        if (field in Savedata.fields):
+        if (field in HLDConstants.fields):
             self.savedata_map[field] = value
         else:
             raise Exception("Invalid field name")
 
     # set an element of a map object
     def set_map_value(self, field, key, value):
-        if (field in Savedata.fields):
+        if (field in HLDConstants.fields):
             self.savedata_map[field][key] = value
         else:
             raise Exception("Invalid field name")
@@ -117,7 +56,7 @@ class Savedata():
         savedata_map = loads(jsondata)
         # parse list/map structures
         for key, value in savedata_map.items():
-            fieldtype = Savedata.fields[key]
+            fieldtype = HLDConstants.fields[key]
             if len(fieldtype) > 1:
                 savedata_map[key] = Savedata.parse_savedata_collection(value, fieldtype)
         # handle special cases
@@ -141,7 +80,7 @@ class Savedata():
             pass
         # format list/map objects
         for key, value in self.savedata_map.items():
-            fieldtype = Savedata.fields[key]
+            fieldtype = HLDConstants.fields[key]
             if len(fieldtype) > 1:
                 temp_sdmap[key] = Savedata.export_savedata_collection(value, fieldtype, "+")
         savedata_text = dumps(temp_sdmap) + " "
@@ -178,7 +117,6 @@ class Savedata():
 
     # convert list/map object to savedata format
     def export_savedata_collection(obj, fieldtype, listsep):
-        print(fieldtype)
         if fieldtype[0] == "list":
             ret = ""
             for x in obj:

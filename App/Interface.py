@@ -29,6 +29,7 @@ class Interface():
                 filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
             if filename is None:
                 return
+            self.sync_savedata_with_entries()
             self.editor.save(filename)
         except Exception as e:
             showerror(title=type(e), message=e)
@@ -40,6 +41,7 @@ class Interface():
             filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
             if filename is None:
                 return
+            self.sync_savedata_with_entries()
             self.editor.save(filename)
         except Exception as e:
             showerror(title=type(e), message=e)
@@ -48,6 +50,7 @@ class Interface():
     # file -> export
     def export(self, slot):
         try:
+            self.sync_savedata_with_entries()
             self.editor.export(slot)
         except Exception as e:
             showerror(title=type(e), message=e)
@@ -67,6 +70,9 @@ class Interface():
         self.app = app
         self.tk = Tk(screenName="Editor")
         self.tk.option_add('*tearOff', FALSE)
+
+        # tk.Entry fields to update; list of (name, entry) tuples
+        self.entries = []
         
         # menus
         self.menu = Menu(self.tk)
@@ -95,7 +101,6 @@ class Interface():
         self.tk.bind("<Control-s>", self.save)
         self.tk.config(menu=self.menu)
 
-
     
 
     # load widgets for editing savedata
@@ -120,7 +125,7 @@ class Interface():
         self.notebook.add(misc, text="Misc")
         self.notebook.pack(padx=5, pady=5)
 
-        # collectable status
+        # collectable status page
         well = Frame(collect)
         wellvalue = [IntVar(master=well, value=x in savedata.get("well")) for x in range(0,4)]
         well_label = Label(well, text="Pillars")
@@ -242,9 +247,29 @@ class Interface():
             modulesW_cbs[i].grid(padx=5, column=3, row=2+i, sticky="w")
         modules.grid(column=0, row=1, columnspan=3, sticky="n")
 
-    # copy changes in UI to savedata dict
+
+        # current state page
+        cpstate = Frame(current) # scalar state values for current checkpoint
+        cpstate_entry = []
+        cpstate_label = Label(cpstate, text="Health/Ammo")
+        cpstate_entrylabels = []
+        for k, v in HLDConstants.cpstate_fields:
+            x = Entry(cpstate)
+            x.insert(0, savedata.get(k))
+            cpstate_entry.append(x)
+            cpstate_entrylabels.append(Label(cpstate, text=v))
+            self.entries.append((k, x))
+        cpstate_label.grid(padx=5, column=0, row=0)
+        for i in range(len(HLDConstants.cpstate_fields)):
+            cpstate_entry[i].grid(padx=5, column=0, row=1+i, sticky="w")
+            cpstate_entrylabels[i].grid(padx=5, column=1, row=1+i, sticky="w")
+        cpstate.grid(column=0, row=0, sticky="n")
+
+
+    # copy changes in UI to savedata dict (TODO - maybe do this all at once when saving instead of on checkButton callback?)
     def sync_savedata(self, field, value):
 
+        # TODO - document this function
         lists = {
             "well": HLDConstants.pillar_ids,
             "warp": HLDConstants.area_ids,
@@ -259,6 +284,7 @@ class Interface():
             "modulesW": (HLDConstants.west_modules, 9)
             }
 
+        # update tk.Checkbutton fields when toggled
         if field in lists.keys():
             const_data = lists[field]
             sd = []
@@ -278,3 +304,16 @@ class Interface():
         else:
             print("?")
 
+
+    # update savedata from tk.Entry values (call before saving)
+    def sync_savedata_with_entries(self):
+
+        for name, entry in self.entries:
+            value = entry.get()
+            value_type = HLDConstants.fields.get(name)
+            if value_type[0] == "float":
+                value = float(value)
+            elif value_type[0] == "int":
+                value =  int(value)
+            print(name, value)
+            self.editor.savedata.set_field(name, value)

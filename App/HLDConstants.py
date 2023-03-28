@@ -1,6 +1,70 @@
+# constant values for names/IDs used by the game
+
 class HLDConstants():
 
-    # constant values
+
+    # all valid savedata fields and their types.
+    # types are a sequence of any of str, int, float, list, map.
+    # list takes 1 arg, map takes 2
+    fields = {"badass": ["float"],
+              "bosses": ["map", "int", "list", "int"],
+              "bossGearbits": ["list", "str"],
+              "cape": ["float"],
+              "cCapes": ["list", "int"],
+              "CH": ["float"],
+              "charDeaths": ["float"],
+              "checkAmmo": ["float"],
+              "checkBat": ["float"],
+              "checkCID": ["float"],
+              "checkHP": ["float"],
+              "checkRoom": ["float"],
+              "checkStash": ["float"],
+              "checkX": ["float"],
+              "checkY": ["float"],
+              "cl": ["map", "int", "list", "int"],
+              "compShell": ["float"],
+              "cShells": ["list", "int"],
+              "cSwords": ["list", "int"],
+              "cues": ["list", "int"],
+              "dateTime": ["float"],
+              "destruct": ["map", "int", "list", "float"],
+              "drifterkey": ["float"],
+              "enemies": ["map", "int", "list", "float"], # TODO - list contains multiple types (int, float, str), needs to handle special case
+              "eq00": ["float"],
+              "eq01": ["float"],
+              "events": ["list", "int"],
+              "fireplaceSave": ["float"],
+              "gameName": ["str"],
+              "gear": ["float"],
+              "gearReminderTimes": ["float"],
+              "gunReminderTimes": ["float"],
+              "halluc": ["float"],
+              "hasMap": ["float"],
+              "healthKits": ["list", "int"],
+              "healthUp": ["float"],
+              "mapMod": ["map", "int", "list", "int"],
+              "newcomerHoardeMessageShown": ["float"],
+              "noSpawn": ["list", "int"],
+              "noviceMode": ["float"],
+              "permaS": ["map", "int", "int"],
+              "playT": ["float"],
+              "rooms": ["list", "int"],
+              "sc": ["list", "int"],
+              "scUp": ["list", "int"],
+              "scK": ["map", "int", "int"],
+              "skill": ["list", "int"],
+              "specialUp": ["float"],
+              "successfulCollectTimes": ["float"],
+              "successfulHealTimes": ["float"],
+              "successfulWarpTimes": ["float"],
+              "sword": ["float"],
+              "tablet": ["list", "int"],
+              "tutHeal": ["float"],
+              "values": ["map", "str", "int"],
+              "warp": ["list", "int"],
+              "well": ["list", "int"],
+              "wellMap": ["list", "int"]}
+
     north_modules = [
         (-1084059, "After Pink Drifter"),
         (-1047430, "Pillar Room"),
@@ -41,6 +105,7 @@ class HLDConstants():
         (403666, "Meadow Vault"),
         (435082, "Tanuki Trouble")
         ]
+
     gun_ids = [
         (1, "Pistol"),
         (2, "Zeliska"),
@@ -49,6 +114,7 @@ class HLDConstants():
         (41, "Diamond Shotgun"),
         (43, "Shotgun")
         ]
+
     area_ids = [
         (0, "East"),
         (1, "North"),
@@ -56,12 +122,8 @@ class HLDConstants():
         (3, "South"),
         (4, "Town")
         ]
-    pillar_ids = [
-        (0, "East"),
-        (1, "North"),
-        (2, "West"),
-        (3, "South")
-        ]
+    pillar_ids = area_ids[:-1] # no pillar in town
+
     skill_ids = [
         (1, "Charge Slash"),
         (2, "Bullet Deflect"),
@@ -69,4 +131,11 @@ class HLDConstants():
         (4, "Chain Dash"),
         (5, "Bullet Shield"),
         (6, "Dash Stab")
+        ]
+
+    cpstate_fields = [
+        ("checkHP", "Health"),
+        ("checkBat", "Gun Ammo (%)"),
+        ("checkStash", "Medkits"),
+        ("checkAmmo", "Grenade Ammo")
         ]
