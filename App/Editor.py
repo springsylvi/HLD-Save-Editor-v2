@@ -157,6 +157,7 @@ class Editor():
         else:
             raise FileNotFoundError("Invald file type")
         savefile.close()
+
         
     def save(self, filename):
         if self.savedata is None:

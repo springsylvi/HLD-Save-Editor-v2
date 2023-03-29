@@ -201,7 +201,7 @@ class Interface():
         char_ng.pack(padx=5, anchor="w")
         char.grid(column=5, row=0, sticky="n")
 
-        modules = Frame(collect)
+        modules = Frame(collect) # modules
         modulesN = []
         modulesE = []
         modulesS = []
@@ -245,7 +245,24 @@ class Interface():
             modulesE_cbs[i].grid(padx=5, column=1, row=2+i, sticky="w")
             modulesS_cbs[i].grid(padx=5, column=2, row=2+i, sticky="w")
             modulesW_cbs[i].grid(padx=5, column=3, row=2+i, sticky="w")
-        modules.grid(column=0, row=1, columnspan=3, sticky="n")
+        modules.grid(pady=20, column=0, row=1, columnspan=3, sticky="n")
+
+        tablet = Frame(collect) # monoliths
+        tablet_value = []
+        tablet_cbs = []
+        tablet_label = Label(tablet, text="Monoliths")
+        tablet_area_labels = [Label(tablet, text=t) for t in ["North", "South", "East", "West"]]
+        for k, v in HLDConstants.tablet_ids:
+            x = IntVar(master=tablet, value=k in savedata.get("tablet"))
+            tablet_value.append(x)
+            tablet_cbs.append(Checkbutton(tablet, text=v, variable=x, command=lambda: self.sync_savedata("tablet", tablet_value)))
+
+        tablet_label.grid(padx=5, column=0, row=0, columnspan=4)
+        for i in range(4):
+            tablet_area_labels[i].grid(padx=5, column=i, row=1)
+        for i in range(16):
+            tablet_cbs[i].grid(padx=5, column=i//4, row=2+(i%4), sticky="w")
+        tablet.grid(pady=20, column=3, row=1, columnspan=3, sticky="n")
 
 
         # current state page
@@ -311,7 +328,7 @@ class Interface():
         for name, entry in self.entries:
             value = entry.get()
             value_type = HLDConstants.fields.get(name)
-            if value_type[0] == "float":
+            if value_type[0] == "float": # TODO - clean this up (add convert_value_to_type function to abstract this)
                 value = float(value)
             elif value_type[0] == "int":
                 value =  int(value)
