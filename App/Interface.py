@@ -29,7 +29,7 @@ class Interface():
                 filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
             if filename is None:
                 return
-            self.sync_savedata_with_entries()
+            self.sync_savedata()
             self.editor.save(filename)
         except Exception as e:
             showerror(title=type(e), message=e)
@@ -41,7 +41,7 @@ class Interface():
             filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
             if filename is None:
                 return
-            self.sync_savedata_with_entries()
+            self.sync_savedata()
             self.editor.save(filename)
         except Exception as e:
             showerror(title=type(e), message=e)
@@ -50,7 +50,7 @@ class Interface():
     # file -> export
     def export(self, slot):
         try:
-            self.sync_savedata_with_entries()
+            self.sync_savedata()
             self.editor.export(slot)
         except Exception as e:
             showerror(title=type(e), message=e)
@@ -71,8 +71,8 @@ class Interface():
         self.tk = Tk(screenName="Editor")
         self.tk.option_add('*tearOff', FALSE)
 
-        # tk.Entry fields to update; list of (name, entry) tuples
-        self.entries = []
+        # data stored in user input fields; list of (name, object) tuples
+        self.input_fields = []
         
         # menus
         self.menu = Menu(self.tk)
@@ -129,7 +129,8 @@ class Interface():
         well = Frame(collect)
         wellvalue = [IntVar(master=well, value=x in savedata.get("well")) for x in range(0,4)]
         well_label = Label(well, text="Pillars")
-        well_cbs = [Checkbutton(well, text=v, variable=wellvalue[k], command=lambda: self.sync_savedata("well", wellvalue)) for k, v in HLDConstants.pillar_ids]
+        well_cbs = [Checkbutton(well, text=v, variable=wellvalue[k]) for k, v in HLDConstants.pillar_ids]
+        self.input_fields.append(("well", wellvalue))
         well_label.pack(padx=5, anchor="w")
         for cb in well_cbs:
             cb.pack(padx=5, anchor="w")
@@ -138,7 +139,8 @@ class Interface():
         warp = Frame(collect)
         warpvalue = [IntVar(master=warp, value=x in savedata.get("warp")) for x in range(5)]
         warp_label = Label(warp, text="Warp Points")
-        warp_cbs = [Checkbutton(warp, text=v, variable=warpvalue[k], command=lambda: self.sync_savedata("warp", warpvalue)) for k, v in HLDConstants.area_ids]
+        warp_cbs = [Checkbutton(warp, text=v, variable=warpvalue[k]) for k, v in HLDConstants.area_ids]
+        self.input_fields.append(("warp", warpvalue))
         warp_label.pack(padx=5, anchor="w")
         for cb in warp_cbs:
             cb.pack(padx=5, anchor="w")
@@ -147,7 +149,8 @@ class Interface():
         skill = Frame(collect)
         skillvalue = [IntVar(master=skill, value=x in savedata.get("skill")) for x in range(1,7)]
         skill_label = Label(skill, text="Skills")
-        skill_cbs = [Checkbutton(skill, text=v, variable=skillvalue[k-1], command=lambda: self.sync_savedata("skill", skillvalue)) for k, v in HLDConstants.skill_ids]
+        skill_cbs = [Checkbutton(skill, text=v, variable=skillvalue[k-1]) for k, v in HLDConstants.skill_ids]
+        self.input_fields.append(("skill", skillvalue))
         skill_label.grid(padx=5, column=0, row=0, columnspan=2)
         for i in range(6):
             cb = skill_cbs[i]
@@ -165,10 +168,12 @@ class Interface():
             ids2 = savedata.get("scUp")
             x = IntVar(master=sc, value=k in ids)
             scvalue.append(x)
-            sc_cbs.append(Checkbutton(sc, text=v, variable=x, command=lambda: self.sync_savedata("sc", scvalue)))
+            sc_cbs.append(Checkbutton(sc, text=v, variable=x))
             y = IntVar(master=sc, value=k in ids2)
             scupvalue.append(y)
-            scup_cbs.append(Checkbutton(sc, text="Upgrade", variable=y, command=lambda: self.sync_savedata("scUp", scupvalue)))
+            scup_cbs.append(Checkbutton(sc, text="Upgrade", variable=y))
+        self.input_fields.append(("sc", scvalue))
+        self.input_fields.append(("scUp", scupvalue))
         sc_label.grid(padx=5, column=0, row=0, columnspan=2)
         for i in range(6):
             cb = sc_cbs[i]
@@ -181,8 +186,10 @@ class Interface():
         misc_collect = Frame(collect)
         hasmap, fpsave = [IntVar(master=misc_collect, value=savedata.get("hasMap")), IntVar(master=misc_collect, value=savedata.get("fireplaceSave"))]
         misc_collect_label = Label(misc_collect, text="Other Values")
-        hasmap_cb = Checkbutton(misc_collect, text="Map Collected", variable=hasmap, command=lambda: self.sync_savedata("hasMap", hasmap))
-        fpsave_cb = Checkbutton(misc_collect, text="Game Completed", variable=fpsave, command=lambda: self.sync_savedata("fireplaceSave", fpsave))
+        hasmap_cb = Checkbutton(misc_collect, text="Map Collected", variable=hasmap)
+        fpsave_cb = Checkbutton(misc_collect, text="Game Completed", variable=fpsave)
+        self.input_fields.append(("hasMap", hasmap))
+        self.input_fields.append(("fireplaceSave", fpsave))
         misc_collect_label.pack(padx=5, anchor="w")
         hasmap_cb.pack(padx=5, anchor="w")
         fpsave_cb.pack(padx=5, anchor="w")
@@ -192,9 +199,10 @@ class Interface():
         char = Frame(collect)
         charvalue = IntVar(master=char, value=(2 if savedata.get("CH") else savedata.get("noviceMode"))) # 0 = normal, 1 = novice, 2 = alt
         char_label = Label(char, text="Character")
-        char_alt = Radiobutton(char, text="Alt Drifter", variable=charvalue, value=2, command=lambda: self.sync_savedata("char"))
-        char_novice = Radiobutton(char, text="Novice Mode", variable=charvalue, value=1, command=lambda: self.sync_savedata("char"))
-        char_ng = Radiobutton(char, text="New Game", variable=charvalue, value=0, command=lambda: self.sync_savedata("char"))
+        char_alt = Radiobutton(char, text="Alt Drifter", variable=charvalue, value=2)
+        char_novice = Radiobutton(char, text="Novice Mode", variable=charvalue, value=1)
+        char_ng = Radiobutton(char, text="New Game", variable=charvalue, value=0)
+        # TODO - append to self.input_fields
         char_label.pack(padx=5, anchor="w")
         char_alt.pack(padx=5, anchor="w")
         char_novice.pack(padx=5, anchor="w")
@@ -219,22 +227,26 @@ class Interface():
             ids = savedata.get("cl").get(6)
             x = IntVar(master=modules, value=k in ids if ids is not None else 0)
             modulesN.append(x)
-            modulesN_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modulesN", modulesN)))
+            modulesN_cbs.append(Checkbutton(modules, text=v, variable=x))
         for k, v in HLDConstants.east_modules:
             ids = savedata.get("cl").get(7)
             x = IntVar(master=modules, value=k in ids if ids is not None else 0)
             modulesE.append(x)
-            modulesE_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modulesE", modulesE)))
+            modulesE_cbs.append(Checkbutton(modules, text=v, variable=x))
         for k, v in HLDConstants.south_modules:
             ids = savedata.get("cl").get(8)
             x = IntVar(master=modules, value=k in ids if ids is not None else 0)
             modulesS.append(x)
-            modulesS_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modulesS", modulesS)))
+            modulesS_cbs.append(Checkbutton(modules, text=v, variable=x))
         for k, v in HLDConstants.west_modules:
             ids = savedata.get("cl").get(9)
             x = IntVar(master=modules, value=k in ids if ids is not None else 0)
             modulesW.append(x)
-            modulesW_cbs.append(Checkbutton(modules, text=v, variable=x, command=lambda: self.sync_savedata("modulesW", modulesW)))
+            modulesW_cbs.append(Checkbutton(modules, text=v, variable=x))
+        self.input_fields.append(("modulesN", modulesN))
+        self.input_fields.append(("modulesE", modulesE))
+        self.input_fields.append(("modulesS", modulesS))
+        self.input_fields.append(("modulesW", modulesW))
         modules_label.grid(padx=5, column=0, row=0, columnspan=4)
         modulesN_label.grid(padx=5, column=0, row=1)
         modulesE_label.grid(padx=5, column=1, row=1)
@@ -255,8 +267,8 @@ class Interface():
         for k, v in HLDConstants.tablet_ids:
             x = IntVar(master=tablet, value=k in savedata.get("tablet"))
             tablet_value.append(x)
-            tablet_cbs.append(Checkbutton(tablet, text=v, variable=x, command=lambda: self.sync_savedata("tablet", tablet_value)))
-
+            tablet_cbs.append(Checkbutton(tablet, text=v, variable=x))
+        self.input_fields.append(("tablet", tablet_value))
         tablet_label.grid(padx=5, column=0, row=0, columnspan=4)
         for i in range(4):
             tablet_area_labels[i].grid(padx=5, column=i, row=1)
@@ -275,7 +287,7 @@ class Interface():
             x.insert(0, savedata.get(k))
             cpstate_entry.append(x)
             cpstate_entrylabels.append(Label(cpstate, text=v))
-            self.entries.append((k, x))
+            self.input_fields.append((k, x))
         cpstate_label.grid(padx=5, column=0, row=0)
         for i in range(len(HLDConstants.cpstate_fields)):
             cpstate_entry[i].grid(padx=5, column=0, row=1+i, sticky="w")
@@ -283,10 +295,9 @@ class Interface():
         cpstate.grid(column=0, row=0, sticky="n")
 
 
-    # copy changes in UI to savedata dict (TODO - maybe do this all at once when saving instead of on checkButton callback?)
-    def sync_savedata(self, field, value):
+    # copy changes in UI to savedata dict
+    def sync_savedata(self):
 
-        # TODO - document this function
         lists = {
             "well": HLDConstants.pillar_ids,
             "warp": HLDConstants.area_ids,
@@ -301,36 +312,24 @@ class Interface():
             "modulesW": (HLDConstants.west_modules, 9)
             }
 
-        # update tk.Checkbutton fields when toggled
-        if field in lists.keys():
-            const_data = lists[field]
-            sd = []
-            for i in range(len(const_data)):
-                if value[i].get():
-                    sd.append(const_data[i][0])
-            self.editor.savedata.set_field(field, sd)
-        elif field in ["hasMap", "fireplaceSave"]:
-            self.editor.savedata.set_field(field, float(value.get()))
-        elif field[:-1] == "modules":
-            const_data = module_cltypes[field]
-            sd = []
-            for i in range(len(const_data[0])):
-                if value[i].get():
-                    sd.append(const_data[0][i][0])
-            self.editor.savedata.set_map_value("cl", const_data[1], sd)
-        else:
-            print("?")
-
-
-    # update savedata from tk.Entry values (call before saving)
-    def sync_savedata_with_entries(self):
-
-        for name, entry in self.entries:
-            value = entry.get()
-            value_type = HLDConstants.fields.get(name)
-            if value_type[0] == "float": # TODO - clean this up (add convert_value_to_type function to abstract this)
-                value = float(value)
-            elif value_type[0] == "int":
-                value =  int(value)
-            print(name, value)
-            self.editor.savedata.set_field(name, value)
+        # TODO - fill out and document this section
+        for field, obj in self.input_fields:
+            # determine type of obj based on field name
+            if field in lists.keys():
+                const_data = lists[field]
+                sd = []
+                for i in range(len(const_data)):
+                    if obj[i].get():
+                        sd.append(const_data[i][0])
+                self.editor.savedata.set_field(field, sd)
+            elif field[:-1] == "modules":
+                const_data = module_cltypes[field]
+                sd = []
+                for i in range(len(const_data[0])):
+                    if obj[i].get():
+                        sd.append(const_data[0][i][0])
+                self.editor.savedata.set_map_value("cl", const_data[1], sd)
+            elif field in ["hasMap", "fireplaceSave", "checkHP", "checkStash", "checkBat", "checkAmmo"]: # single value -> float
+                self.editor.savedata.set_field(field, float(obj.get()))
+            else:
+                print("?")
