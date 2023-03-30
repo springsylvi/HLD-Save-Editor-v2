@@ -1,3 +1,4 @@
+import os.path
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -13,10 +14,12 @@ class Interface():
     def load(self, event=None):
         try:
             filename = filedialog.askopenfilename(initialdir=self.app.savefile_path)
-            if filename is None:
+            if filename is None or filename == "":
                 return
+            print(filename)
             self.editor.load(filename)
             self.init_editor_ui(self.editor)
+            self.set_status_message(f"loaded data from {os.path.basename(filename)}")
         except Exception as e:
             showerror(title=type(e), message=e)
 
@@ -27,10 +30,11 @@ class Interface():
             filename = self.editor.filename
             if filename is None:
                 filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
-            if filename is None:
+            if filename is None or filename == "":
                 return
             self.sync_savedata()
             self.editor.save(filename)
+            self.set_status_message(f"saved data to {os.path.basename(filename)}")
         except Exception as e:
             showerror(title=type(e), message=e)
 
@@ -39,10 +43,11 @@ class Interface():
     def saveas(self):
         try:
             filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
-            if filename is None:
+            if filename is None or filename == "":
                 return
             self.sync_savedata()
             self.editor.save(filename)
+            self.set_status_message(f"saved data to {os.path.basename(filename)}")
         except Exception as e:
             showerror(title=type(e), message=e)
 
@@ -52,6 +57,7 @@ class Interface():
         try:
             self.sync_savedata()
             self.editor.export(slot)
+            self.set_status_message(f"exported data to slot {slot}")
         except Exception as e:
             showerror(title=type(e), message=e)
 
@@ -63,7 +69,13 @@ class Interface():
             self.editor.get_header(filename)
         except Exception as e:
             showerror(title=type(e), message=e)
-    
+
+
+    # set status bar text to message
+    def set_status_message(self, message):
+        self.sbar_label.config(text=message)
+        # TODO - log past messages, including errors?
+
 
     def __init__(self, editor, app):
         self.editor = editor
@@ -71,8 +83,8 @@ class Interface():
         self.tk = Tk(screenName="Editor")
         self.tk.option_add('*tearOff', FALSE)
 
-        # data stored in user input fields; list of (name, object) tuples
-        self.input_fields = []
+        self.window = Frame(self.tk, width=500, height=500) # main window
+        self.sbar = Frame(self.tk) # status bar
         
         # menus
         self.menu = Menu(self.tk)
@@ -93,6 +105,7 @@ class Interface():
 
         self.optionmenu.add_command(label="Import Header", command=self.import_header)
 
+        # menu shortcuts
         self.tk.bind("<Control-KeyPress-0>", lambda x: self.export(0))
         self.tk.bind("<Control-KeyPress-1>", lambda x: self.export(1))
         self.tk.bind("<Control-KeyPress-2>", lambda x: self.export(2))
@@ -101,7 +114,16 @@ class Interface():
         self.tk.bind("<Control-s>", self.save)
         self.tk.config(menu=self.menu)
 
-    
+        # status bar
+        self.sbar_label = Label(self.sbar)
+        self.sbar_label.pack(padx=5, pady=5, side=LEFT)
+
+        self.window.pack()
+        self.sbar.pack(side=BOTTOM, fill=X)
+
+
+        # data stored in user input fields; list of (name, object) tuples
+        self.input_fields = []
 
     # load widgets for editing savedata
     def init_editor_ui(self, editor):
@@ -113,7 +135,7 @@ class Interface():
             self.notebook.destroy() # remove old window
         except:
             pass
-        self.notebook = ttk.Notebook(self.tk, width=1200, height=800)
+        self.notebook = ttk.Notebook(self.window)
         collect = Frame(self.notebook)
         current = Frame(self.notebook)
         misc =  Frame(self.notebook)

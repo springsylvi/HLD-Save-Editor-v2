@@ -174,7 +174,7 @@ class Editor():
         header = base64.standard_b64decode(header_text)
         with open(join(self.path, "HyperLight_RecordOfTheDrifter_{0}.sav".format(slot)), "wb", buffering=0) as savefile:
             self.savedata.export_savefile(savefile, header)
-        print("exported data to slot {0}".format(slot))
+        
 
     # add header from savefile to config
     def get_header(self, filename):
