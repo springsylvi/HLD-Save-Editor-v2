@@ -106,11 +106,11 @@ class Savedata():
             if fieldtype[1] == "float":
                 map_obj = {float(a) : b for a, b in map_obj.items()}
             if fieldtype[1] == "int":
-                map_obj = {int(a) : b for a, b in map_obj.items()}
+                map_obj = {int(float(a)) : b for a, b in map_obj.items()}
             if fieldtype[2] == "float":
                 map_obj = {a : float(b) for a, b in map_obj.items()}
             if fieldtype[2] == "int":
-                map_obj = {a : int(b) for a, b in map_obj.items()}
+                map_obj = {a : int(float(b)) for a, b in map_obj.items()}
             if fieldtype[2] == "list":
                 map_obj = {a : Savedata.parse_savedata_collection(b, fieldtype[2:4]) for a, b in map_obj.items()}
             return map_obj

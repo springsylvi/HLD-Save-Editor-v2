@@ -113,7 +113,7 @@ class Interface():
             self.notebook.destroy() # remove old window
         except:
             pass
-        self.notebook = ttk.Notebook(self.tk, width=1200, height=600)
+        self.notebook = ttk.Notebook(self.tk, width=1200, height=800)
         collect = Frame(self.notebook)
         current = Frame(self.notebook)
         misc =  Frame(self.notebook)
@@ -182,6 +182,22 @@ class Interface():
             cb2.grid(padx=5, column=1, row=i+1, sticky="w")
         sc.grid(column=3, row=0, sticky="n")
 
+        upgrades = Frame(collect) # medkit/grenade upgrades
+        upgrades_entry = []
+        upgrades_label = Label(upgrades, text="Other Upgrades")
+        upgrades_labels = []
+        for k, v in HLDConstants.misc_upgrade_fields:
+            x = Entry(upgrades) # TODO - make the entry box smaller
+            x.insert(0, savedata.get(k))
+            upgrades_entry.append(x)
+            upgrades_labels.append(Label(upgrades, text=v))
+            self.input_fields.append((k, x))
+        upgrades_label.grid(padx=5, column=0, row=0, columnspan=2)
+        for i in range(2):
+            upgrades_entry[i].grid(padx=5, column=0, row=1+i, sticky="w")
+            upgrades_labels[i].grid(padx=5, column=1, row=1+i, sticky="w")
+        upgrades.grid(column=4, row=0, sticky="n")
+
         # TODO - fix checkbutton not initialising to variable state
         misc_collect = Frame(collect)
         hasmap, fpsave = [IntVar(master=misc_collect, value=savedata.get("hasMap")), IntVar(master=misc_collect, value=savedata.get("fireplaceSave"))]
@@ -193,7 +209,7 @@ class Interface():
         misc_collect_label.pack(padx=5, anchor="w")
         hasmap_cb.pack(padx=5, anchor="w")
         fpsave_cb.pack(padx=5, anchor="w")
-        misc_collect.grid(column=4, row=0, sticky="n")
+        misc_collect.grid(column=5, row=0, sticky="n")
 
         # TODO - fix radiobutton
         char = Frame(collect)
@@ -207,7 +223,7 @@ class Interface():
         char_alt.pack(padx=5, anchor="w")
         char_novice.pack(padx=5, anchor="w")
         char_ng.pack(padx=5, anchor="w")
-        char.grid(column=5, row=0, sticky="n")
+        char.grid(column=6, row=0, sticky="n")
 
         modules = Frame(collect) # modules
         modulesN = []
@@ -276,6 +292,22 @@ class Interface():
             tablet_cbs[i].grid(padx=5, column=i//4, row=2+(i%4), sticky="w")
         tablet.grid(pady=20, column=3, row=1, columnspan=3, sticky="n")
 
+        outfits = Frame(collect) # outfits collected
+        outfits_value = []
+        outfits_label = Label(outfits, text="Outfits")
+        outfits_cbs = []
+        for k, v in HLDConstants.outfit_ids:
+            x = IntVar(master=outfits, value=k in savedata.get("cShells"))
+            outfits_value.append(x)
+            outfits_cbs.append(Checkbutton(outfits, text=v, variable=x))
+        self.input_fields.append(("cShells", outfits_value))
+        self.input_fields.append(("cSwords", outfits_value))
+        self.input_fields.append(("cCapes", outfits_value))
+        outfits_label.grid(padx=5, column=0, row=0, columnspan=2)
+        for i in range(12):
+            outfits_cbs[i].grid(padx=5, column=i//6, row=1+(i%6), sticky="w")
+        outfits.grid(column=0, row=2, columnspan=2, sticky="n")
+
 
         # current state page
         cpstate = Frame(current) # scalar state values for current checkpoint
@@ -288,11 +320,28 @@ class Interface():
             cpstate_entry.append(x)
             cpstate_entrylabels.append(Label(cpstate, text=v))
             self.input_fields.append((k, x))
-        cpstate_label.grid(padx=5, column=0, row=0)
+        cpstate_label.grid(padx=5, column=0, row=0, columnspan=2)
         for i in range(len(HLDConstants.cpstate_fields)):
             cpstate_entry[i].grid(padx=5, column=0, row=1+i, sticky="w")
             cpstate_entrylabels[i].grid(padx=5, column=1, row=1+i, sticky="w")
         cpstate.grid(column=0, row=0, sticky="n")
+
+        outfit_eq = Frame(current) # currently equipped outfit (NOTE: game crashes when opening outfit equip menu if you don't own the currently equipped outfit. Maybe automatically add outfit to owned when editing this field?)
+        outfit_eq_value = []
+        outfit_eq_label = Label(outfit_eq, text="Equipped Outfit")
+        outfit_eq_dds = []
+        outfit_eq_colour_labels = []
+        for k, v in HLDConstants.outfit_components:
+            x = StringVar(master=outfit_eq, value=HLDConstants.outfit_ids[int(savedata.get(k))][1])
+            outfit_eq_value.append(x)
+            outfit_eq_dds.append(OptionMenu(outfit_eq, x, *[t[1] for t in HLDConstants.outfit_ids]))
+            outfit_eq_colour_labels.append(Label(outfit_eq, text=v))
+            self.input_fields.append((k, x))
+        outfit_eq_label.grid(padx=5, column=0, row=0, columnspan=2)
+        for i in range(3):
+            outfit_eq_dds[i].grid(padx=5, column=0, row=1+i, sticky="e")
+            outfit_eq_colour_labels[i].grid(padx=5, column=1, row=1+i, sticky="w")
+        outfit_eq.grid(column=2, row=0, columnspan=2, sticky="n")
 
 
     # copy changes in UI to savedata dict
@@ -303,7 +352,10 @@ class Interface():
             "warp": HLDConstants.area_ids,
             "skill": HLDConstants.skill_ids,
             "sc": HLDConstants.gun_ids,
-            "scUp": HLDConstants.gun_ids
+            "scUp": HLDConstants.gun_ids,
+            "cShells": HLDConstants.outfit_ids,
+            "cSwords": HLDConstants.outfit_ids,
+            "cCapes": HLDConstants.outfit_ids,
             }
         module_cltypes = {
             "modulesN": (HLDConstants.north_modules, 6),
@@ -329,7 +381,10 @@ class Interface():
                     if obj[i].get():
                         sd.append(const_data[0][i][0])
                 self.editor.savedata.set_map_value("cl", const_data[1], sd)
-            elif field in ["hasMap", "fireplaceSave", "checkHP", "checkStash", "checkBat", "checkAmmo"]: # single value -> float
+            elif field in ["hasMap", "fireplaceSave", "checkHP", "checkStash", "checkBat", "checkAmmo", "healthUp", "specialUp"]: # single value -> float
                 self.editor.savedata.set_field(field, float(obj.get()))
+            elif field in ["compShell", "sword", "cape"]: # outfit name -> index
+                index = [t[1] for t in HLDConstants.outfit_ids].index(obj.get())
+                self.editor.savedata.set_field(field, float(index))
             else:
                 print("?")

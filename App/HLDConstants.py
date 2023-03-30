@@ -347,4 +347,29 @@ class HLDConstants():
         ("checkAmmo", "Grenade Ammo")
         ]
 
+    misc_upgrade_fields = [
+        ("healthUp", "Extra Medkits"),
+        ("specialUp", "Max Grenades")
+        ]
     
+    # TODO - remove explicit indices and turn into list of strings?
+    outfit_ids = [
+        (0, "Red (Default)"),
+        (1, "Blue"),
+        (2, "Fuschia"),
+        (3, "White"),
+        (4, "Yellow"),
+        (5, "Orange"),
+        (6, "Blue/Green"),
+        (7, "Pink"),
+        (8, "Black"),
+        (9, "Ochre"),
+        (10, "Purple"),
+        (11, "New Game +")
+        ]
+
+    outfit_components = [
+        ("compShell", "Droid"),
+        ("sword", "Sword"),
+        ("cape", "Cape")
+        ]
