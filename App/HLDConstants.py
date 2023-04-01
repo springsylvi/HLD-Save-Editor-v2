@@ -340,6 +340,11 @@ class HLDConstants():
         (16, "After Pillar")
         ]
 
+    misc_collect_fields = [
+        ("gear", "Unspent Gearbits"),
+        ("drifterkey", "Keys")
+        ]
+
     cpstate_fields = [
         ("checkHP", "Health"),
         ("checkBat", "Gun Ammo (%)"),
@@ -369,6 +374,13 @@ class HLDConstants():
         ]
 
     outfit_components = [
+        ("compShell", "Droid"),
+        ("sword", "Sword"),
+        ("cape", "Cape")
+        ]
+
+    # keys and bits
+    kb_fields = [
         ("compShell", "Droid"),
         ("sword", "Sword"),
         ("cape", "Cape")

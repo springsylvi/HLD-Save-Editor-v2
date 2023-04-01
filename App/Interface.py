@@ -16,7 +16,6 @@ class Interface():
             filename = filedialog.askopenfilename(initialdir=self.app.savefile_path)
             if filename is None or filename == "":
                 return
-            print(filename)
             self.editor.load(filename)
             self.init_editor_ui(self.editor)
             self.set_status_message(f"loaded data from {os.path.basename(filename)}")
@@ -209,7 +208,7 @@ class Interface():
         upgrades_label = Label(upgrades, text="Other Upgrades")
         upgrades_labels = []
         for k, v in HLDConstants.misc_upgrade_fields:
-            x = Entry(upgrades) # TODO - make the entry box smaller
+            x = Entry(upgrades, width=10)
             x.insert(0, savedata.get(k))
             upgrades_entry.append(x)
             upgrades_labels.append(Label(upgrades, text=v))
@@ -218,19 +217,28 @@ class Interface():
         for i in range(2):
             upgrades_entry[i].grid(padx=5, column=0, row=1+i, sticky="w")
             upgrades_labels[i].grid(padx=5, column=1, row=1+i, sticky="w")
-        upgrades.grid(column=4, row=0, sticky="n")
+        upgrades.grid(column=2, row=2, sticky="n")
 
         # TODO - fix checkbutton not initialising to variable state
-        misc_collect = Frame(collect)
-        hasmap, fpsave = [IntVar(master=misc_collect, value=savedata.get("hasMap")), IntVar(master=misc_collect, value=savedata.get("fireplaceSave"))]
+        misc_collect = Frame(collect) # map, keys, bits
+        misc_collect_value = []
+        hasmap = IntVar(master=misc_collect, value=savedata.get("hasMap"))
         misc_collect_label = Label(misc_collect, text="Other Values")
+        misc_collect_entry = []
+        misc_collect_entry_labels = []
+        for k, v in HLDConstants.misc_collect_fields:
+            x = Entry(misc_collect, width=10)
+            x.insert(0, savedata.get(k))
+            misc_collect_entry.append(x)
+            misc_collect_entry_labels.append(Label(misc_collect, text=v))
+            self.input_fields.append((k, x))
         hasmap_cb = Checkbutton(misc_collect, text="Map Collected", variable=hasmap)
-        fpsave_cb = Checkbutton(misc_collect, text="Game Completed", variable=fpsave)
         self.input_fields.append(("hasMap", hasmap))
-        self.input_fields.append(("fireplaceSave", fpsave))
-        misc_collect_label.pack(padx=5, anchor="w")
-        hasmap_cb.pack(padx=5, anchor="w")
-        fpsave_cb.pack(padx=5, anchor="w")
+        misc_collect_label.grid(padx=5, column=0, row=0, columnspan=2)
+        for i in range(2):
+            misc_collect_entry[i].grid(padx=5, column=0, row=1+i, sticky="w")
+            misc_collect_entry_labels[i].grid(padx=5, column=1, row=1+i, sticky="w")
+        hasmap_cb.grid(column=0, row=3, columnspan=2)
         misc_collect.grid(column=5, row=0, sticky="n")
 
         # TODO - fix radiobutton
@@ -337,7 +345,7 @@ class Interface():
         cpstate_label = Label(cpstate, text="Health/Ammo")
         cpstate_entrylabels = []
         for k, v in HLDConstants.cpstate_fields:
-            x = Entry(cpstate)
+            x = Entry(cpstate, width=10)
             x.insert(0, savedata.get(k))
             cpstate_entry.append(x)
             cpstate_entrylabels.append(Label(cpstate, text=v))
@@ -403,7 +411,7 @@ class Interface():
                     if obj[i].get():
                         sd.append(const_data[0][i][0])
                 self.editor.savedata.set_map_value("cl", const_data[1], sd)
-            elif field in ["hasMap", "fireplaceSave", "checkHP", "checkStash", "checkBat", "checkAmmo", "healthUp", "specialUp"]: # single value -> float
+            elif field in ["hasMap", "fireplaceSave", "checkHP", "checkStash", "checkBat", "checkAmmo", "healthUp", "specialUp", "drifterkey", "gear"]: # single value -> float
                 self.editor.savedata.set_field(field, float(obj.get()))
             elif field in ["compShell", "sword", "cape"]: # outfit name -> index
                 index = [t[1] for t in HLDConstants.outfit_ids].index(obj.get())
