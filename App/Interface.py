@@ -289,7 +289,7 @@ class Interface():
         drifter_pos_button = Button(drifter_pos, text="Choose Room", command=lambda: self.get_entrance(drifter_pos_value))
         for i in range(len(drifter_pos_value)):
             drifter_pos_value[i].grid(column=0, row=1+i, sticky="w")
-        drifter_pos_button.grid(column=1, row=1)
+        drifter_pos_button.grid(column=0, row=4)
         drifter_pos.grid(pady=10, column=0, row=1)
             
 
