@@ -18,11 +18,11 @@ class EditorUIObj(Frame):
         super().__init__(master=master, **kw)
         self.uitype = uitype
         if uitype == "Checkbutton":
-            self.var = IntVar(master=self, value=initial_value)
+            self.var = IntVar(master=self, value=int(initial_value))
             self.obj = Checkbutton(self, text=text, variable=self.var)
             self.obj.grid(column=0, row=0)
         elif uitype == "Entry":
-            self.var == None
+            self.var = None
             self.obj = Entry(self, width=10)
             self.obj.insert(0, initial_value)
             self.label = Label(self, text=text)
@@ -30,16 +30,19 @@ class EditorUIObj(Frame):
             self.label.grid(column=1, row=0)
         elif uitype == "OptionMenu":
             self.var = StringVar(master=self, value=initial_value)
-            self.obj = OptionMenu(self, self.var, *menu_options)
+            self.omframe = Frame(master=self, width=30)
+            self.obj = OptionMenu(self.omframe, self.var, *menu_options)
             self.label = Label(self, text=text)
-            self.obj.grid(column=0, row=0)
-            self.label.grid(column=1, row=0)
+            self.obj.pack(anchor="w")
+            self.omframe.grid(column=0, row=0, sticky="w")
+            self.label.grid(column=1, row=0, sticky="e")
+            # TODO - tidy up this packing to align dropdowns
 
 
     def get(self):
-        if uitype == "Checkbutton" or uitype == "OptionMenu":
+        if self.uitype == "Checkbutton" or self.uitype == "OptionMenu":
             return self.var.get()
-        elif uitype == "Entry":
+        elif self.uitype == "Entry":
             return self.obj.get()
         else:
             raise Exception("Unknown uitype")
@@ -164,224 +167,7 @@ class Interface():
 
         # data stored in user input fields; list of (name, object) tuples
         self.input_fields = []
-
-
-    # load page 1 of editor gui (collectable status)
-    def init_page_1(self, savedata, page):
-
-        # list of (iname, fieldtext, uitype, value, row_num, grid_pos, const_data) tuples where
-        #   iname (str) : internal name of the field
-        #   fieldtext (str) : text displayed above UI section
-        #   uitype (str) : type of ui object used for editing this field (Checkbutton, Entry, OptionMenu)
-        #   value (list) : current value in savedata, type of list elements depends on uitype
-        #   row_num (int) : number of rows per column when displaying multiple checkbuttons/etc.
-        #   grid_pos (int, int) : overall position in display grid
-        #   const_data (list) : constant list of name/values associated with this field type
-        field_specific_data = [
-            ("well", "Pillars", "Checkbutton", [x in savedata.get("well") for x in range(4)], 4, (0,0), HLDConstants.pillar_ids),
-            ("warp", "Warp Points", "Checkbutton", [x in savedata.get("warp") for x in range(5)], 5, (1,0), HLDConstants.area_ids),
-            ("skill", "Skills", "Checkbutton", [x in savedata.get("skill") for x in range(1,7)], 3, (2,0), HLDConstants.skill_ids),
-            ("sc", "Guns", "Checkbutton", [x in savedata.get("sc") for x, y in HLDConstants.gun_ids], 6, (3,0), HLDConstants.gun_ids),
-            ("scUp", "Gun Upgrades", "Checkbutton", [x in savedata.get("scUp") for x, y in HLDConstants.gun_ids], 6, (4,0), HLDConstants.gun_ids)
-            ]
-
-        # TODO - loop
-        for iname, fieldtext, uitype, value, row_num, grid_pos, const_data in field_specific_data:
-            ff = Frame(page)
-            ff_label = Label(ff, text=fieldtext)
-            ff_editor_objs = []
-            for i in range(len(value)):
-                if uitype == "OptionMenu":
-                    menu_options == [x[1] for x in const_data]
-                else:
-                    menu_options = None
-                obj = EditorUIObj(ff, uitype, const_data[i][1], value[i], menu_options=menu_options)
-                ff_editor_objs.append(obj)
-                obj.grid(padx=5, column=i//row_num, row=1+(i%row_num), sticky="w")
-                self.input_fields.append((iname, obj))
-            ff_label.grid(padx=5, column=0, row=0, columnspan=math.ceil(len(value)/row_num), sticky="n")
-            ff.grid(column=grid_pos[0], row=grid_pos[1], sticky="n")
-            
-
-        # OLD CODE BELOW
-
-
-        upgrades = Frame(page) # medkit/grenade upgrades
-        upgrades_entry = []
-        upgrades_label = Label(upgrades, text="Other Upgrades")
-        upgrades_labels = []
-        for k, v in HLDConstants.misc_upgrade_fields:
-            x = Entry(upgrades, width=10)
-            x.insert(0, savedata.get(k))
-            upgrades_entry.append(x)
-            upgrades_labels.append(Label(upgrades, text=v))
-            self.input_fields.append((k, x))
-        upgrades_label.grid(padx=5, column=0, row=0, columnspan=2)
-        for i in range(2):
-            upgrades_entry[i].grid(padx=5, column=0, row=1+i, sticky="w")
-            upgrades_labels[i].grid(padx=5, column=1, row=1+i, sticky="w")
-        upgrades.grid(column=2, row=2, sticky="n")
-
-        # TODO - fix checkbutton not initialising to variable state
-        misc_collect = Frame(page) # keys, bits, map
-        misc_collect_value = []
-        hasmap = IntVar(master=misc_collect, value=savedata.get("hasMap"))
-        misc_collect_label = Label(misc_collect, text="Other Values")
-        misc_collect_entry = []
-        misc_collect_entry_labels = []
-        for k, v in HLDConstants.misc_collect_fields:
-            x = Entry(misc_collect, width=10)
-            x.insert(0, savedata.get(k))
-            misc_collect_entry.append(x)
-            misc_collect_entry_labels.append(Label(misc_collect, text=v))
-            self.input_fields.append((k, x))
-        hasmap_cb = Checkbutton(misc_collect, text="Map Collected", variable=hasmap)
-        self.input_fields.append(("hasMap", hasmap))
-        misc_collect_label.grid(padx=5, column=0, row=0, columnspan=2)
-        for i in range(2):
-            misc_collect_entry[i].grid(padx=5, column=0, row=1+i, sticky="w")
-            misc_collect_entry_labels[i].grid(padx=5, column=1, row=1+i, sticky="w")
-        hasmap_cb.grid(column=0, row=3, columnspan=2)
-        misc_collect.grid(column=5, row=0, sticky="n")
-
-        gamemode = Frame(page) # NG/Alt/Novice
-        gamemode_value = []
-        gamemode_label = Label(gamemode, text="Game Mode")
-        gamemode_cbs = []
-        for k, v in HLDConstants.gamemode_fields:
-            x = IntVar(master=gamemode, value=savedata.get(k))
-            gamemode_value.append(x)
-            gamemode_cbs.append(Checkbutton(gamemode, text=v, variable=x))
-            self.input_fields.append((k, x))
-        gamemode_label.pack(padx=5, anchor="w")
-        for i in range(2):
-            gamemode_cbs[i].pack(padx=5, anchor="w")
-        gamemode.grid(column=6, row=0, sticky="n")
-
-        modules = Frame(page) # modules
-        modulesN = []
-        modulesE = []
-        modulesS = []
-        modulesW = []
-        modulesN_cbs = []
-        modulesE_cbs = []
-        modulesS_cbs = []
-        modulesW_cbs = []
-        modules_label = Label(modules, text="Modules")
-        modulesN_label = Label(modules, text="North")
-        modulesE_label = Label(modules, text="East")
-        modulesS_label = Label(modules, text="South")
-        modulesW_label = Label(modules, text="West")
-        for k, v in HLDConstants.north_modules:
-            ids = savedata.get("cl").get(6)
-            x = IntVar(master=modules, value=k in ids if ids is not None else 0)
-            modulesN.append(x)
-            modulesN_cbs.append(Checkbutton(modules, text=v, variable=x))
-        for k, v in HLDConstants.east_modules:
-            ids = savedata.get("cl").get(7)
-            x = IntVar(master=modules, value=k in ids if ids is not None else 0)
-            modulesE.append(x)
-            modulesE_cbs.append(Checkbutton(modules, text=v, variable=x))
-        for k, v in HLDConstants.south_modules:
-            ids = savedata.get("cl").get(8)
-            x = IntVar(master=modules, value=k in ids if ids is not None else 0)
-            modulesS.append(x)
-            modulesS_cbs.append(Checkbutton(modules, text=v, variable=x))
-        for k, v in HLDConstants.west_modules:
-            ids = savedata.get("cl").get(9)
-            x = IntVar(master=modules, value=k in ids if ids is not None else 0)
-            modulesW.append(x)
-            modulesW_cbs.append(Checkbutton(modules, text=v, variable=x))
-        self.input_fields.append(("modulesN", modulesN))
-        self.input_fields.append(("modulesE", modulesE))
-        self.input_fields.append(("modulesS", modulesS))
-        self.input_fields.append(("modulesW", modulesW))
-        modules_label.grid(padx=5, column=0, row=0, columnspan=4)
-        modulesN_label.grid(padx=5, column=0, row=1)
-        modulesE_label.grid(padx=5, column=1, row=1)
-        modulesS_label.grid(padx=5, column=2, row=1)
-        modulesW_label.grid(padx=5, column=3, row=1)
-        for i in range(8):
-            modulesN_cbs[i].grid(padx=5, column=0, row=2+i, sticky="w")
-            modulesE_cbs[i].grid(padx=5, column=1, row=2+i, sticky="w")
-            modulesS_cbs[i].grid(padx=5, column=2, row=2+i, sticky="w")
-            modulesW_cbs[i].grid(padx=5, column=3, row=2+i, sticky="w")
-        modules.grid(pady=20, column=0, row=1, columnspan=3, sticky="n")
-
-        tablet = Frame(page) # monoliths
-        tablet_value = []
-        tablet_cbs = []
-        tablet_label = Label(tablet, text="Monoliths")
-        tablet_area_labels = [Label(tablet, text=t) for t in ["North", "South", "East", "West"]]
-        for k, v in HLDConstants.tablet_ids:
-            x = IntVar(master=tablet, value=k in savedata.get("tablet"))
-            tablet_value.append(x)
-            tablet_cbs.append(Checkbutton(tablet, text=v, variable=x))
-        self.input_fields.append(("tablet", tablet_value))
-        tablet_label.grid(padx=5, column=0, row=0, columnspan=4)
-        for i in range(4):
-            tablet_area_labels[i].grid(padx=5, column=i, row=1)
-        for i in range(16):
-            tablet_cbs[i].grid(padx=5, column=i//4, row=2+(i%4), sticky="w")
-        tablet.grid(pady=20, column=3, row=1, columnspan=3, sticky="n")
-
-        outfits = Frame(page) # outfits collected
-        outfits_value = []
-        outfits_label = Label(outfits, text="Outfits")
-        outfits_cbs = []
-        for k, v in HLDConstants.outfit_ids:
-            x = IntVar(master=outfits, value=k in savedata.get("cShells"))
-            outfits_value.append(x)
-            outfits_cbs.append(Checkbutton(outfits, text=v, variable=x))
-        self.input_fields.append(("cShells", outfits_value))
-        self.input_fields.append(("cSwords", outfits_value))
-        self.input_fields.append(("cCapes", outfits_value))
-        outfits_label.grid(padx=5, column=0, row=0, columnspan=2)
-        for i in range(12):
-            outfits_cbs[i].grid(padx=5, column=i//6, row=1+(i%6), sticky="w")
-        outfits.grid(column=0, row=2, columnspan=2, sticky="n")
-
-
-    # current state page
-    def init_page_2(self, savedata, page):
-
-        cpstate = Frame(page) # scalar state values for current checkpoint
-        cpstate_entry = []
-        cpstate_label = Label(cpstate, text="Health/Ammo")
-        cpstate_entrylabels = []
-        for k, v in HLDConstants.cpstate_fields:
-            x = Entry(cpstate, width=10)
-            x.insert(0, savedata.get(k))
-            cpstate_entry.append(x)
-            cpstate_entrylabels.append(Label(cpstate, text=v))
-            self.input_fields.append((k, x))
-        cpstate_label.grid(padx=5, column=0, row=0, columnspan=2)
-        for i in range(len(HLDConstants.cpstate_fields)):
-            cpstate_entry[i].grid(padx=5, column=0, row=1+i, sticky="w")
-            cpstate_entrylabels[i].grid(padx=5, column=1, row=1+i, sticky="w")
-        cpstate.grid(column=0, row=0, sticky="n")
-
-        outfit_eq = Frame(page) # currently equipped outfit (NOTE: game crashes when opening outfit equip menu if you don't own the currently equipped outfit. Maybe automatically add outfit to owned when editing this field?)
-        outfit_eq_value = []
-        outfit_eq_label = Label(outfit_eq, text="Equipped Outfit")
-        outfit_eq_dds = []
-        outfit_eq_colour_labels = []
-        for k, v in HLDConstants.outfit_components:
-            x = StringVar(master=outfit_eq, value=HLDConstants.outfit_ids[int(savedata.get(k))][1])
-            outfit_eq_value.append(x)
-            outfit_eq_dds.append(OptionMenu(outfit_eq, x, *[t[1] for t in HLDConstants.outfit_ids]))
-            outfit_eq_colour_labels.append(Label(outfit_eq, text=v))
-            self.input_fields.append((k, x))
-        outfit_eq_label.grid(padx=5, column=0, row=0, columnspan=2)
-        for i in range(3):
-            outfit_eq_dds[i].grid(padx=5, column=0, row=1+i, sticky="e")
-            outfit_eq_colour_labels[i].grid(padx=5, column=1, row=1+i, sticky="w")
-        outfit_eq.grid(column=2, row=0, columnspan=2, sticky="n")
-
-
-    # misc fields page
-    def init_page_3(self, savedata, page):
-        pass
+        
 
     # load widgets for editing savedata
     def init_editor_ui(self, editor):
@@ -405,13 +191,70 @@ class Interface():
         self.notebook.add(misc, text="Misc")
         self.notebook.pack(padx=5, pady=5)
 
-        self.init_page_1(savedata, collect)
-        self.init_page_2(savedata, current)
-        self.init_page_3(savedata, misc)
+        # list of (iname, fieldtext, uitype, value, row_num, grid_pos, const_data, is_list) tuples where
+        #   iname (str) : internal name of the field
+        #   fieldtext (str) : text displayed above UI section
+        #   uitype (str) : type of ui object used for editing this field (Checkbutton, Entry, OptionMenu)
+        #   value (list) : current value in savedata, type of list elements depends on uitype
+        #   row_num (int) : number of rows per column when displaying multiple checkbuttons/etc.
+        #   grid_pos (int, int) : overall position in display grid
+        #   page (Frame) : which page to diplay on
+        #   const_data (list) : constant list of name/values associated with this field type (tuple of 2 lists for uitype == OptionMenu)
+        #   is_list (bool) : whether the list corresponds to a single field, instead of a list of different fields
+        field_specific_data = [
+            ("well", "Pillars", "Checkbutton", [x in savedata.get("well") for x in range(4)], 4, (0,0), collect, HLDConstants.pillar_ids, True),
+            ("warp", "Warp Points", "Checkbutton", [x in savedata.get("warp") for x in range(5)], 5, (1,0), collect, HLDConstants.area_ids, True),
+            ("skill", "Skills", "Checkbutton", [x in savedata.get("skill") for x in range(1,7)], 3, (2,0), collect, HLDConstants.skill_ids, True),
+            ("sc", "Guns", "Checkbutton", [x in savedata.get("sc") for x, y in HLDConstants.gun_ids], 6, (0,1), collect, HLDConstants.gun_ids, True),
+            ("scUp", "Gun Upgrades", "Checkbutton", [x in savedata.get("scUp") for x, y in HLDConstants.gun_ids], 6, (1,1), collect, HLDConstants.gun_ids, True),
+            ("cShells", "Outfits", "Checkbutton", [x in savedata.get("cShells") for x, y in HLDConstants.outfit_ids], 6, (2,1), collect, HLDConstants.outfit_ids, True),
+            ("east_modules", "East Modules", "Checkbutton", [x in savedata.get("cl").get(7) for x, y in HLDConstants.east_modules], 8, (3,0), collect, HLDConstants.east_modules, True),
+            ("north_modules", "North Modules", "Checkbutton", [x in savedata.get("cl").get(6) for x, y in HLDConstants.north_modules], 8, (4,0), collect, HLDConstants.north_modules, True),
+            ("west_modules", "West Modules", "Checkbutton", [x in savedata.get("cl").get(9) for x, y in HLDConstants.west_modules], 8, (5,0), collect, HLDConstants.west_modules, True),
+            ("south_modules", "South Modules", "Checkbutton", [x in savedata.get("cl").get(8) for x, y in HLDConstants.south_modules], 8, (6,0), collect, HLDConstants.south_modules, True),
+            ("east_tablet", "East Monoliths", "Checkbutton", [x in savedata.get("tablet") for x, y in HLDConstants.east_tablet_ids], 4, (3,1), collect, HLDConstants.east_tablet_ids, True),
+            ("north_tablet", "North Monoliths", "Checkbutton", [x in savedata.get("tablet") for x, y in HLDConstants.north_tablet_ids], 4, (4,1), collect, HLDConstants.north_tablet_ids, True),
+            ("west_tablet", "West Monoliths", "Checkbutton", [x in savedata.get("tablet") for x, y in HLDConstants.west_tablet_ids], 4, (5,1), collect, HLDConstants.west_tablet_ids, True),
+            ("south_tablet", "South Monoliths", "Checkbutton", [x in savedata.get("tablet") for x, y in HLDConstants.south_tablet_ids], 4, (6,1), collect, HLDConstants.south_tablet_ids, True),
+            ("gamemode", "Game Mode", "Checkbutton", [savedata.get(x) for x, y in HLDConstants.gamemode_fields], 2, (0,2), collect, HLDConstants.gamemode_fields, False),
+            ("misc_values", "Other Values", "Checkbutton", [savedata.get(x) for x, y in HLDConstants.misc_value_fields], 2, (1,2), collect, HLDConstants.misc_value_fields, False),
+            ("upgrades", "Other Upgrades", "Entry", [savedata.get(x) for x, y in HLDConstants.misc_upgrade_fields], 2, (2,2), collect, HLDConstants.misc_upgrade_fields, False),
+            ("misc_collect", "Other Collectables", "Entry", [savedata.get(x) for x, y in HLDConstants.misc_collect_fields], 2, (3,2), collect, HLDConstants.misc_collect_fields, False),
+            ("cpstate", "Health/Ammo", "Entry", [savedata.get(x) for x, y in HLDConstants.cpstate_fields], 4, (0,0), current, HLDConstants.cpstate_fields, False),
+            ("outfit_eq", "Equipped Outfit", "OptionMenu", [savedata.get(x) for x, y in HLDConstants.outfit_components], 3, (1,0), current, (HLDConstants.outfit_ids, HLDConstants.outfit_components), False)
+            ]
 
+        # load each section from field_specific_data
+        for iname, fieldtext, uitype, value, row_num, grid_pos, page, const_data, is_list in field_specific_data:
+            ff = Frame(page)
+            ff_label = Label(ff, text=fieldtext)
+            ff_editor_objs = []
+            for i in range(len(value)):
+                if uitype == "OptionMenu":
+                    menu_options = [x[1] for x in const_data[0]]
+                    initial_value = const_data[0][int(value[i])][1] # look up index in table
+                    text = const_data[1][i][1]
+                    elem_iname = const_data[1][i][0]
+                    obj = EditorUIObj(ff, uitype, text, initial_value, menu_options=menu_options)
+                else:
+                    elem_iname = const_data[i][0]
+                    obj = EditorUIObj(ff, uitype, const_data[i][1], value[i])
+                ff_editor_objs.append(obj)
+                obj.grid(padx=5, column=i//row_num, row=1+(i%row_num), sticky="w")
+                if not is_list: # add each individual element
+                    self.input_fields.append((elem_iname, obj))
+                    print(elem_iname, obj.get())
+            if is_list: # add whole list
+                self.input_fields.append((iname, ff_editor_objs))
+                print(iname, [x.get() for x in ff_editor_objs])
+            ff_label.grid(padx=5, column=0, row=0, columnspan=math.ceil(len(value)/row_num), sticky="n")
+            ff.grid(pady=10, column=grid_pos[0], row=grid_pos[1], sticky="n")
+            
 
     # copy changes in UI to savedata dict
     def sync_savedata(self):
+
+        # TODO - reimplement this function to work with new init_editor_ui version
 
         lists = {
             "well": HLDConstants.pillar_ids,
@@ -419,9 +262,7 @@ class Interface():
             "skill": HLDConstants.skill_ids,
             "sc": HLDConstants.gun_ids,
             "scUp": HLDConstants.gun_ids,
-            "cShells": HLDConstants.outfit_ids,
-            "cSwords": HLDConstants.outfit_ids,
-            "cCapes": HLDConstants.outfit_ids,
+            "cShells": HLDConstants.outfit_ids
             }
         module_cltypes = {
             "modulesN": (HLDConstants.north_modules, 6),
@@ -440,6 +281,9 @@ class Interface():
                     if obj[i].get():
                         sd.append(const_data[i][0])
                 self.editor.savedata.set_field(field, sd)
+                if field == "cShells": # copy value to other outfit component lists
+                    self.editor.savedata.set_field("cSwords", sd)
+                    self.editor.savedata.set_field("cCapes", sd)
             elif field[:-1] == "modules":
                 const_data = module_cltypes[field]
                 sd = []

@@ -339,10 +339,19 @@ class HLDConstants():
         (15, "Before Pink Drifter"),
         (16, "After Pillar")
         ]
+    east_tablet_ids = tablet_ids[8:12]
+    north_tablet_ids = tablet_ids[0:4]
+    west_tablet_ids = tablet_ids[12:16]
+    south_tablet_ids = tablet_ids[4:8]
 
     misc_collect_fields = [
         ("gear", "Unspent Gearbits"),
         ("drifterkey", "Keys")
+        ]
+
+    misc_value_fields = [
+        ("hasMap", "Map Collected"),
+        ("fireplaceSave", "Fireplace Save")
         ]
 
     cpstate_fields = [
@@ -373,6 +382,7 @@ class HLDConstants():
         (11, "New Game +")
         ]
 
+    # NOTE: game crashes when opening outfit equip menu if you don't own the currently equipped outfit. Maybe automatically add outfit to owned when editing this field?
     outfit_components = [
         ("compShell", "Droid"),
         ("sword", "Sword"),
