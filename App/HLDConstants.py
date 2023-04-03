@@ -385,3 +385,8 @@ class HLDConstants():
         ("sword", "Sword"),
         ("cape", "Cape")
         ]
+
+    gamemode_fields = [
+        ("CH", "Alt Drifter"),
+        ("noviceMode", "Novice Mode")
+        ]

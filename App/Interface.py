@@ -1,4 +1,5 @@
 import os.path
+import math
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -124,40 +125,44 @@ class Interface():
         # data stored in user input fields; list of (name, object) tuples
         self.input_fields = []
 
-    # load widgets for editing savedata
-    def init_editor_ui(self, editor):
 
-        savedata = editor.savedata
+    # load page 1 of editor gui (collectable status)
+    def init_page_1(self, savedata, page):
 
-        # main window
-        try:
-            self.notebook.destroy() # remove old window
-        except:
-            pass
-        self.notebook = ttk.Notebook(self.window)
-        collect = Frame(self.notebook)
-        current = Frame(self.notebook)
-        misc =  Frame(self.notebook)
-        collect.pack()
-        current.pack()
-        misc.pack()
-        self.notebook.add(collect, text="Collectable Status")
-        self.notebook.add(current, text="Current State")
-        self.notebook.add(misc, text="Misc")
-        self.notebook.pack(padx=5, pady=5)
+        # list of (iname, fieldtext, uitype, value, row_num, grid_pos, const_data) tuples where
+        #   iname (str) : internal name of the field
+        #   fieldtext (str) : text displayed above UI section
+        #   uitype (str) : type of ui object used for editing this field (Checkbutton, Entry, OptionMenu)
+        #   value (list) : current value in savedata, type of list elements depends on uitype
+        #   row_num (int) : number of rows per column when displaying multiple checkbuttons/etc.
+        #   grid_pos (int, int) : overall position in display grid
+        #   const_data (list) : constant list of name/values associated with this field type
+        field_specific_data = [
+            ("well", "Pillars", "Checkbutton", [IntVar(master=page, value=x in savedata.get("well")) for x in range(0,4)], 4, (0,0), HLDConstants.pillar_ids)
+            ]
 
-        # collectable status page
-        well = Frame(collect)
-        wellvalue = [IntVar(master=well, value=x in savedata.get("well")) for x in range(0,4)]
-        well_label = Label(well, text="Pillars")
-        well_cbs = [Checkbutton(well, text=v, variable=wellvalue[k]) for k, v in HLDConstants.pillar_ids]
-        self.input_fields.append(("well", wellvalue))
-        well_label.pack(padx=5, anchor="w")
-        for cb in well_cbs:
-            cb.pack(padx=5, anchor="w")
-        well.grid(column=0, row=0, sticky="n")
+        # TODO - loop
+        for iname, fieldtext, uitype, value, row_num, grid_pos, const_data in field_specific_data:
+            ff = Frame(page)
+            ff_label = Label(ff, text=fieldtext)
+            ff_editor_objs = []
+            if uitype == "Checkbutton":
+                for i in range(len(value)):
+                    cb_text = const_data[i][1]
+                    cb = Checkbutton(ff, text=cb_text, variable=value[i])
+                    ff_editor_objs.append(cb)
+                    cb.grid(padx=5, column=i//row_num, row=1+(i%row_num), sticky="w")
+                self.input_fields.append((iname, value))
+            elif uitype == "Entry":
+                pass
+            elif uitype == "Optionmenu":
+                pass
+            ff_label.grid(padx=5, column=0, row=0, columnspan=math.ceil(len(value)/row_num))
+            ff.grid(column=grid_pos[0], row=grid_pos[1], sticky="n")
+            
 
-        warp = Frame(collect)
+        # OLD CODE BELOW
+        warp = Frame(page)
         warpvalue = [IntVar(master=warp, value=x in savedata.get("warp")) for x in range(5)]
         warp_label = Label(warp, text="Warp Points")
         warp_cbs = [Checkbutton(warp, text=v, variable=warpvalue[k]) for k, v in HLDConstants.area_ids]
@@ -167,7 +172,7 @@ class Interface():
             cb.pack(padx=5, anchor="w")
         warp.grid(column=1, row=0, sticky="n")
 
-        skill = Frame(collect)
+        skill = Frame(page)
         skillvalue = [IntVar(master=skill, value=x in savedata.get("skill")) for x in range(1,7)]
         skill_label = Label(skill, text="Skills")
         skill_cbs = [Checkbutton(skill, text=v, variable=skillvalue[k-1]) for k, v in HLDConstants.skill_ids]
@@ -178,7 +183,7 @@ class Interface():
             cb.grid(padx=5, column=0 if i < 3 else 1, row=(i % 3) + 1, sticky="w")
         skill.grid(column=2, row=0, sticky="n")
 
-        sc = Frame(collect)
+        sc = Frame(page)
         scvalue = []
         sc_cbs = []
         scupvalue = []
@@ -203,7 +208,7 @@ class Interface():
             cb2.grid(padx=5, column=1, row=i+1, sticky="w")
         sc.grid(column=3, row=0, sticky="n")
 
-        upgrades = Frame(collect) # medkit/grenade upgrades
+        upgrades = Frame(page) # medkit/grenade upgrades
         upgrades_entry = []
         upgrades_label = Label(upgrades, text="Other Upgrades")
         upgrades_labels = []
@@ -220,7 +225,7 @@ class Interface():
         upgrades.grid(column=2, row=2, sticky="n")
 
         # TODO - fix checkbutton not initialising to variable state
-        misc_collect = Frame(collect) # map, keys, bits
+        misc_collect = Frame(page) # keys, bits, map
         misc_collect_value = []
         hasmap = IntVar(master=misc_collect, value=savedata.get("hasMap"))
         misc_collect_label = Label(misc_collect, text="Other Values")
@@ -241,21 +246,21 @@ class Interface():
         hasmap_cb.grid(column=0, row=3, columnspan=2)
         misc_collect.grid(column=5, row=0, sticky="n")
 
-        # TODO - fix radiobutton
-        char = Frame(collect)
-        charvalue = IntVar(master=char, value=(2 if savedata.get("CH") else savedata.get("noviceMode"))) # 0 = normal, 1 = novice, 2 = alt
-        char_label = Label(char, text="Character")
-        char_alt = Radiobutton(char, text="Alt Drifter", variable=charvalue, value=2)
-        char_novice = Radiobutton(char, text="Novice Mode", variable=charvalue, value=1)
-        char_ng = Radiobutton(char, text="New Game", variable=charvalue, value=0)
-        # TODO - append to self.input_fields
-        char_label.pack(padx=5, anchor="w")
-        char_alt.pack(padx=5, anchor="w")
-        char_novice.pack(padx=5, anchor="w")
-        char_ng.pack(padx=5, anchor="w")
-        char.grid(column=6, row=0, sticky="n")
+        gamemode = Frame(page) # NG/Alt/Novice
+        gamemode_value = []
+        gamemode_label = Label(gamemode, text="Game Mode")
+        gamemode_cbs = []
+        for k, v in HLDConstants.gamemode_fields:
+            x = IntVar(master=gamemode, value=savedata.get(k))
+            gamemode_value.append(x)
+            gamemode_cbs.append(Checkbutton(gamemode, text=k, variable=x))
+            self.input_fields.append((k, x))
+        gamemode_label.pack(padx=5, anchor="w")
+        for i in range(2):
+            gamemode_cbs[i].pack(padx=5, anchor="w")
+        gamemode.grid(column=6, row=0, sticky="n")
 
-        modules = Frame(collect) # modules
+        modules = Frame(page) # modules
         modulesN = []
         modulesE = []
         modulesS = []
@@ -305,7 +310,7 @@ class Interface():
             modulesW_cbs[i].grid(padx=5, column=3, row=2+i, sticky="w")
         modules.grid(pady=20, column=0, row=1, columnspan=3, sticky="n")
 
-        tablet = Frame(collect) # monoliths
+        tablet = Frame(page) # monoliths
         tablet_value = []
         tablet_cbs = []
         tablet_label = Label(tablet, text="Monoliths")
@@ -322,7 +327,7 @@ class Interface():
             tablet_cbs[i].grid(padx=5, column=i//4, row=2+(i%4), sticky="w")
         tablet.grid(pady=20, column=3, row=1, columnspan=3, sticky="n")
 
-        outfits = Frame(collect) # outfits collected
+        outfits = Frame(page) # outfits collected
         outfits_value = []
         outfits_label = Label(outfits, text="Outfits")
         outfits_cbs = []
@@ -339,8 +344,10 @@ class Interface():
         outfits.grid(column=0, row=2, columnspan=2, sticky="n")
 
 
-        # current state page
-        cpstate = Frame(current) # scalar state values for current checkpoint
+    # current state page
+    def init_page_2(self, savedata, page):
+
+        cpstate = Frame(page) # scalar state values for current checkpoint
         cpstate_entry = []
         cpstate_label = Label(cpstate, text="Health/Ammo")
         cpstate_entrylabels = []
@@ -356,7 +363,7 @@ class Interface():
             cpstate_entrylabels[i].grid(padx=5, column=1, row=1+i, sticky="w")
         cpstate.grid(column=0, row=0, sticky="n")
 
-        outfit_eq = Frame(current) # currently equipped outfit (NOTE: game crashes when opening outfit equip menu if you don't own the currently equipped outfit. Maybe automatically add outfit to owned when editing this field?)
+        outfit_eq = Frame(page) # currently equipped outfit (NOTE: game crashes when opening outfit equip menu if you don't own the currently equipped outfit. Maybe automatically add outfit to owned when editing this field?)
         outfit_eq_value = []
         outfit_eq_label = Label(outfit_eq, text="Equipped Outfit")
         outfit_eq_dds = []
@@ -372,6 +379,37 @@ class Interface():
             outfit_eq_dds[i].grid(padx=5, column=0, row=1+i, sticky="e")
             outfit_eq_colour_labels[i].grid(padx=5, column=1, row=1+i, sticky="w")
         outfit_eq.grid(column=2, row=0, columnspan=2, sticky="n")
+
+
+    # misc fields page
+    def init_page_3(self, savedata, page):
+        pass
+
+    # load widgets for editing savedata
+    def init_editor_ui(self, editor):
+
+        savedata = editor.savedata
+
+        # main window
+        try:
+            self.notebook.destroy() # remove old window
+        except:
+            pass
+        self.notebook = ttk.Notebook(self.window)
+        collect = Frame(self.notebook)
+        current = Frame(self.notebook)
+        misc =  Frame(self.notebook)
+        collect.pack()
+        current.pack()
+        misc.pack()
+        self.notebook.add(collect, text="Collectable Status")
+        self.notebook.add(current, text="Current State")
+        self.notebook.add(misc, text="Misc")
+        self.notebook.pack(padx=5, pady=5)
+
+        self.init_page_1(savedata, collect)
+        self.init_page_2(savedata, current)
+        self.init_page_3(savedata, misc)
 
 
     # copy changes in UI to savedata dict
@@ -411,7 +449,7 @@ class Interface():
                     if obj[i].get():
                         sd.append(const_data[0][i][0])
                 self.editor.savedata.set_map_value("cl", const_data[1], sd)
-            elif field in ["hasMap", "fireplaceSave", "checkHP", "checkStash", "checkBat", "checkAmmo", "healthUp", "specialUp", "drifterkey", "gear"]: # single value -> float
+            elif field in ["hasMap", "fireplaceSave", "checkHP", "checkStash", "checkBat", "checkAmmo", "healthUp", "specialUp", "drifterkey", "gear", "CH", "noviceMode"]: # single value -> float
                 self.editor.savedata.set_field(field, float(obj.get()))
             elif field in ["compShell", "sword", "cape"]: # outfit name -> index
                 index = [t[1] for t in HLDConstants.outfit_ids].index(obj.get())
