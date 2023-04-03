@@ -400,3 +400,9 @@ class HLDConstants():
         ("CH", "Alt Drifter"),
         ("noviceMode", "Novice Mode")
         ]
+
+    position_fields = [
+        ("checkX", "X Position"),
+        ("checkY", "Y Position"),
+        ("checkRoom", "Room ID")
+        ]

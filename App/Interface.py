@@ -47,6 +47,15 @@ class EditorUIObj(Frame):
         else:
             raise Exception("Unknown uitype")
 
+    def set_value(self, value):
+        if self.uitype == "Checkbutton":
+            self.var.set(value)
+        elif self.uitype == "Entry":
+            self.obj.delete(0, END)
+            self.obj.insert(0, value)
+        elif self.uitype == "OptionMenu":
+            pass
+            # TODO
 
 
 class Interface():
@@ -167,7 +176,29 @@ class Interface():
 
         # data stored in user input fields; list of (name, object) tuples
         self.input_fields = []
+
+
+    # open a window to choose room by name, write choice into pos_value # TODO - add entrance choosing too
+    def get_entrance(self, pos_value):
+        top = Toplevel(self.tk)
+        top.title("Entrance Chooser")
+        room = IntVar(master=top, value=46)
+        i = 0
+        for room_id, (room_iname, room_cname) in HLDConstants.roomNames.items():
+            x = Radiobutton(top, text=room_cname, variable=room, value=room_id)
+            x.grid(column=i//31, row=i%31)
+            i = i+1
+        ok_button = Button(top, text="OK", command=lambda: self.finish_entrance_selection(top, pos_value, room.get()), width=20)
+        ok_button.grid(pady=10, column=0, row=31, columnspan=6)
         
+
+    # close window and write values after selecting entrance
+    def finish_entrance_selection(self, win, pos_value, room_num):
+        pos_value[0].set_value(-10.0)
+        pos_value[1].set_value(-10.0)
+        pos_value[2].set_value(room_num)
+        win.destroy()
+
 
     # load widgets for editing savedata
     def init_editor_ui(self, editor):
@@ -231,9 +262,9 @@ class Interface():
             ff_editor_objs = []
             for i in range(len(value)):
                 if uitype == "OptionMenu":
-                    menu_options = [x[1] for x in const_data[0]]
-                    initial_value = const_data[0][int(value[i])][1] # look up index in table
-                    text = const_data[1][i][1]
+                    menu_options = [x[1] for x in const_data[0]] # list of possible choices
+                    initial_value = const_data[0][int(value[i])][1] # look up current value in table to get name
+                    text = const_data[1][i][1] # name of field
                     elem_iname = const_data[1][i][0]
                     obj = EditorUIObj(ff, uitype, text, initial_value, menu_options=menu_options)
                 else:
@@ -249,6 +280,17 @@ class Interface():
                 print(iname, [x.get() for x in ff_editor_objs])
             ff_label.grid(padx=5, column=0, row=0, columnspan=math.ceil(len(value)/row_num), sticky="n")
             ff.grid(pady=10, column=grid_pos[0], row=grid_pos[1], sticky="n")
+
+        # checkX/checkY/checkRoom + entrance warp
+        drifter_pos = Frame(current)
+        drifter_pos_label = Label(drifter_pos, text="Current Location")
+        drifter_pos_value = [EditorUIObj(drifter_pos, "Entry", v, savedata.get(k)) for k, v in HLDConstants.position_fields]
+        drifter_pos_label.grid(column=0, row=0)
+        drifter_pos_button = Button(drifter_pos, text="Choose Room", command=lambda: self.get_entrance(drifter_pos_value))
+        for i in range(len(drifter_pos_value)):
+            drifter_pos_value[i].grid(column=0, row=1+i, sticky="w")
+        drifter_pos_button.grid(column=1, row=1)
+        drifter_pos.grid(pady=10, column=0, row=1)
             
 
     # copy changes in UI to savedata dict
