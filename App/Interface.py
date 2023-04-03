@@ -6,6 +6,46 @@ from tkinter import filedialog
 from tkinter.messagebox import showerror
 from HLDConstants import HLDConstants
 
+
+class EditorUIObj(Frame):
+    """
+    A generic UI object for editing savedata
+    
+    Contains one of Checkbutton, Entry + Label, or OptionMenu + Label, as well as its associated variables
+    """
+
+    def __init__(self, master, uitype, text, initial_value, menu_options=None, **kw):
+        super().__init__(master=master, **kw)
+        self.uitype = uitype
+        if uitype == "Checkbutton":
+            self.var = IntVar(master=self, value=initial_value)
+            self.obj = Checkbutton(self, text=text, variable=self.var)
+            self.obj.grid(column=0, row=0)
+        elif uitype == "Entry":
+            self.var == None
+            self.obj = Entry(self, width=10)
+            self.obj.insert(0, initial_value)
+            self.label = Label(self, text=text)
+            self.obj.grid(column=0, row=0)
+            self.label.grid(column=1, row=0)
+        elif uitype == "OptionMenu":
+            self.var = StringVar(master=self, value=initial_value)
+            self.obj = OptionMenu(self, self.var, *menu_options)
+            self.label = Label(self, text=text)
+            self.obj.grid(column=0, row=0)
+            self.label.grid(column=1, row=0)
+
+
+    def get(self):
+        if uitype == "Checkbutton" or uitype == "OptionMenu":
+            return self.var.get()
+        elif uitype == "Entry":
+            return self.obj.get()
+        else:
+            raise Exception("Unknown uitype")
+
+
+
 class Interface():
     """
     GUI manager
@@ -138,7 +178,11 @@ class Interface():
         #   grid_pos (int, int) : overall position in display grid
         #   const_data (list) : constant list of name/values associated with this field type
         field_specific_data = [
-            ("well", "Pillars", "Checkbutton", [IntVar(master=page, value=x in savedata.get("well")) for x in range(0,4)], 4, (0,0), HLDConstants.pillar_ids)
+            ("well", "Pillars", "Checkbutton", [x in savedata.get("well") for x in range(4)], 4, (0,0), HLDConstants.pillar_ids),
+            ("warp", "Warp Points", "Checkbutton", [x in savedata.get("warp") for x in range(5)], 5, (1,0), HLDConstants.area_ids),
+            ("skill", "Skills", "Checkbutton", [x in savedata.get("skill") for x in range(1,7)], 3, (2,0), HLDConstants.skill_ids),
+            ("sc", "Guns", "Checkbutton", [x in savedata.get("sc") for x, y in HLDConstants.gun_ids], 6, (3,0), HLDConstants.gun_ids),
+            ("scUp", "Gun Upgrades", "Checkbutton", [x in savedata.get("scUp") for x, y in HLDConstants.gun_ids], 6, (4,0), HLDConstants.gun_ids)
             ]
 
         # TODO - loop
@@ -146,67 +190,21 @@ class Interface():
             ff = Frame(page)
             ff_label = Label(ff, text=fieldtext)
             ff_editor_objs = []
-            if uitype == "Checkbutton":
-                for i in range(len(value)):
-                    cb_text = const_data[i][1]
-                    cb = Checkbutton(ff, text=cb_text, variable=value[i])
-                    ff_editor_objs.append(cb)
-                    cb.grid(padx=5, column=i//row_num, row=1+(i%row_num), sticky="w")
-                self.input_fields.append((iname, value))
-            elif uitype == "Entry":
-                pass
-            elif uitype == "Optionmenu":
-                pass
-            ff_label.grid(padx=5, column=0, row=0, columnspan=math.ceil(len(value)/row_num))
+            for i in range(len(value)):
+                if uitype == "OptionMenu":
+                    menu_options == [x[1] for x in const_data]
+                else:
+                    menu_options = None
+                obj = EditorUIObj(ff, uitype, const_data[i][1], value[i], menu_options=menu_options)
+                ff_editor_objs.append(obj)
+                obj.grid(padx=5, column=i//row_num, row=1+(i%row_num), sticky="w")
+                self.input_fields.append((iname, obj))
+            ff_label.grid(padx=5, column=0, row=0, columnspan=math.ceil(len(value)/row_num), sticky="n")
             ff.grid(column=grid_pos[0], row=grid_pos[1], sticky="n")
             
 
         # OLD CODE BELOW
-        warp = Frame(page)
-        warpvalue = [IntVar(master=warp, value=x in savedata.get("warp")) for x in range(5)]
-        warp_label = Label(warp, text="Warp Points")
-        warp_cbs = [Checkbutton(warp, text=v, variable=warpvalue[k]) for k, v in HLDConstants.area_ids]
-        self.input_fields.append(("warp", warpvalue))
-        warp_label.pack(padx=5, anchor="w")
-        for cb in warp_cbs:
-            cb.pack(padx=5, anchor="w")
-        warp.grid(column=1, row=0, sticky="n")
 
-        skill = Frame(page)
-        skillvalue = [IntVar(master=skill, value=x in savedata.get("skill")) for x in range(1,7)]
-        skill_label = Label(skill, text="Skills")
-        skill_cbs = [Checkbutton(skill, text=v, variable=skillvalue[k-1]) for k, v in HLDConstants.skill_ids]
-        self.input_fields.append(("skill", skillvalue))
-        skill_label.grid(padx=5, column=0, row=0, columnspan=2)
-        for i in range(6):
-            cb = skill_cbs[i]
-            cb.grid(padx=5, column=0 if i < 3 else 1, row=(i % 3) + 1, sticky="w")
-        skill.grid(column=2, row=0, sticky="n")
-
-        sc = Frame(page)
-        scvalue = []
-        sc_cbs = []
-        scupvalue = []
-        scup_cbs = []
-        sc_label = Label(sc, text="Guns + Upgrades")
-        for k, v in HLDConstants.gun_ids:
-            ids = savedata.get("sc")
-            ids2 = savedata.get("scUp")
-            x = IntVar(master=sc, value=k in ids)
-            scvalue.append(x)
-            sc_cbs.append(Checkbutton(sc, text=v, variable=x))
-            y = IntVar(master=sc, value=k in ids2)
-            scupvalue.append(y)
-            scup_cbs.append(Checkbutton(sc, text="Upgrade", variable=y))
-        self.input_fields.append(("sc", scvalue))
-        self.input_fields.append(("scUp", scupvalue))
-        sc_label.grid(padx=5, column=0, row=0, columnspan=2)
-        for i in range(6):
-            cb = sc_cbs[i]
-            cb.grid(padx=5, column=0, row=i+1, sticky="w")
-            cb2 = scup_cbs[i]
-            cb2.grid(padx=5, column=1, row=i+1, sticky="w")
-        sc.grid(column=3, row=0, sticky="n")
 
         upgrades = Frame(page) # medkit/grenade upgrades
         upgrades_entry = []
@@ -253,7 +251,7 @@ class Interface():
         for k, v in HLDConstants.gamemode_fields:
             x = IntVar(master=gamemode, value=savedata.get(k))
             gamemode_value.append(x)
-            gamemode_cbs.append(Checkbutton(gamemode, text=k, variable=x))
+            gamemode_cbs.append(Checkbutton(gamemode, text=v, variable=x))
             self.input_fields.append((k, x))
         gamemode_label.pack(padx=5, anchor="w")
         for i in range(2):
