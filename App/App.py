@@ -42,7 +42,8 @@ class App:
 			with open("config.ini", "w+") as config_ini:
 				config.write(config_ini)
 			return savefile_path
-		raise Exception("Cannot find savefile location")
+		else:
+			raise Exception("Savefile Directory does not exist (likey because HLD is not installed)")
 
 
 	def __init__(self):

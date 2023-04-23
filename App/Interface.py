@@ -26,6 +26,19 @@ class FullCB():
         self.cb.grid(**kw)
 
 
+class FullEntry():
+    """
+    Tk Entry + Label
+    """
+
+    def __init__(self, master, value, text):
+        self.entry = Entry(master, width=10)
+        self.entry.insert(0, value)
+        self.label = Label(master, text=text)
+
+    def get(self):
+        return self.entry.get()
+
 
 class Interface():
     """
@@ -204,9 +217,9 @@ class Interface():
         wellcbs = [FullCB(wellframe, x in savedata.get("well"), HLDConstants.well_ids.get(x)) for x in range(4)]
         welllabel.grid(column=0, row=0)
         for i in range(len(wellcbs)):
-            wellcbs[i].grid(padx=5, column=0, row=i+1)
+            wellcbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("well", wellcbs))
-        wellframe.grid(pady=10, column=2, row=2, sticky=N)
+        wellframe.grid(pady=10, column=0, row=0, sticky=N)
         # warp
         # skill
         # modules
@@ -222,7 +235,7 @@ class Interface():
         upgradescbs = [FullCB(upgradesframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in upgradesfields]
         upgradeslabel.grid(column=0, row=0)
         for i in range(len(upgradesfields)):
-            upgradescbs[i].grid(padx=5, column=0, row=i+1)
+            upgradescbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
             self.input_fields.append((upgradesfields[i], upgradescbs[i]))
         upgradesframe.grid(pady=10, column=2, row=2, sticky=N)
         # misc_collect
@@ -236,12 +249,13 @@ class Interface():
         drifter_pos = Frame(current)
         drifter_posfields = ["checkX", "checkY", "checkRoom"]
         drifter_pos_label = Label(drifter_pos, text="Current Location")
-        drifter_pos_value = [Entry(drifter_pos, value=HLDConstants.display_fields.get(x).get_title()) for x in drifter_posfields] # TODO - ?
         drifter_pos_label.grid(column=0, row=0)
-        drifter_pos_button = Button(drifter_pos, text="Choose Room", command=lambda: self.get_entrance(drifter_pos_value))
-        for i in range(len(drifter_pos_value)):
-            drifter_pos_value[i].grid(column=0, row=1+i, sticky="w")
-        drifter_pos_button.grid(column=0, row=4)
+        drifter_posentries = [FullEntry(drifter_pos, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in drifter_posfields]
+        drifter_pos_button = Button(drifter_pos, text="Choose Room", command=lambda: self.get_entrance(drifter_posentries))
+        for i in range(len(drifter_posentries)):
+            drifter_posentries[i].entry.grid(column=0, row=1+i, sticky=E)
+            drifter_posentries[i].label.grid(column=1, row=1+i, sticky=W)
+        drifter_pos_button.grid(column=0, row=4, columnspan=2)
         drifter_pos.grid(pady=10, column=0, row=1)
             
 
