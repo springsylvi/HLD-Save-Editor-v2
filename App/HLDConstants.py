@@ -1,5 +1,59 @@
-# constant values for names/IDs used by the game
+class ListMap():
+    """
+    A map with a defined ordering which can be indexed into.
+    """
 
+    # data : list of pairs, first element of each tuple is the map key, second is the value
+    def __init__(self, data):
+        self.ilist = [x[1] for x in data]
+        self.imap = {a:b for a,b in data}
+
+    # return value from map key
+    def get(self, key):
+        return self.imap.get(key)
+
+    # return value from list index
+    def __getitem__(self, index):
+        return self.ilist[index]
+
+
+class DisplayInfo():
+    """
+    Contains info about how to display a type of display field.
+    """
+
+    # displaytype is what type of UI element is displayed, const_data type varies based on displaytype, row_num is only used for checkboxlist type
+    # displaytype values are [intscalar, floatscalar, index, checkbox, checkboxlist, dropdown, bosses]
+    def __init__(self, displaytype, displaytitle, const_data, row_num=None):
+        self.displaytype = displaytype
+        self.displaytitle = displaytitle
+        self.const_data = const_data
+        self.row_num = row_num
+
+    def get_displaytype(self):
+        return self.displaytype
+
+    def get_title(self):
+        return self.displaytitle
+    
+    def get_const_data(self):
+        return self.const_data
+
+    def get_row_num(self):
+        return self.row_num
+
+    def get_frame(self, master):
+            # TODO -  fill in ff
+            ff_cbs = []
+            ff_labels = []
+            for i in range(len(self.const_data)):
+                #obj = EditorUIObj(ff, uitype, const_data[i][1], value[i])]
+                cb = Checkbutton()
+                ff_cbs.append(obj)
+                obj.grid(padx=5, column=i//row_num, row=1+(i%row_num), sticky="w")
+            return ff
+
+# constant values
 class HLDConstants():
 
     # dict of ids to (internal name, common name) tuples
@@ -191,8 +245,9 @@ class HLDConstants():
         }
 
     # all valid savedata fields and their types.
-    # types are a sequence of any of str, int, float, list, map.
-    # list takes 1 arg, map takes 2
+    # types are a sequence of any of str, int, float, list, map, enemystruct.
+    # list takes 1 arg, map takes 2.
+    # used for converting between Savedata and .sav/.hlds files
     fields = {"badass": ["float"],
               "bosses": ["map", "int", "list", "int"],
               "bossGearbits": ["list", "str"],
@@ -216,7 +271,7 @@ class HLDConstants():
               "dateTime": ["float"],
               "destruct": ["map", "int", "list", "float"],
               "drifterkey": ["float"],
-              "enemies": ["map", "int", "list", "float"], # TODO - list contains multiple types (int, float, str), needs to handle special case
+              "enemies": ["map", "int", "enemystruct"],
               "eq00": ["float"],
               "eq01": ["float"],
               "events": ["list", "int"],
@@ -252,7 +307,7 @@ class HLDConstants():
               "well": ["list", "int"],
               "wellMap": ["list", "int"]}
 
-    north_modules = [
+    north_modules = ListMap([
         (-1084059, "After Pink Drifter"),
         (-1047430, "Pillar Room"),
         (-932471, "Drop Spiral"),
@@ -261,8 +316,8 @@ class HLDConstants():
         (-813235, "Cathedral Arena"),
         (-767783, "Birds"),
         (-1137428, "Dark Room")
-        ]
-    east_modules = [
+        ])
+    east_modules = ListMap([
         (-255100, "Water Tunnel"),
         (-187905, "Mega Huge Lab"),
         (-167326, "Flame Room"),
@@ -271,8 +326,8 @@ class HLDConstants():
         (-88709, "Frog Arena"),
         (-68841, "Big Bog Lab"),
         (-18778, "Flame Dash Challenge")
-         ]
-    south_modules = [
+         ])
+    south_modules = ListMap([
         (-416223, "Mimic"),
         (-417825, "Scythe"),
         (-602007, "Pre-Baker 1"),
@@ -281,8 +336,8 @@ class HLDConstants():
         (-398635, "Pre-Archer 1"),
         (-386457, "Pre-Archer 2"),
         (-676357, "Dash Challenge")
-        ]
-    west_modules = [
+        ])
+    west_modules = ListMap([
         (101387, "Bridge Vault"),
         (185267, "Tanuki Arena"),
         (206139, "Dogs"),
@@ -291,34 +346,39 @@ class HLDConstants():
         (353953, "Thin Forest Secret"),
         (403666, "Meadow Vault"),
         (435082, "Tanuki Trouble")
-        ]
+        ])
 
-    gun_ids = [
+    gun_ids = ListMap([
         (1, "Pistol"),
         (2, "Zeliska"),
         (21, "Laser"),
         (23, "Railgun"),
         (41, "Diamond Shotgun"),
         (43, "Shotgun")
-        ]
+        ])
 
-    area_ids = [
+    area_ids = ListMap([
         (0, "East"),
         (1, "North"),
         (2, "West"),
         (3, "South"),
         (4, "Town")
-        ]
-    pillar_ids = area_ids[:-1] # no pillar in town
+        ])
+    well_ids = ListMap([
+        (0, "East"),
+        (1, "North"),
+        (2, "West"),
+        (3, "South")
+        ])
 
-    skill_ids = [
+    skill_ids = ListMap([
         (1, "Charge Slash"),
         (2, "Bullet Deflect"),
         (3, "Phantom Slash"),
         (4, "Chain Dash"),
         (5, "Bullet Shield"),
         (6, "Dash Stab")
-        ]
+        ])
 
     # north: 1-4, south: 5-8, east: 9-12, west: 13-16
     tablet_ids = [
@@ -339,35 +399,13 @@ class HLDConstants():
         (15, "Before Pink Drifter"),
         (16, "After Pillar")
         ]
-    east_tablet_ids = tablet_ids[8:12]
-    north_tablet_ids = tablet_ids[0:4]
-    west_tablet_ids = tablet_ids[12:16]
-    south_tablet_ids = tablet_ids[4:8]
-
-    misc_collect_fields = [
-        ("gear", "Unspent Gearbits"),
-        ("drifterkey", "Keys")
-        ]
-
-    misc_value_fields = [
-        ("hasMap", "Map Collected"),
-        ("fireplaceSave", "Fireplace Save")
-        ]
-
-    cpstate_fields = [
-        ("checkHP", "Health"),
-        ("checkBat", "Gun Ammo (%)"),
-        ("checkStash", "Medkits"),
-        ("checkAmmo", "Grenade Ammo")
-        ]
-
-    misc_upgrade_fields = [
-        ("healthUp", "Extra Medkits"),
-        ("specialUp", "Max Grenades")
-        ]
+    east_tablet_ids = ListMap(tablet_ids[8:12])
+    north_tablet_ids = ListMap(tablet_ids[0:4])
+    west_tablet_ids = ListMap(tablet_ids[12:16])
+    south_tablet_ids = ListMap(tablet_ids[4:8])
     
     # TODO - remove explicit indices and turn into list of strings?
-    outfit_ids = [
+    outfit_ids = ListMap([
         (0, "Red (Default)"),
         (1, "Blue"),
         (2, "Fuschia"),
@@ -380,29 +418,74 @@ class HLDConstants():
         (9, "Ochre"),
         (10, "Purple"),
         (11, "New Game +")
-        ]
+        ])
 
-    # NOTE: game crashes when opening outfit equip menu if you don't own the currently equipped outfit. Maybe automatically add outfit to owned when editing this field?
-    outfit_components = [
-        ("compShell", "Droid"),
-        ("sword", "Sword"),
-        ("cape", "Cape")
-        ]
 
-    # keys and bits
-    kb_fields = [
-        ("compShell", "Droid"),
-        ("sword", "Sword"),
-        ("cape", "Cape")
-        ]
 
-    gamemode_fields = [
-        ("CH", "Alt Drifter"),
-        ("noviceMode", "Novice Mode")
-        ]
-
-    position_fields = [
-        ("checkX", "X Position"),
-        ("checkY", "Y Position"),
-        ("checkRoom", "Room ID")
-        ]
+    # list of each individual value the user can interact with through the UI (some savedata fields are split across multiple display fields)
+    # iterate over this to turn Savedata into list of FieldEditor, then run display code
+    # tuple elements are unique name, displayinfo obj
+    display_fields = ListMap([
+        ("badass", DisplayInfo("intscalar", "Pink Drifter Conversations", None)),
+        #("bosses", lambda sd: sd.get("bosses"), DisplayInfo("bosses", "Bosses Killed", None)), #TODO - creat const_data for bosses
+        #"bossGearbits": ["list", "str"],
+        ("cape", DisplayInfo("dropdown", "Cape", outfit_ids)),
+        ("cCapes", DisplayInfo("checkboxlist", "Capes Owned", outfit_ids, 6)),
+        ("CH", DisplayInfo("checkbox", "Alt Drifter", None)),
+        #("charDeaths", lambda sd: sd.get("CH"), DisplayInfo("intscalar", "Total Deaths", None)),
+        ("checkAmmo", DisplayInfo("floatscalar", "Grenade Ammo", None)),
+        ("checkBat", DisplayInfo("floatscalar", "Gun Ammo (%)", None)),
+        #("checkCID", lambda sd: sd.get("checkCID"), DisplayInfo("index", "Checkpoint ID", None)),
+        ("checkHP", DisplayInfo("intscalar", "Health", None)),
+        ("checkRoom", DisplayInfo("index", "Room ID", roomNames)),
+        ("checkStash", DisplayInfo("intscalar", "Medkits", None)),
+        ("checkX", DisplayInfo("floatscalar", "X Position", None)),
+        ("checkY", DisplayInfo("floatscalar", "Y Position", None)),
+        #"cl": ["map", "int", "list", "int"],
+        ("eastmodules", DisplayInfo("checkboxlist", "East Modules", east_modules, 8)),
+        ("northmodules", DisplayInfo("checkboxlist", "North Modules", north_modules, 8)),
+        ("westmodules", DisplayInfo("checkboxlist", "West Modules", west_modules, 8)),
+        ("southmodules", DisplayInfo("checkboxlist", "South Modules", south_modules, 8)),
+        ("compShell", DisplayInfo("dropdown", "Droid", outfit_ids)),
+        ("cShells", DisplayInfo("checkboxlist", "Droids Owned", outfit_ids, 6)),
+        ("cSwords", DisplayInfo("checkboxlist", "Swords Owned", outfit_ids, 6)),
+        #("cCues", lambda sd: sd.get("cues"), DisplayInfo("?", "?", None)),
+        #"dateTime": ["float"],
+        #"destruct": ["map", "int", "list", "float"],
+        ("drifterkey", DisplayInfo("intscalar", "Keys", None)),
+        #"enemies": ["map", "int", "list", "float"], # TODO - list contains multiple types (int, float, str), needs to handle special case
+        #("eq00", lambda sd: sd.get("eq00"), DisplayInfo("dropdown", "Gun Slot 1", gun_ids)),
+        #("eq01", lambda sd: sd.get("eq01"), DisplayInfo("dropdown", "Gun Slot 2", gun_ids)),
+        #"events": ["list", "int"],
+        ("fireplaceSave", DisplayInfo("checkbox", "Game Completed", None)),
+        ("gameName", DisplayInfo("str", "Savefile Name", None)),
+        ("gear", DisplayInfo("intscalar", "Unspent Gearbits", None)),
+        #"gearReminderTimes": ["float"],
+        #"gunReminderTimes": ["float"],
+        #"halluc": ["float"],
+        ("hasMap", DisplayInfo("checkbox", "Map Collected", None)),
+        #"healthKits": ["list", "int"],
+        ("healthUp", DisplayInfo("intscalar", "Extra Medkit Slots", None)),
+        #"mapMod": ["map", "int", "list", "int"],
+        #"newcomerHoardeMessageShown": ["float"],
+        #"noSpawn": ["list", "int"],
+        ("noviceMode", DisplayInfo("checkbox", "Novice Mode", None)),
+        #"permaS": ["map", "int", "int"],
+        #"playT": ["float"],
+        #"rooms": ["list", "int"],
+        ("sc", DisplayInfo("checkboxlist", "Guns Owned", gun_ids, 6)),
+        ("scUp", DisplayInfo("checkboxlist", "Guns Upgraded", gun_ids, 6)),
+        #"scK": ["map", "int", "int"],
+        ("skill", DisplayInfo("checkboxlist", "Skills", skill_ids, 6)),
+        ("specialUp", DisplayInfo("intscalar", "Max Grenades", None)),
+        #"successfulCollectTimes": ["float"],
+        #"successfulHealTimes": ["float"],
+        #"successfulWarpTimes": ["float"],
+        ("sword", DisplayInfo("dropdown", "Sword", None)),
+        ("tablet", DisplayInfo("checkboxlist", "Monoliths", tablet_ids, 4)),
+        #"tutHeal": ["float"],
+        #"values": ["map", "str", "int"],
+        ("warp", DisplayInfo("checkboxlist", "Warp Points", area_ids, 5)),
+        ("well", DisplayInfo("checkboxlist", "Pillars", well_ids, 4))
+        #"wellMap": ["list", "int"]
+        ])

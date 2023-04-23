@@ -6,6 +6,19 @@ import configparser
 from HLDConstants import HLDConstants
 
 
+class FieldEditor():
+    """
+    A generic object for editing some single piece of savedata. These pieces are defined around how they will be used in the UI.
+
+    """
+
+    # displaytype is an element of HLDConstants.displaytypes
+    def __init__(self, displayname, displaytype, const_data):
+        self.displayname = displayname
+        self.const_data = const_data
+
+
+
 class Savedata():
     """
     Contains savedata as a dictionary.
@@ -114,6 +127,9 @@ class Savedata():
             if fieldtype[2] == "list":
                 map_obj = {a : Savedata.parse_savedata_collection(b, fieldtype[2:4]) for a, b in map_obj.items()}
             return map_obj
+        if fieldtype[0] == "enemystruct":
+            pass
+            # TODO
 
     # convert list/map object to savedata format
     def export_savedata_collection(obj, fieldtype, listsep):
@@ -190,4 +206,3 @@ class Editor():
             return self.savedata
         else:
             return "No save loaded."
-
