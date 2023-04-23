@@ -31,13 +31,23 @@ class FullEntry():
     Tk Entry + Label
     """
 
-    def __init__(self, master, value, text):
+    def __init__(self, master, value, text, valuetype):
+        if valuetype == "int":
+            self.valuetype_func = lambda x: int(float(x))
+        elif valuetype == "float":
+            self.valuetype_func = float
+        else:
+            self.valuetype_func = lambda x: x
         self.entry = Entry(master, width=10)
-        self.entry.insert(0, value)
+        self.entry.insert(0, self.valuetype_func(value))
         self.label = Label(master, text=text)
 
     def get(self):
-        return self.entry.get()
+        return self.valuetype_func(self.entry.get())
+
+    def set_value(self, value):
+        self.entry.delete(0, END)
+        self.entry.insert(0, self.valuetype_func(value))
 
 
 class Interface():
@@ -162,24 +172,25 @@ class Interface():
 
 
     # open a window to choose room by name, write choice into pos_value # TODO - add entrance choosing too
-    def get_entrance(self, pos_value):
+    def get_entrance(self, pos_entries):
         top = Toplevel(self.tk)
         top.title("Entrance Chooser")
-        room = IntVar(master=top, value=46)
+        room = IntVar(master=top, value=int(float(pos_entries[2].get()))) # TODO - remove this typescasting after figuring out display types
+        print(pos_entries[2].get())
         i = 0
         for room_id, (room_iname, room_cname) in HLDConstants.roomNames.items():
             x = Radiobutton(top, text=room_cname, variable=room, value=room_id)
             x.grid(column=i//31, row=i%31)
             i = i+1
-        ok_button = Button(top, text="OK", command=lambda: self.finish_entrance_selection(top, pos_value, room.get()), width=20)
+        ok_button = Button(top, text="OK", command=lambda: self.finish_entrance_selection(top, pos_entries, room.get()), width=20)
         ok_button.grid(pady=10, column=0, row=31, columnspan=6)
         
 
     # close window and write values after selecting entrance
-    def finish_entrance_selection(self, win, pos_value, room_num):
-        pos_value[0].set_value(-10.0)
-        pos_value[1].set_value(-10.0)
-        pos_value[2].set_value(room_num)
+    def finish_entrance_selection(self, win, pos_entries, room_num):
+        pos_entries[0].set_value(-10.0)
+        pos_entries[1].set_value(-10.0)
+        pos_entries[2].set_value(room_num)
         win.destroy()
 
 
@@ -250,7 +261,7 @@ class Interface():
         drifter_posfields = ["checkX", "checkY", "checkRoom"]
         drifter_pos_label = Label(drifter_pos, text="Current Location")
         drifter_pos_label.grid(column=0, row=0)
-        drifter_posentries = [FullEntry(drifter_pos, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in drifter_posfields]
+        drifter_posentries = [FullEntry(drifter_pos, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), "float") for x in drifter_posfields] # TODO - remove the hardcoded float type once I figure out display types
         drifter_pos_button = Button(drifter_pos, text="Choose Room", command=lambda: self.get_entrance(drifter_posentries))
         for i in range(len(drifter_posentries)):
             drifter_posentries[i].entry.grid(column=0, row=1+i, sticky=E)
