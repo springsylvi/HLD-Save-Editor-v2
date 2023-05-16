@@ -23,7 +23,7 @@ class DisplayInfo():
     """
 
     # displaytype is what type of UI element is displayed, const_data type varies based on displaytype, row_num is only used for checkboxlist type
-    # displaytype values are [intscalar, floatscalar, index, checkbox, checkboxlist, dropdown, bosses]
+    # displaytype values are [int, float, checkbox, checkboxlist, dropdown, bosses]
     def __init__(self, displaytype, displaytitle, const_data, row_num=None):
         self.displaytype = displaytype
         self.displaytitle = displaytitle
@@ -42,16 +42,6 @@ class DisplayInfo():
     def get_row_num(self):
         return self.row_num
 
-    def get_frame(self, master):
-            # TODO -  fill in ff
-            ff_cbs = []
-            ff_labels = []
-            for i in range(len(self.const_data)):
-                #obj = EditorUIObj(ff, uitype, const_data[i][1], value[i])]
-                cb = Checkbutton()
-                ff_cbs.append(obj)
-                obj.grid(padx=5, column=i//row_num, row=1+(i%row_num), sticky="w")
-            return ff
 
 # constant values
 class HLDConstants():
@@ -423,8 +413,8 @@ class HLDConstants():
 
 
     # list of each individual value the user can interact with through the UI (some savedata fields are split across multiple display fields)
-    # iterate over this to turn Savedata into list of FieldEditor, then run display code
     # tuple elements are unique name, displayinfo obj
+    # TODO - add extra elements (i.e. field names in input_fields that aren't in the savefile)
     display_fields = ListMap([
         ("badass", DisplayInfo("intscalar", "Pink Drifter Conversations", None)),
         #("bosses", lambda sd: sd.get("bosses"), DisplayInfo("bosses", "Bosses Killed", None)), #TODO - creat const_data for bosses

@@ -276,6 +276,12 @@ class Interface():
         # TODO - reimplement this function to work with new init_editor_ui version
         # for each element of input_fields, look up name in HLDConstants.display_fields and call get method on that display type to pull raw data from tk obj
 
+        for field, obj in self.input_fields:
+            displayinfo = HLDConstants.display_fields.get("field")[1]
+            displaytype = displayinfo.get_displaytype()
+            if displaytype == ? # TODO - figure out what types displaytype needs to represent (use paper!) 
+
+        """
         lists = {
             "well": HLDConstants.well_ids,
             "warp": HLDConstants.area_ids,
@@ -318,3 +324,4 @@ class Interface():
                 self.editor.savedata.set_field(field, float(index))
             else:
                 print("?")
+        """
