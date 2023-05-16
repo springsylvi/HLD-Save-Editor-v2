@@ -1,16 +1,25 @@
 class ListMap():
     """
-    A map with a defined ordering which can be indexed into.
+    A map with a defined ordering which can be indexed into. Values are assumed to be unique.
     """
 
     # data : list of pairs, first element of each tuple is the map key, second is the value
     def __init__(self, data):
         self.ilist = [x[1] for x in data]
         self.imap = {a:b for a,b in data}
+        self.reverse_imap = {b:a for a,b in data}
 
     # return value from map key
     def get(self, key):
         return self.imap.get(key)
+
+    # return key from value
+    def get_key(self, value):
+        return self.reverse_imap.get(value)
+
+    # return list of values
+    def get_values(self):
+        return self.ilist
 
     # return value from list index
     def __getitem__(self, index):
@@ -23,7 +32,7 @@ class DisplayInfo():
     """
 
     # displaytype is what type of UI element is displayed, const_data type varies based on displaytype, row_num is only used for checkboxlist type
-    # displaytype values are [int, float, checkbox, checkboxlist, dropdown, bosses]
+    # displaytype values are [int, float, checkbox, checkboxlist, dropdown, other]
     def __init__(self, displaytype, displaytitle, const_data, row_num=None):
         self.displaytype = displaytype
         self.displaytitle = displaytitle
@@ -416,21 +425,21 @@ class HLDConstants():
     # tuple elements are unique name, displayinfo obj
     # TODO - add extra elements (i.e. field names in input_fields that aren't in the savefile)
     display_fields = ListMap([
-        ("badass", DisplayInfo("intscalar", "Pink Drifter Conversations", None)),
-        #("bosses", lambda sd: sd.get("bosses"), DisplayInfo("bosses", "Bosses Killed", None)), #TODO - creat const_data for bosses
+        ("badass", DisplayInfo("int", "Pink Drifter Conversations", None)),
+        #("bosses", lambda sd: sd.get("bosses"), DisplayInfo("other", "Bosses Killed", None)), #TODO - creat const_data for bosses
         #"bossGearbits": ["list", "str"],
         ("cape", DisplayInfo("dropdown", "Cape", outfit_ids)),
         ("cCapes", DisplayInfo("checkboxlist", "Capes Owned", outfit_ids, 6)),
         ("CH", DisplayInfo("checkbox", "Alt Drifter", None)),
-        #("charDeaths", lambda sd: sd.get("CH"), DisplayInfo("intscalar", "Total Deaths", None)),
-        ("checkAmmo", DisplayInfo("floatscalar", "Grenade Ammo", None)),
-        ("checkBat", DisplayInfo("floatscalar", "Gun Ammo (%)", None)),
+        #("charDeaths", lambda sd: sd.get("CH"), DisplayInfo("int", "Total Deaths", None)),
+        ("checkAmmo", DisplayInfo("float", "Grenade Ammo", None)),
+        ("checkBat", DisplayInfo("float", "Gun Ammo (%)", None)),
         #("checkCID", lambda sd: sd.get("checkCID"), DisplayInfo("index", "Checkpoint ID", None)),
-        ("checkHP", DisplayInfo("intscalar", "Health", None)),
-        ("checkRoom", DisplayInfo("index", "Room ID", roomNames)),
-        ("checkStash", DisplayInfo("intscalar", "Medkits", None)),
-        ("checkX", DisplayInfo("floatscalar", "X Position", None)),
-        ("checkY", DisplayInfo("floatscalar", "Y Position", None)),
+        ("checkHP", DisplayInfo("int", "Health", None)),
+        ("checkRoom", DisplayInfo("float", "Room ID", roomNames)),
+        ("checkStash", DisplayInfo("int", "Medkits", None)),
+        ("checkX", DisplayInfo("float", "X Position", None)),
+        ("checkY", DisplayInfo("float", "Y Position", None)),
         #"cl": ["map", "int", "list", "int"],
         ("eastmodules", DisplayInfo("checkboxlist", "East Modules", east_modules, 8)),
         ("northmodules", DisplayInfo("checkboxlist", "North Modules", north_modules, 8)),
@@ -442,20 +451,20 @@ class HLDConstants():
         #("cCues", lambda sd: sd.get("cues"), DisplayInfo("?", "?", None)),
         #"dateTime": ["float"],
         #"destruct": ["map", "int", "list", "float"],
-        ("drifterkey", DisplayInfo("intscalar", "Keys", None)),
+        ("drifterkey", DisplayInfo("int", "Keys", None)),
         #"enemies": ["map", "int", "list", "float"], # TODO - list contains multiple types (int, float, str), needs to handle special case
         #("eq00", lambda sd: sd.get("eq00"), DisplayInfo("dropdown", "Gun Slot 1", gun_ids)),
         #("eq01", lambda sd: sd.get("eq01"), DisplayInfo("dropdown", "Gun Slot 2", gun_ids)),
         #"events": ["list", "int"],
         ("fireplaceSave", DisplayInfo("checkbox", "Game Completed", None)),
         ("gameName", DisplayInfo("str", "Savefile Name", None)),
-        ("gear", DisplayInfo("intscalar", "Unspent Gearbits", None)),
+        ("gear", DisplayInfo("int", "Unspent Gearbits", None)),
         #"gearReminderTimes": ["float"],
         #"gunReminderTimes": ["float"],
         #"halluc": ["float"],
         ("hasMap", DisplayInfo("checkbox", "Map Collected", None)),
         #"healthKits": ["list", "int"],
-        ("healthUp", DisplayInfo("intscalar", "Extra Medkit Slots", None)),
+        ("healthUp", DisplayInfo("int", "Extra Medkit Slots", None)),
         #"mapMod": ["map", "int", "list", "int"],
         #"newcomerHoardeMessageShown": ["float"],
         #"noSpawn": ["list", "int"],
@@ -467,7 +476,7 @@ class HLDConstants():
         ("scUp", DisplayInfo("checkboxlist", "Guns Upgraded", gun_ids, 6)),
         #"scK": ["map", "int", "int"],
         ("skill", DisplayInfo("checkboxlist", "Skills", skill_ids, 6)),
-        ("specialUp", DisplayInfo("intscalar", "Max Grenades", None)),
+        ("specialUp", DisplayInfo("int", "Max Grenades", None)),
         #"successfulCollectTimes": ["float"],
         #"successfulHealTimes": ["float"],
         #"successfulWarpTimes": ["float"],

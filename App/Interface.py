@@ -26,6 +26,27 @@ class FullCB():
         self.cb.grid(**kw)
 
 
+class FullDD():
+    """
+    Tk Optionmenu + related state
+    """
+
+    def __init__(self, master, value, options):
+        self.options = options # listmap of index, string pairs
+        self.var = StringVar(master=master, value=value)
+        self.dd = OptionMenu(master, self.var, *(options.get_values()))
+
+    # return index for selected value
+    def get(self):
+        return self.options.get_key(self.var.get())
+
+    def pack(self, **kw):
+        self.cb.pack(**kw)
+
+    def grid(self, **kw):
+        self.cb.grid(**kw)
+
+
 class FullEntry():
     """
     Tk Entry + Label
@@ -266,6 +287,7 @@ class Interface():
         for i in range(len(drifter_posentries)):
             drifter_posentries[i].entry.grid(column=0, row=1+i, sticky=E)
             drifter_posentries[i].label.grid(column=1, row=1+i, sticky=W)
+            self.input_fields.append((drifter_posfields[i], drifter_posentries[i]))
         drifter_pos_button.grid(column=0, row=4, columnspan=2)
         drifter_pos.grid(pady=10, column=0, row=1)
             
@@ -275,11 +297,15 @@ class Interface():
 
         # TODO - reimplement this function to work with new init_editor_ui version
         # for each element of input_fields, look up name in HLDConstants.display_fields and call get method on that display type to pull raw data from tk obj
-
         for field, obj in self.input_fields:
-            displayinfo = HLDConstants.display_fields.get("field")[1]
+            displayinfo = HLDConstants.display_fields.get(field)
             displaytype = displayinfo.get_displaytype()
-            if displaytype == ? # TODO - figure out what types displaytype needs to represent (use paper!) 
+            print(displaytype)
+            if displaytype == "checkboxlist":
+                pass
+            elif displaytype in ["int", "float", "dropdown", "checkbox"]:
+                print(obj.get())
+                # TODO - write value to savedata
 
         """
         lists = {
