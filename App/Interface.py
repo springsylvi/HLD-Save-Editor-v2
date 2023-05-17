@@ -1,5 +1,6 @@
 import os.path
 import math
+import platform
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -151,6 +152,15 @@ class Interface():
         self.window = Frame(self.tk, width=500, height=500) # main window
         self.sbar = Frame(self.tk) # status bar
         
+        # determine modifier key
+        sysname = platform.system()
+        if sysname == "Darwin":
+            modifier = "Command"
+            modifier_display = "Cmd"
+        else:
+            modifier = "Control"
+            modifier_display = "Ctrl"
+
         # menus
         self.menu = Menu(self.tk)
         self.filemenu = Menu(self.menu)
@@ -159,24 +169,24 @@ class Interface():
         self.optionmenu = Menu(self.menu)
         self.menu.add_cascade(label="Options", menu=self.optionmenu)
 
-        self.filemenu.add_command(label="Load", command=self.load, accelerator="Ctrl+L")
-        self.filemenu.add_command(label="Save", command=self.save, accelerator="Ctrl+S")
+        self.filemenu.add_command(label="Load", command=self.load, accelerator=f"{modifier_display}+L")
+        self.filemenu.add_command(label="Save", command=self.save, accelerator=f"{modifier_display}+S")
         self.filemenu.add_command(label="Save As", command=self.saveas)
         self.filemenu.add_cascade(label="Export", menu=self.exportmenu)
-        self.exportmenu.add_command(label="Slot 0", command=lambda: self.export(0), accelerator="Ctrl+0")
-        self.exportmenu.add_command(label="Slot 1", command=lambda: self.export(1), accelerator="Ctrl+1")
-        self.exportmenu.add_command(label="Slot 2", command=lambda: self.export(2), accelerator="Ctrl+2")
-        self.exportmenu.add_command(label="Slot 3", command=lambda: self.export(3), accelerator="Ctrl+3")
+        self.exportmenu.add_command(label="Slot 0", command=lambda: self.export(0), accelerator=f"{modifier_display}+0")
+        self.exportmenu.add_command(label="Slot 1", command=lambda: self.export(1), accelerator=f"{modifier_display}+1")
+        self.exportmenu.add_command(label="Slot 2", command=lambda: self.export(2), accelerator=f"{modifier_display}+2")
+        self.exportmenu.add_command(label="Slot 3", command=lambda: self.export(3), accelerator=f"{modifier_display}+3")
 
         self.optionmenu.add_command(label="Import Header", command=self.import_header)
 
         # menu shortcuts
-        self.tk.bind("<Control-KeyPress-0>", lambda x: self.export(0))
-        self.tk.bind("<Control-KeyPress-1>", lambda x: self.export(1))
-        self.tk.bind("<Control-KeyPress-2>", lambda x: self.export(2))
-        self.tk.bind("<Control-KeyPress-3>", lambda x: self.export(3))
-        self.tk.bind("<Control-l>", self.load)
-        self.tk.bind("<Control-s>", self.save)
+        self.tk.bind(f"<{modifier}-KeyPress-0>", lambda x: self.export(0))
+        self.tk.bind(f"<{modifier}-KeyPress-1>", lambda x: self.export(1))
+        self.tk.bind(f"<{modifier}-KeyPress-2>", lambda x: self.export(2))
+        self.tk.bind(f"<{modifier}-KeyPress-3>", lambda x: self.export(3))
+        self.tk.bind(f"<{modifier}-l>", self.load)
+        self.tk.bind(f"<{modifier}-s>", self.save)
         self.tk.config(menu=self.menu)
 
         # status bar
