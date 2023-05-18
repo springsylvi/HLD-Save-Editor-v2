@@ -142,7 +142,6 @@ class Interface():
         self.sbar_label.config(text=message)
         # TODO - log past messages, including errors?
 
-
     def __init__(self, editor, app):
         self.editor = editor
         self.app = app
@@ -200,6 +199,15 @@ class Interface():
         # data stored in display fields; list of (name, object) tuples.
         # type of object depends on display type of field
         self.input_fields = []
+        
+
+    # convert a list of FullCBs to a list of id numbers, using a ListMap of the same length with id numbers as keys
+    def convert_cblist(cblist, ids):
+        ret = []
+        for i in range(len(cblist)):
+            if cblist[i].get():
+                ret.append(ids.get_key(ids[i]))
+        return ret
 
 
     # open a window to choose room by name, write choice into pos_value # TODO - add entrance choosing too
@@ -312,10 +320,12 @@ class Interface():
             displaytype = displayinfo.get_displaytype()
             print(displaytype)
             if displaytype == "checkboxlist":
-                pass
+                const_data = displayinfo.get_const_data()
+                print(Interface.convert_cblist(obj, const_data))
             elif displaytype in ["int", "float", "dropdown", "checkbox"]:
                 print(obj.get())
-                # TODO - write value to savedata
+            else:
+                pass
 
         """
         lists = {
