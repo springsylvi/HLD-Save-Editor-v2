@@ -29,23 +29,18 @@ class FullCB():
 
 class FullDD():
     """
-    Tk Optionmenu + related state
+    Tk Optionmenu + related state + Label
     """
 
-    def __init__(self, master, value, options):
+    def __init__(self, master, value, options, text):
         self.options = options # listmap of index, string pairs
         self.var = StringVar(master=master, value=value)
         self.dd = OptionMenu(master, self.var, *(options.get_values()))
+        self.label = Label(master, text=text)
 
     # return index for selected value
     def get(self):
         return self.options.get_key(self.var.get())
-
-    def pack(self, **kw):
-        self.cb.pack(**kw)
-
-    def grid(self, **kw):
-        self.cb.grid(**kw)
 
 
 class FullEntry():
@@ -276,6 +271,16 @@ class Interface():
 
         # sc + scUp
         # outfits
+        outfiteqframe = Frame(current)
+        outfiteqfields = ["sword", "cape", "compShell"]
+        outfiteqlabel = Label(outfiteqframe, text="Equipped Outfit")
+        outfiteqdds = [FullDD(outfiteqframe, HLDConstants.outfit_ids.get(savedata.get(x)), HLDConstants.outfit_ids, HLDConstants.display_fields.get(x).get_title()) for x in outfiteqfields]
+        outfiteqlabel.grid(column=0, row=0)
+        for i in range(len(outfiteqdds)):
+            outfiteqdds[i].dd.grid(column=0, row=1+i, sticky=E)
+            outfiteqdds[i].label.grid(column=1, row=1+i, sticky=W)
+            self.input_fields.append((outfiteqfields[i], outfiteqdds[i]))
+        outfiteqframe.grid(pady=10, column=0, row=0, sticky=N)
         # monoliths
 
         # upgrades
