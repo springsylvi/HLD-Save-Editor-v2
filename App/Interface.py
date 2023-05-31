@@ -266,7 +266,23 @@ class Interface():
         self.input_fields.append(("well", wellcbs))
         wellframe.grid(pady=10, column=0, row=0, sticky=N)
         # warp
+        warpframe = Frame(collect)
+        warplabel = Label(warpframe, text="Warps")
+        warpcbs = [FullCB(warpframe, x in savedata.get("warp"), HLDConstants.area_ids.get(x)) for x in range(5)]
+        warplabel.grid(column=0, row=0)
+        for i in range(len(warpcbs)):
+            warpcbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        self.input_fields.append(("warp", warpcbs))
+        warpframe.grid(pady=10, column=1, row=0, sticky=N)
         # skill
+        skillframe = Frame(collect)
+        skilllabel = Label(skillframe, text="Skills")
+        skillcbs = [FullCB(skillframe, x in savedata.get("skill"), HLDConstants.skill_ids.get(x)) for x in range(1,7)]
+        skilllabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(skillcbs)):
+            skillcbs[i].grid(padx=5, column=i//3, row=i%3+1, sticky=W)
+        self.input_fields.append(("skill", skillcbs))
+        skillframe.grid(pady=10, column=2, row=0, sticky=N)
         # modules
 
         # sc + scUp
@@ -275,7 +291,7 @@ class Interface():
         outfiteqfields = ["sword", "cape", "compShell"]
         outfiteqlabel = Label(outfiteqframe, text="Equipped Outfit")
         outfiteqdds = [FullDD(outfiteqframe, HLDConstants.outfit_ids.get(savedata.get(x)), HLDConstants.outfit_ids, HLDConstants.display_fields.get(x).get_title()) for x in outfiteqfields]
-        outfiteqlabel.grid(column=0, row=0)
+        outfiteqlabel.grid(column=0, row=0, columnspan=2)
         for i in range(len(outfiteqdds)):
             outfiteqdds[i].dd.grid(column=0, row=1+i, sticky=E)
             outfiteqdds[i].label.grid(column=1, row=1+i, sticky=W)
@@ -287,11 +303,12 @@ class Interface():
         upgradesframe = Frame(collect)
         upgradesfields = ["healthUp", "specialUp"]
         upgradeslabel = Label(upgradesframe, text="Upgrades")
-        upgradescbs = [FullCB(upgradesframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in upgradesfields]
-        upgradeslabel.grid(column=0, row=0)
+        upgradesentries = [FullEntry(upgradesframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), "int") for x in upgradesfields]
+        upgradeslabel.grid(column=0, row=0, columnspan=2)
         for i in range(len(upgradesfields)):
-            upgradescbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
-            self.input_fields.append((upgradesfields[i], upgradescbs[i]))
+            upgradesentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
+            upgradesentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
+            self.input_fields.append((upgradesfields[i], upgradesentries[i]))
         upgradesframe.grid(pady=10, column=2, row=2, sticky=N)
         # misc_collect
 
