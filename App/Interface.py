@@ -250,10 +250,6 @@ class Interface():
         self.notebook.add(misc, text="Misc")
         self.notebook.pack(padx=5, pady=5)
 
-        #TODO - rewrite all of the rest of this func
-        # iterate over displaydata list from editor, handle all special cases (this will be messy, can maybe clean up later?)
-        # populate input_fields (need .get() to work on all values)
-
         # TODO - create UI elements for checkboxlists
 
         # well
@@ -286,17 +282,18 @@ class Interface():
         # modules
 
         # sc + scUp
+        scframe = Frame(collect)
+        sclabel = Label(scframe, text="Guns + Upgrades")
+        sccbs = [FullCB(scframe, x in savedata.get("sc"), y) for x,y in HLDConstants.gun_ids.get_pairs()]
+        scupcbs = [FullCB(scframe, x in savedata.get("scUp"), y + " Upgrade") for x,y in HLDConstants.gun_ids.get_pairs()]
+        sclabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(sccbs)):
+            sccbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+            scupcbs[i].grid(padx=5, column=1, row=i+1, sticky=W)
+        self.input_fields.append(("sc", sccbs))
+        self.input_fields.append(("scUp", scupcbs))
+        scframe.grid(pady=10, column=2, row=0, sticky=N)
         # outfits
-        outfiteqframe = Frame(current)
-        outfiteqfields = ["sword", "cape", "compShell"]
-        outfiteqlabel = Label(outfiteqframe, text="Equipped Outfit")
-        outfiteqdds = [FullDD(outfiteqframe, HLDConstants.outfit_ids.get(savedata.get(x)), HLDConstants.outfit_ids, HLDConstants.display_fields.get(x).get_title()) for x in outfiteqfields]
-        outfiteqlabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(outfiteqdds)):
-            outfiteqdds[i].dd.grid(column=0, row=1+i, sticky=E)
-            outfiteqdds[i].label.grid(column=1, row=1+i, sticky=W)
-            self.input_fields.append((outfiteqfields[i], outfiteqdds[i]))
-        outfiteqframe.grid(pady=10, column=0, row=0, sticky=N)
         # monoliths
 
         # upgrades
@@ -311,6 +308,18 @@ class Interface():
             self.input_fields.append((upgradesfields[i], upgradesentries[i]))
         upgradesframe.grid(pady=10, column=2, row=2, sticky=N)
         # misc_collect
+
+        # equipped outfit
+        outfiteqframe = Frame(current)
+        outfiteqfields = ["sword", "cape", "compShell"]
+        outfiteqlabel = Label(outfiteqframe, text="Equipped Outfit")
+        outfiteqdds = [FullDD(outfiteqframe, HLDConstants.outfit_ids.get(savedata.get(x)), HLDConstants.outfit_ids, HLDConstants.display_fields.get(x).get_title()) for x in outfiteqfields]
+        outfiteqlabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(outfiteqdds)):
+            outfiteqdds[i].dd.grid(column=0, row=1+i, sticky=E)
+            outfiteqdds[i].label.grid(column=1, row=1+i, sticky=W)
+            self.input_fields.append((outfiteqfields[i], outfiteqdds[i]))
+        outfiteqframe.grid(pady=10, column=0, row=0, sticky=N)
 
         # gamemode
         gamemodeframe = Frame(misc)

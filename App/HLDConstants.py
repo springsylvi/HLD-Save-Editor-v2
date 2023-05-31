@@ -21,6 +21,10 @@ class ListMap():
     def get_values(self):
         return self.ilist
 
+    # return list of pairs
+    def get_pairs(self):
+        return [(a,b) for a,b in self.imap.items()]
+
     # return value from list index
     def __getitem__(self, index):
         return self.ilist[index]
