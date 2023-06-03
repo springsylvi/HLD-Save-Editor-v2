@@ -384,7 +384,7 @@ class HLDConstants():
         ])
 
     # north: 1-4, south: 5-8, east: 9-12, west: 13-16
-    tablet_ids = [
+    tablet_ids = ListMap([
         (1, "Stairs"),
         (2, "Cliffs NPC Cave"),
         (3, "Cathedral"),
@@ -401,11 +401,11 @@ class HLDConstants():
         (14, "8 Module Door"),
         (15, "Before Pink Drifter"),
         (16, "After Pillar")
-        ]
-    east_tablet_ids = ListMap(tablet_ids[8:12])
-    north_tablet_ids = ListMap(tablet_ids[0:4])
-    west_tablet_ids = ListMap(tablet_ids[12:16])
-    south_tablet_ids = ListMap(tablet_ids[4:8])
+        ])
+    #east_tablet_ids = ListMap(tablet_ids[8:12])
+    #north_tablet_ids = ListMap(tablet_ids[0:4])
+    #west_tablet_ids = ListMap(tablet_ids[12:16])
+    #south_tablet_ids = ListMap(tablet_ids[4:8])
     
     # TODO - remove explicit indices and turn into list of strings?
     outfit_ids = ListMap([
@@ -425,7 +425,7 @@ class HLDConstants():
 
 
 
-    # list of each individual value the user can interact with through the UI (some savedata fields are split across multiple display fields)
+    # list of each individual value the user can interact with through the UI (some savedata fields are split across multiple display fields or vice versa)
     # tuple elements are unique name, displayinfo obj
     # TODO - add extra elements (i.e. field names in input_fields that aren't in the savefile)
     display_fields = ListMap([
@@ -489,6 +489,7 @@ class HLDConstants():
         #"tutHeal": ["float"],
         #"values": ["map", "str", "int"],
         ("warp", DisplayInfo("checkboxlist", "Warp Points", area_ids, 5)),
-        ("well", DisplayInfo("checkboxlist", "Pillars", well_ids, 4))
+        ("well", DisplayInfo("checkboxlist", "Pillars", well_ids, 4)),
         #"wellMap": ["list", "int"]
+        ("outfits", DisplayInfo("checkboxlist", "Outfits", outfit_ids, 6))
         ])

@@ -250,8 +250,6 @@ class Interface():
         self.notebook.add(misc, text="Misc")
         self.notebook.pack(padx=5, pady=5)
 
-        # TODO - create UI elements for checkboxlists
-
         # well
         wellframe = Frame(collect)
         welllabel = Label(wellframe, text="Pillars")
@@ -280,7 +278,34 @@ class Interface():
         self.input_fields.append(("skill", skillcbs))
         skillframe.grid(pady=10, column=2, row=0, sticky=N)
         # modules
+        moduleframe = Frame(collect)
+        modulelabel = Label(moduleframe, text="Modules")
+        northmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(6), y) for x,y in HLDConstants.north_modules.get_pairs()]
+        eastmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(7), y) for x,y in HLDConstants.east_modules.get_pairs()]
+        southmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(8), y) for x,y in HLDConstants.south_modules.get_pairs()]
+        westmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(9), y) for x,y in HLDConstants.west_modules.get_pairs()]
+        # TODO -  add area labels
+        modulelabel.grid(column=0, row=0, columnspan=4)
+        for i in range(len(northmodulecbs)):
+            northmodulecbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+            eastmodulecbs[i].grid(padx=5, column=1, row=i+1, sticky=W)
+            southmodulecbs[i].grid(padx=5, column=2, row=i+1, sticky=W)
+            westmodulecbs[i].grid(padx=5, column=3, row=i+1, sticky=W)
+        self.input_fields.append(("northmodules", northmodulecbs))
+        self.input_fields.append(("eastmodules", eastmodulecbs))
+        self.input_fields.append(("southmodules", southmodulecbs))
+        self.input_fields.append(("westmodules", westmodulecbs))
+        moduleframe.grid(pady=10, column=4, row=0, columnspan=4, sticky=N)
 
+        # outfits
+        outfitframe = Frame(collect)
+        outfitlabel = Label(outfitframe, text="Outfits")
+        outfitcbs = [FullCB(outfitframe, x in savedata.get("cShells"), y) for x,y in HLDConstants.outfit_ids.get_pairs()]
+        outfitlabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(outfitcbs)):
+            outfitcbs[i].grid(padx=5, column=i//6, row=i%6+1, sticky=W)
+        self.input_fields.append(("outfits", outfitcbs))
+        outfitframe.grid(pady=10, column=0, row=1, columnspan=2, sticky=N)
         # sc + scUp
         scframe = Frame(collect)
         sclabel = Label(scframe, text="Guns + Upgrades")
@@ -292,9 +317,16 @@ class Interface():
             scupcbs[i].grid(padx=5, column=1, row=i+1, sticky=W)
         self.input_fields.append(("sc", sccbs))
         self.input_fields.append(("scUp", scupcbs))
-        scframe.grid(pady=10, column=2, row=0, sticky=N)
-        # outfits
+        scframe.grid(pady=10, column=2, row=1, columnspan=2, sticky=N)
         # monoliths
+        tabletframe = Frame(collect)
+        tabletlabel = Label(tabletframe, text="Monoliths")
+        tabletcbs = [FullCB(tabletframe, x in savedata.get("tablet"), y) for x,y in HLDConstants.tablet_ids.get_pairs()]
+        tabletlabel.grid(column=0, row=0, columnspan=4)
+        for i in range(len(tabletcbs)):
+            tabletcbs[i].grid(padx=5, column=i//4, row=i%4+1, sticky=W)
+        self.input_fields.append(("tablet", tabletcbs))
+        tabletframe.grid(pady=10, column=4, row=1, columnspan=4, sticky=N)
 
         # upgrades
         upgradesframe = Frame(collect)
@@ -306,7 +338,7 @@ class Interface():
             upgradesentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
             upgradesentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
             self.input_fields.append((upgradesfields[i], upgradesentries[i]))
-        upgradesframe.grid(pady=10, column=2, row=2, sticky=N)
+        upgradesframe.grid(pady=10, column=0, row=2, columnspan=2, sticky=N)
         # misc_collect
 
         # equipped outfit
@@ -350,9 +382,17 @@ class Interface():
             displayinfo = HLDConstants.display_fields.get(field)
             displaytype = displayinfo.get_displaytype()
             print(displaytype)
+
             if displaytype == "checkboxlist":
                 const_data = displayinfo.get_const_data()
                 print(Interface.convert_cblist(obj, const_data))
+
+                if field[-7:] == "modules":
+                    pass # set cl type
+                elif field == "outfits":
+                    pass # set all 3 outfit parts
+                else:
+                    pass
             elif displaytype in ["int", "float", "dropdown", "checkbox"]:
                 print(obj.get())
             else:
