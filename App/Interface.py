@@ -340,6 +340,16 @@ class Interface():
             self.input_fields.append((upgradesfields[i], upgradesentries[i]))
         upgradesframe.grid(pady=10, column=0, row=2, columnspan=2, sticky=N)
         # misc_collect
+        misccollectframe = Frame(collect)
+        misccollectfields = ["gear", "drifterkey"]
+        misccollectlabel = Label(misccollectframe, text="Other Collectables")
+        misccollectentries = [FullEntry(misccollectframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), "int") for x in misccollectfields]
+        misccollectlabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(misccollectfields)):
+            misccollectentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
+            misccollectentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
+            self.input_fields.append((misccollectfields[i], misccollectentries[i]))
+        misccollectframe.grid(pady=10, column=2, row=2, columnspan=2, sticky=N)
 
         # equipped outfit
         outfiteqframe = Frame(current)
@@ -351,18 +361,36 @@ class Interface():
             outfiteqdds[i].dd.grid(column=0, row=1+i, sticky=E)
             outfiteqdds[i].label.grid(column=1, row=1+i, sticky=W)
             self.input_fields.append((outfiteqfields[i], outfiteqdds[i]))
-        outfiteqframe.grid(pady=10, column=0, row=0, sticky=N)
+        outfiteqframe.grid(pady=10, column=0, row=0, columnspan=2, sticky=N)
 
         # gamemode
         gamemodeframe = Frame(misc)
+        gamemodefields = ["CH", "noviceMode"]
+        gamemodelabel = Label(gamemodeframe, text="Game Mode")
+        gamemodecbs = [FullCB(gamemodeframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in gamemodefields]
+        gamemodelabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(gamemodefields)):
+            gamemodecbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+            self.input_fields.append((gamemodefields[i], gamemodecbs[i]))
+        gamemodeframe.grid(pady=10, column=0, row=0, sticky=N)
         # misc_values
+        miscboolsframe = Frame(misc)
+        miscboolsfields = ["hasMap", "fireplaceSave"]
+        miscboolslabel = Label(miscboolsframe, text="Misc Values")
+        miscboolscbs = [FullCB(miscboolsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in miscboolsfields]
+        miscboolslabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(miscboolsfields)):
+            miscboolscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+            self.input_fields.append((miscboolsfields[i], miscboolscbs[i]))
+        miscboolsframe.grid(pady=10, column=1, row=0, sticky=N)
+        
 
 
         # checkX/checkY/checkRoom + entrance warp
         drifter_pos = Frame(current)
         drifter_posfields = ["checkX", "checkY", "checkRoom"]
         drifter_pos_label = Label(drifter_pos, text="Current Location")
-        drifter_pos_label.grid(column=0, row=0)
+        drifter_pos_label.grid(column=0, row=0, columnspan=2)
         drifter_posentries = [FullEntry(drifter_pos, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), "float") for x in drifter_posfields] # TODO - remove the hardcoded float type once I figure out display types
         drifter_pos_button = Button(drifter_pos, text="Choose Room", command=lambda: self.get_entrance(drifter_posentries))
         for i in range(len(drifter_posentries)):
@@ -381,18 +409,24 @@ class Interface():
         for field, obj in self.input_fields:
             displayinfo = HLDConstants.display_fields.get(field)
             displaytype = displayinfo.get_displaytype()
-            print(displaytype)
+            print(field, ":", displaytype)
 
             if displaytype == "checkboxlist":
                 const_data = displayinfo.get_const_data()
-                print(Interface.convert_cblist(obj, const_data))
+                value = Interface.convert_cblist(obj, const_data)
+                print(value)
 
                 if field[-7:] == "modules":
-                    pass # set cl type
+                    # set cl type
+                    module_cltypes = {"northmodules" : 6, "eastmodules" : 7, "southmodules" : 8, "westmodules" : 9}
+                    self.editor.savedata.set_map_value("cl", module_cltypes.get(field), value)
                 elif field == "outfits":
-                    pass # set all 3 outfit parts
+                    # set all 3 outfit parts
+                    for outfit_part in ["cShells", "cSwords", "cCapes"]:
+                        self.editor.savedata.set_field(outfit_part, value)
                 else:
-                    pass
+                    # set field normally
+                    self.editor.savedata.set_field(field, value)
             elif displaytype in ["int", "float", "dropdown", "checkbox"]:
                 print(obj.get())
             else:
