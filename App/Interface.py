@@ -428,9 +428,12 @@ class Interface():
                     # set field normally
                     self.editor.savedata.set_field(field, value)
             elif displaytype in ["int", "float", "dropdown", "checkbox"]:
-                print(obj.get())
+                value = obj.get()
+                print(value)
+
+                self.editor.savedata.set_field(field, value)
             else:
-                pass
+                print("unknown display type")
 
         """
         lists = {
