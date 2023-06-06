@@ -362,30 +362,17 @@ class Interface():
             outfiteqdds[i].label.grid(column=1, row=1+i, sticky=W)
             self.input_fields.append((outfiteqfields[i], outfiteqdds[i]))
         outfiteqframe.grid(pady=10, column=0, row=0, columnspan=2, sticky=N)
-
-        # gamemode
-        gamemodeframe = Frame(misc)
-        gamemodefields = ["CH", "noviceMode"]
-        gamemodelabel = Label(gamemodeframe, text="Game Mode")
-        gamemodecbs = [FullCB(gamemodeframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in gamemodefields]
-        gamemodelabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(gamemodefields)):
-            gamemodecbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
-            self.input_fields.append((gamemodefields[i], gamemodecbs[i]))
-        gamemodeframe.grid(pady=10, column=0, row=0, sticky=N)
-        # misc_values
-        miscboolsframe = Frame(misc)
-        miscboolsfields = ["hasMap", "fireplaceSave"]
-        miscboolslabel = Label(miscboolsframe, text="Misc Values")
-        miscboolscbs = [FullCB(miscboolsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in miscboolsfields]
-        miscboolslabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(miscboolsfields)):
-            miscboolscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
-            self.input_fields.append((miscboolsfields[i], miscboolscbs[i]))
-        miscboolsframe.grid(pady=10, column=1, row=0, sticky=N)
-        
-
-
+        # equipped guns
+        sceqframe = Frame(current)
+        sceqfields = ["eq00", "eq01"]
+        sceqlabel = Label(sceqframe, text="Equipped Guns")
+        sceqdds = [FullDD(sceqframe, HLDConstants.gun_ids.get(savedata.get(x)), HLDConstants.gun_ids, HLDConstants.display_fields.get(x).get_title()) for x in sceqfields]
+        sceqlabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(sceqdds)):
+            sceqdds[i].dd.grid(column=0, row=1+i, sticky=E)
+            sceqdds[i].label.grid(column=1, row=1+i, sticky=W)
+            self.input_fields.append((sceqfields[i], sceqdds[i]))
+        sceqframe.grid(pady=10, column=2, row=0, columnspan=2, sticky=N)
         # checkX/checkY/checkRoom + entrance warp
         drifter_pos = Frame(current)
         drifter_posfields = ["checkX", "checkY", "checkRoom"]
@@ -399,6 +386,39 @@ class Interface():
             self.input_fields.append((drifter_posfields[i], drifter_posentries[i]))
         drifter_pos_button.grid(column=0, row=4, columnspan=2)
         drifter_pos.grid(pady=10, column=0, row=1)
+
+        # gamemode
+        gamemodeframe = Frame(misc)
+        gamemodefields = ["CH", "noviceMode"]
+        gamemodelabel = Label(gamemodeframe, text="Game Mode")
+        gamemodecbs = [FullCB(gamemodeframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in gamemodefields]
+        gamemodelabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(gamemodefields)):
+            gamemodecbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+            self.input_fields.append((gamemodefields[i], gamemodecbs[i]))
+        gamemodeframe.grid(pady=10, column=0, row=0, sticky=N)
+        # misc bools
+        miscboolsframe = Frame(misc)
+        miscboolsfields = ["hasMap", "fireplaceSave"]
+        miscboolslabel = Label(miscboolsframe, text="Misc Values 1")
+        miscboolscbs = [FullCB(miscboolsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in miscboolsfields]
+        miscboolslabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(miscboolsfields)):
+            miscboolscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+            self.input_fields.append((miscboolsfields[i], miscboolscbs[i]))
+        miscboolsframe.grid(pady=10, column=1, row=0, sticky=N)
+        # misc ints
+        miscintsframe = Frame(misc)
+        miscintsfields = ["badass", "charDeaths"] # values?
+        miscintslabel = Label(miscintsframe, text="Misc Values 2")
+        miscintsentries = [FullEntry(miscintsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), "int") for x in miscintsfields]
+        miscintslabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(miscintsfields)):
+            miscintsentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
+            miscintsentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
+            self.input_fields.append((miscintsfields[i], miscintsentries[i]))
+        miscintsframe.grid(pady=10, column=2, row=0, sticky=N)
+
             
 
     # copy changes in UI to savedata dict
