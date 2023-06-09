@@ -99,7 +99,6 @@ class Savedata():
         savedata_text = dumps(temp_sdmap) + " "
         savedata_enc = base64.standard_b64encode(header + savedata_text.encode())
         savefile.write(savedata_enc)
-        # TODO - cache output?
 
 
     # convert list/map in savedata format to list/map object

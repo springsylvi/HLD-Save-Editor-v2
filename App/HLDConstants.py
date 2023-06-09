@@ -30,6 +30,7 @@ class ListMap():
         return self.ilist[index]
 
 
+# TODO - use keyword arguments more
 class DisplayInfo():
     """
     Contains info about how to display a type of display field.
@@ -252,7 +253,7 @@ class HLDConstants():
     # list takes 1 arg, map takes 2.
     # used for converting between Savedata and .sav/.hlds files
     fields = {"badass": ["float"],
-              "bosses": ["map", "int", "list", "int"],
+              "bosses": ["map", "float", "list", "int"],
               "bossGearbits": ["list", "str"],
               "cape": ["float"],
               "cCapes": ["list", "int"],
@@ -423,6 +424,16 @@ class HLDConstants():
         (11, "New Game +")
         ])
 
+    boss_ids = ListMap([
+        (0, "Toad"),
+        (1, "Pope"),
+        (2, "General"),
+        (3.1, "Scythe"),
+        (3.2, "Archer"),
+        (3.3, "Baker"),
+        (3.4, "Mimic")
+        ])
+
 
 
     # list of each individual value the user can interact with through the UI (some savedata fields are split across multiple display fields or vice versa)
@@ -430,7 +441,7 @@ class HLDConstants():
     # TODO - add extra elements (i.e. field names in input_fields that aren't in the savefile)
     display_fields = ListMap([
         ("badass", DisplayInfo("int", "Pink Drifter Conversations", None)),
-        #("bosses", lambda sd: sd.get("bosses"), DisplayInfo("other", "Bosses Killed", None)), #TODO - creat const_data for bosses
+        ("bosses", DisplayInfo("other", "Bosses Killed", boss_ids)),
         #"bossGearbits": ["list", "str"],
         ("cape", DisplayInfo("dropdown", "Cape", outfit_ids)),
         ("cCapes", DisplayInfo("checkboxlist", "Capes Owned", outfit_ids, 6)),
