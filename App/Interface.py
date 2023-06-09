@@ -48,7 +48,8 @@ class FullEntry():
     Tk Entry + Label
     """
 
-    def __init__(self, master, value, text, valuetype):
+    def __init__(self, master, value, text, fieldname):
+        valuetype = HLDConstants.display_fields.get(fieldname).get_displaytype()
         if valuetype == "int":
             self.valuetype_func = lambda x: int(float(x))
         elif valuetype == "float":
@@ -209,7 +210,7 @@ class Interface():
     def get_entrance(self, pos_entries):
         top = Toplevel(self.tk)
         top.title("Entrance Chooser")
-        room = IntVar(master=top, value=int(float(pos_entries[2].get()))) # TODO - remove this typescasting after figuring out display types
+        room = IntVar(master=top, value=int(float(pos_entries[2].get()))) # TODO - throw error for non-int values
         print(pos_entries[2].get())
         i = 0
         for room_id, (room_iname, room_cname) in HLDConstants.roomNames.items():
@@ -332,7 +333,7 @@ class Interface():
         upgradesframe = Frame(collect)
         upgradesfields = ["healthUp", "specialUp"]
         upgradeslabel = Label(upgradesframe, text="Upgrades")
-        upgradesentries = [FullEntry(upgradesframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), "int") for x in upgradesfields]
+        upgradesentries = [FullEntry(upgradesframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in upgradesfields]
         upgradeslabel.grid(column=0, row=0, columnspan=2)
         for i in range(len(upgradesfields)):
             upgradesentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
@@ -343,7 +344,7 @@ class Interface():
         misccollectframe = Frame(collect)
         misccollectfields = ["gear", "drifterkey"]
         misccollectlabel = Label(misccollectframe, text="Other Collectables")
-        misccollectentries = [FullEntry(misccollectframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), "int") for x in misccollectfields]
+        misccollectentries = [FullEntry(misccollectframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in misccollectfields]
         misccollectlabel.grid(column=0, row=0, columnspan=2)
         for i in range(len(misccollectfields)):
             misccollectentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
@@ -378,7 +379,7 @@ class Interface():
         drifter_posfields = ["checkX", "checkY", "checkRoom"]
         drifter_pos_label = Label(drifter_pos, text="Current Location")
         drifter_pos_label.grid(column=0, row=0, columnspan=2)
-        drifter_posentries = [FullEntry(drifter_pos, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), "float") for x in drifter_posfields] # TODO - remove the hardcoded float type once I figure out display types
+        drifter_posentries = [FullEntry(drifter_pos, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in drifter_posfields] # TODO - remove the hardcoded float type once I figure out display types
         drifter_pos_button = Button(drifter_pos, text="Choose Room", command=lambda: self.get_entrance(drifter_posentries))
         for i in range(len(drifter_posentries)):
             drifter_posentries[i].entry.grid(column=0, row=1+i, sticky=E)
@@ -411,7 +412,7 @@ class Interface():
         miscintsframe = Frame(misc)
         miscintsfields = ["badass", "charDeaths"] # values?
         miscintslabel = Label(miscintsframe, text="Misc Values 2")
-        miscintsentries = [FullEntry(miscintsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), "int") for x in miscintsfields]
+        miscintsentries = [FullEntry(miscintsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in miscintsfields]
         miscintslabel.grid(column=0, row=0, columnspan=2)
         for i in range(len(miscintsfields)):
             miscintsentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)

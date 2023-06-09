@@ -450,7 +450,7 @@ class HLDConstants():
         ("checkBat", DisplayInfo("float", "Gun Ammo (%)", None)),
         #("checkCID", lambda sd: sd.get("checkCID"), DisplayInfo("index", "Checkpoint ID", None)),
         ("checkHP", DisplayInfo("int", "Health", None)),
-        ("checkRoom", DisplayInfo("float", "Room ID", roomNames)),
+        ("checkRoom", DisplayInfo("int", "Room ID", roomNames)),
         ("checkStash", DisplayInfo("int", "Medkits", None)),
         ("checkX", DisplayInfo("float", "X Position", None)),
         ("checkY", DisplayInfo("float", "Y Position", None)),
