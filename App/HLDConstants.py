@@ -408,7 +408,6 @@ class HLDConstants():
     #west_tablet_ids = ListMap(tablet_ids[12:16])
     #south_tablet_ids = ListMap(tablet_ids[4:8])
     
-    # TODO - remove explicit indices and turn into list of strings?
     outfit_ids = ListMap([
         (0, "Red (Default)"),
         (1, "Blue"),

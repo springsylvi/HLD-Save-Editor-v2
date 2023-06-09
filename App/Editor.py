@@ -79,6 +79,9 @@ class Savedata():
             # TODO - add support for non 3-digit room numbers
         except:
             pass
+        for f in ["eq00", "eq01"]:
+            if savedata_map.get(f) is None:
+                savedata_map[f] = 0.0
         # TODO - dateTime?
         return savedata_map
 

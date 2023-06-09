@@ -418,14 +418,14 @@ class Interface():
             miscintsentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
             self.input_fields.append((miscintsfields[i], miscintsentries[i]))
         miscintsframe.grid(pady=10, column=2, row=0, sticky=N)
+        # bosses
+        # TODO
 
             
 
     # copy changes in UI to savedata dict
     def sync_savedata(self):
 
-        # TODO - reimplement this function to work with new init_editor_ui version
-        # for each element of input_fields, look up name in HLDConstants.display_fields and call get method on that display type to pull raw data from tk obj
         for field, obj in self.input_fields:
             displayinfo = HLDConstants.display_fields.get(field)
             displaytype = displayinfo.get_displaytype()
@@ -455,47 +455,3 @@ class Interface():
             else:
                 print("unknown display type")
 
-        """
-        lists = {
-            "well": HLDConstants.well_ids,
-            "warp": HLDConstants.area_ids,
-            "skill": HLDConstants.skill_ids,
-            "sc": HLDConstants.gun_ids,
-            "scUp": HLDConstants.gun_ids,
-            "cShells": HLDConstants.outfit_ids
-            }
-        module_cltypes = {
-            "modulesN": (HLDConstants.north_modules, 6),
-            "modulesE": (HLDConstants.east_modules, 7),
-            "modulesS": (HLDConstants.south_modules, 8),
-            "modulesW": (HLDConstants.west_modules, 9)
-            }
-
-        # TODO - fill out and document this section
-        for field, obj in self.input_fields:
-            # determine type of obj based on field name
-            if field in lists.keys():
-                const_data = lists[field]
-                sd = []
-                for i in range(len(const_data)):
-                    if obj[i].get():
-                        sd.append(const_data[i][0])
-                self.editor.savedata.set_field(field, sd)
-                if field == "cShells": # copy value to other outfit component lists
-                    self.editor.savedata.set_field("cSwords", sd)
-                    self.editor.savedata.set_field("cCapes", sd)
-            elif field[:-1] == "modules":
-                const_data = module_cltypes[field]
-                sd = []
-                for i in range(len(const_data[0])):
-                    if obj[i].get():
-                        sd.append(const_data[0][i][0])
-                self.editor.savedata.set_map_value("cl", const_data[1], sd)
-            elif field in ["hasMap", "fireplaceSave", "checkHP", "checkStash", "checkBat", "checkAmmo", "healthUp", "specialUp", "drifterkey", "gear", "CH", "noviceMode"]: # single value -> float
-                self.editor.savedata.set_field(field, float(obj.get()))
-            elif field in ["compShell", "sword", "cape"]: # outfit name -> index
-                index = [t[1] for t in HLDConstants.outfit_ids].index(obj.get())
-                self.editor.savedata.set_field(field, float(index))
-            else:
-                print("?")
-        """
