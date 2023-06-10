@@ -50,6 +50,7 @@ class FullEntry():
 
     def __init__(self, master, value, text, fieldname):
         valuetype = HLDConstants.display_fields.get(fieldname).get_displaytype()
+        # TODO - throw error if float entered into int field?
         if valuetype == "int":
             self.valuetype_func = lambda x: int(float(x))
         elif valuetype == "float":
@@ -379,7 +380,7 @@ class Interface():
         drifter_posfields = ["checkX", "checkY", "checkRoom"]
         drifter_pos_label = Label(drifter_pos, text="Current Location")
         drifter_pos_label.grid(column=0, row=0, columnspan=2)
-        drifter_posentries = [FullEntry(drifter_pos, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in drifter_posfields] # TODO - remove the hardcoded float type once I figure out display types
+        drifter_posentries = [FullEntry(drifter_pos, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in drifter_posfields]
         drifter_pos_button = Button(drifter_pos, text="Choose Room", command=lambda: self.get_entrance(drifter_posentries))
         for i in range(len(drifter_posentries)):
             drifter_posentries[i].entry.grid(column=0, row=1+i, sticky=E)
@@ -387,6 +388,17 @@ class Interface():
             self.input_fields.append((drifter_posfields[i], drifter_posentries[i]))
         drifter_pos_button.grid(column=0, row=4, columnspan=2)
         drifter_pos.grid(pady=10, column=0, row=1)
+        # drifterstats (health + ammo)
+        drifterstatsframe = Frame(current)
+        drifterstatsfields = ["checkHP", "checkBat", "checkAmmo", "checkStash"]
+        drifterstatslabel = Label(drifterstatsframe, text="Health/Ammo")
+        drifterstatsentries = [FullEntry(drifterstatsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in drifterstatsfields]
+        drifterstatslabel.grid(column=0, row=0, columnspan=2)
+        for i in range(len(drifterstatsfields)):
+            drifterstatsentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
+            drifterstatsentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
+            self.input_fields.append((drifterstatsfields[i], drifterstatsentries[i]))
+        drifterstatsframe.grid(pady=10, column=2, row=1, sticky=N)
 
         # gamemode
         gamemodeframe = Frame(misc)
@@ -410,7 +422,7 @@ class Interface():
         miscboolsframe.grid(pady=10, column=1, row=0, sticky=N)
         # misc ints
         miscintsframe = Frame(misc)
-        miscintsfields = ["badass", "charDeaths"] # values?
+        miscintsfields = ["badass", "charDeaths"] # TODO - add values?
         miscintslabel = Label(miscintsframe, text="Misc Values 2")
         miscintsentries = [FullEntry(miscintsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in miscintsfields]
         miscintslabel.grid(column=0, row=0, columnspan=2)
@@ -420,6 +432,14 @@ class Interface():
             self.input_fields.append((miscintsfields[i], miscintsentries[i]))
         miscintsframe.grid(pady=10, column=2, row=0, sticky=N)
         # bosses
+        bossframe = Frame(misc)
+        bosslabel = Label(bossframe, text="Bosses Killed")
+        bosscbs = [FullCB(bossframe, x in savedata.get("bosses"), y) for x,y in HLDConstants.boss_ids.get_pairs()]
+        bosslabel.grid(column=0, row=0)
+        for i in range(len(bosscbs)):
+            bosscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        self.input_fields.append(("bosses", bosscbs))
+        bossframe.grid(pady=10, column=0, row=1, sticky=N)
         # TODO
 
             
@@ -445,6 +465,9 @@ class Interface():
                     # set all 3 outfit parts
                     for outfit_part in ["cShells", "cSwords", "cCapes"]:
                         self.editor.savedata.set_field(outfit_part, value)
+                elif field == "bosses":
+                    # TODO
+                    pass
                 else:
                     # set field normally
                     self.editor.savedata.set_field(field, value)

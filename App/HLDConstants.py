@@ -424,13 +424,24 @@ class HLDConstants():
         ])
 
     boss_ids = ListMap([
-        (0, "Toad"),
-        (1, "Pope"),
-        (2, "General"),
+        (0.0, "Toad"),
+        (1.0, "Pope"),
+        (2.0, "General"),
         (3.1, "Scythe"),
         (3.2, "Archer"),
         (3.3, "Baker"),
         (3.4, "Mimic")
+        ])
+
+    # default corpse coords
+    boss_cords = ListMap([
+        (0, (800,448)),
+        (1, (296,552)),
+        (2, (416,480)),
+        (3.1, (416,504)),
+        (3.2, (320,160)),
+        (3.3, (291,167)),
+        (3.4, (296,272))
         ])
 
 
