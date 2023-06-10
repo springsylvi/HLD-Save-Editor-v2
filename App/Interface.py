@@ -50,9 +50,8 @@ class FullEntry():
 
     def __init__(self, master, value, text, fieldname):
         valuetype = HLDConstants.display_fields.get(fieldname).get_displaytype()
-        # TODO - throw error if float entered into int field?
         if valuetype == "int":
-            self.valuetype_func = lambda x: int(float(x))
+            self.valuetype_func = lambda x: int(x)
         elif valuetype == "float":
             self.valuetype_func = float
         else:
@@ -60,9 +59,13 @@ class FullEntry():
         self.entry = Entry(master, width=10)
         self.entry.insert(0, self.valuetype_func(value))
         self.label = Label(master, text=text)
+        self.title = text
 
     def get(self):
-        return self.valuetype_func(self.entry.get())
+        try:
+            return self.valuetype_func(self.entry.get())
+        except ValueError:
+            raise Exception(f"Non-integer value {self.entry.get()} entered into integer field '{self.title}'")
 
     def set_value(self, value):
         self.entry.delete(0, END)
@@ -282,17 +285,19 @@ class Interface():
         # modules
         moduleframe = Frame(collect)
         modulelabel = Label(moduleframe, text="Modules")
+        modulearealabels = [Label(moduleframe, text=x) for x in ["North", "South", "East", "West"]]
         northmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(6), y) for x,y in HLDConstants.north_modules.get_pairs()]
-        eastmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(7), y) for x,y in HLDConstants.east_modules.get_pairs()]
         southmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(8), y) for x,y in HLDConstants.south_modules.get_pairs()]
+        eastmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(7), y) for x,y in HLDConstants.east_modules.get_pairs()]
         westmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(9), y) for x,y in HLDConstants.west_modules.get_pairs()]
-        # TODO -  add area labels
         modulelabel.grid(column=0, row=0, columnspan=4)
         for i in range(len(northmodulecbs)):
-            northmodulecbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
-            eastmodulecbs[i].grid(padx=5, column=1, row=i+1, sticky=W)
-            southmodulecbs[i].grid(padx=5, column=2, row=i+1, sticky=W)
-            westmodulecbs[i].grid(padx=5, column=3, row=i+1, sticky=W)
+            northmodulecbs[i].grid(padx=5, column=0, row=i+2, sticky=W)
+            southmodulecbs[i].grid(padx=5, column=1, row=i+2, sticky=W)
+            eastmodulecbs[i].grid(padx=5, column=2, row=i+2, sticky=W)
+            westmodulecbs[i].grid(padx=5, column=3, row=i+2, sticky=W)
+        for i in range(len(modulearealabels)):
+            modulearealabels[i].grid(padx=5, column=i, row=1)
         self.input_fields.append(("northmodules", northmodulecbs))
         self.input_fields.append(("eastmodules", eastmodulecbs))
         self.input_fields.append(("southmodules", southmodulecbs))
@@ -323,10 +328,13 @@ class Interface():
         # monoliths
         tabletframe = Frame(collect)
         tabletlabel = Label(tabletframe, text="Monoliths")
+        tabletarealabels = [Label(tabletframe, text=x) for x in ["North", "South", "East", "West"]]
         tabletcbs = [FullCB(tabletframe, x in savedata.get("tablet"), y) for x,y in HLDConstants.tablet_ids.get_pairs()]
         tabletlabel.grid(column=0, row=0, columnspan=4)
         for i in range(len(tabletcbs)):
-            tabletcbs[i].grid(padx=5, column=i//4, row=i%4+1, sticky=W)
+            tabletcbs[i].grid(padx=5, column=i//4, row=i%4+2, sticky=W)
+        for i in range(len(tabletarealabels)):
+            tabletarealabels[i].grid(padx=5, column=i, row=1)
         self.input_fields.append(("tablet", tabletcbs))
         tabletframe.grid(pady=10, column=4, row=1, columnspan=4, sticky=N)
 
@@ -422,7 +430,7 @@ class Interface():
         miscboolsframe.grid(pady=10, column=1, row=0, sticky=N)
         # misc ints
         miscintsframe = Frame(misc)
-        miscintsfields = ["badass", "charDeaths"] # TODO - add values?
+        miscintsfields = ["badass", "charDeaths"]
         miscintslabel = Label(miscintsframe, text="Misc Values 2")
         miscintsentries = [FullEntry(miscintsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in miscintsfields]
         miscintslabel.grid(column=0, row=0, columnspan=2)
@@ -431,6 +439,7 @@ class Interface():
             miscintsentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
             self.input_fields.append((miscintsfields[i], miscintsentries[i]))
         miscintsframe.grid(pady=10, column=2, row=0, sticky=N)
+        # TODO - add values
         # bosses
         bossframe = Frame(misc)
         bosslabel = Label(bossframe, text="Bosses Killed")
@@ -440,7 +449,6 @@ class Interface():
             bosscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("bosses", bosscbs))
         bossframe.grid(pady=10, column=0, row=1, sticky=N)
-        # TODO
 
             
 
