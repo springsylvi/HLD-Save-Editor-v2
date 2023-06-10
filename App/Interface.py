@@ -447,6 +447,8 @@ class Interface():
     # copy changes in UI to savedata dict
     def sync_savedata(self):
 
+        savedata = self.editor.savedata
+
         for field, obj in self.input_fields:
             displayinfo = HLDConstants.display_fields.get(field)
             displaytype = displayinfo.get_displaytype()
@@ -460,22 +462,31 @@ class Interface():
                 if field[-7:] == "modules":
                     # set cl type
                     module_cltypes = {"northmodules" : 6, "eastmodules" : 7, "southmodules" : 8, "westmodules" : 9}
-                    self.editor.savedata.set_map_value("cl", module_cltypes.get(field), value)
+                    savedata.set_map_value("cl", module_cltypes.get(field), value)
                 elif field == "outfits":
                     # set all 3 outfit parts
                     for outfit_part in ["cShells", "cSwords", "cCapes"]:
-                        self.editor.savedata.set_field(outfit_part, value)
-                elif field == "bosses":
-                    # TODO
-                    pass
+                        savedata.set_field(outfit_part, value)
                 else:
                     # set field normally
-                    self.editor.savedata.set_field(field, value)
+                    savedata.set_field(field, value)
             elif displaytype in ["int", "float", "dropdown", "checkbox"]:
                 value = obj.get()
                 print(value)
 
-                self.editor.savedata.set_field(field, value)
+                savedata.set_field(field, value)
+            elif field == "bosses":
+                value = {}
+                for i in range(len(HLDConstants.boss_ids)):
+                    boss_id = HLDConstants.boss_ids.get_key_from_index(i)
+                    if obj[i].get():
+                        boss_coords = savedata.get("bosses").get(boss_id)
+                        if boss_coords is None:
+                            boss_coords = list(HLDConstants.boss_coords.get(boss_id))
+                        value[boss_id] = boss_coords
+                print(value)
+                savedata.set_field(field, value)
             else:
-                print("unknown display type")
+                raise Exception(f"sync_savedata not implemented for field {field}")
+                
 

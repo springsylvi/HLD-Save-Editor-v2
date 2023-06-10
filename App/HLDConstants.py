@@ -17,6 +17,10 @@ class ListMap():
     def get_key(self, value):
         return self.reverse_imap.get(value)
 
+    # return key from index
+    def get_key_from_index(self, index):
+        return self.get_key(self[index])
+
     # return list of values
     def get_values(self):
         return self.ilist
@@ -29,6 +33,8 @@ class ListMap():
     def __getitem__(self, index):
         return self.ilist[index]
 
+    def __len__(self):
+        return len(self.ilist)
 
 # TODO - use keyword arguments more
 class DisplayInfo():
@@ -434,7 +440,7 @@ class HLDConstants():
         ])
 
     # default corpse coords
-    boss_cords = ListMap([
+    boss_coords = ListMap([
         (0, (800,448)),
         (1, (296,552)),
         (2, (416,480)),
