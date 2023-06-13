@@ -6,19 +6,6 @@ import configparser
 from HLDConstants import HLDConstants
 
 
-class FieldEditor():
-    """
-    A generic object for editing some single piece of savedata. These pieces are defined around how they will be used in the UI.
-
-    """
-
-    # displaytype is an element of HLDConstants.displaytypes
-    def __init__(self, displayname, displaytype, const_data):
-        self.displayname = displayname
-        self.const_data = const_data
-
-
-
 class Savedata():
     """
     Contains savedata as a dictionary.
@@ -42,6 +29,17 @@ class Savedata():
             self.savedata_map[field][key] = value
         else:
             raise Exception("Invalid field name")
+
+    # get the value of a map element, returns empty list instead of None if does not exist
+    def get_map_value(self, field, key):
+        fieldtype = HLDConstants.fields[field]
+        if fieldtype[0] != "map":
+            raise Exception("get_map_value called on non-map field")
+        value = self.savedata_map.get(field).get(key)
+        if value is None and fieldtype[2] == "list":
+            return []
+        else:
+            return value
 
     # parse data from .hlds file
     def parse_hlds(hldsdata):
@@ -105,7 +103,7 @@ class Savedata():
 
 
     # convert list/map in savedata format to list/map object
-    # TODO - tidy up this function
+    # TODO - tidy up this function (remove int(float()) casting where possible)
     def parse_savedata_collection(raw, fieldtype):
         if fieldtype[0] == "list":
             sep = "&" if "&" in raw else "+"
@@ -129,9 +127,7 @@ class Savedata():
             if fieldtype[2] == "list":
                 map_obj = {a : Savedata.parse_savedata_collection(b, fieldtype[2:4]) for a, b in map_obj.items()}
             return map_obj
-        if fieldtype[0] == "enemystruct":
-            pass
-            # TODO
+
 
     # convert list/map object to savedata format
     def export_savedata_collection(obj, fieldtype, listsep):

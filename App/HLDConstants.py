@@ -36,6 +36,7 @@ class ListMap():
     def __len__(self):
         return len(self.ilist)
 
+
 # TODO - use keyword arguments more
 class DisplayInfo():
     """
@@ -255,7 +256,7 @@ class HLDConstants():
         }
 
     # all valid savedata fields and their types.
-    # types are a sequence of any of str, int, float, list, map, enemystruct.
+    # types are a sequence of any of str, int, float, list, map, other.
     # list takes 1 arg, map takes 2.
     # used for converting between Savedata and .sav/.hlds files
     fields = {"badass": ["float"],
@@ -281,7 +282,7 @@ class HLDConstants():
               "dateTime": ["float"],
               "destruct": ["map", "int", "list", "float"],
               "drifterkey": ["float"],
-              "enemies": ["map", "int", "enemystruct"],
+              "enemies": ["map", "int", "list", "other"],
               "eq00": ["float"],
               "eq01": ["float"],
               "events": ["list", "int"],
@@ -409,10 +410,6 @@ class HLDConstants():
         (15, "Before Pink Drifter"),
         (16, "After Pillar")
         ])
-    #east_tablet_ids = ListMap(tablet_ids[8:12])
-    #north_tablet_ids = ListMap(tablet_ids[0:4])
-    #west_tablet_ids = ListMap(tablet_ids[12:16])
-    #south_tablet_ids = ListMap(tablet_ids[4:8])
     
     outfit_ids = ListMap([
         (0, "Red (Default)"),

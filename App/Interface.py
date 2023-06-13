@@ -140,7 +140,6 @@ class Interface():
     # set status bar text to message
     def set_status_message(self, message):
         self.sbar_label.config(text=message)
-        # TODO - log past messages, including errors?
 
     def __init__(self, editor, app):
         self.editor = editor
@@ -210,11 +209,11 @@ class Interface():
         return ret
 
 
-    # open a window to choose room by name, write choice into pos_value # TODO - add entrance choosing too
+    # open a window to choose room by name, write choice into pos_value # TODO - add entrance choosing (or at least set coords to default entrance)
     def get_entrance(self, pos_entries):
         top = Toplevel(self.tk)
         top.title("Entrance Chooser")
-        room = IntVar(master=top, value=int(float(pos_entries[2].get()))) # TODO - throw error for non-int values
+        room = IntVar(master=top, value=int(pos_entries[2].get()))
         print(pos_entries[2].get())
         i = 0
         for room_id, (room_iname, room_cname) in HLDConstants.roomNames.items():
@@ -286,10 +285,10 @@ class Interface():
         moduleframe = Frame(collect)
         modulelabel = Label(moduleframe, text="Modules")
         modulearealabels = [Label(moduleframe, text=x) for x in ["North", "South", "East", "West"]]
-        northmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(6), y) for x,y in HLDConstants.north_modules.get_pairs()]
-        southmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(8), y) for x,y in HLDConstants.south_modules.get_pairs()]
-        eastmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(7), y) for x,y in HLDConstants.east_modules.get_pairs()]
-        westmodulecbs = [FullCB(moduleframe, x in savedata.get("cl").get(9), y) for x,y in HLDConstants.west_modules.get_pairs()]
+        northmodulecbs = [FullCB(moduleframe, x in savedata.get_map_value("cl", 6), y) for x,y in HLDConstants.north_modules.get_pairs()]
+        southmodulecbs = [FullCB(moduleframe, x in savedata.get_map_value("cl", 8), y) for x,y in HLDConstants.south_modules.get_pairs()]
+        eastmodulecbs = [FullCB(moduleframe, x in savedata.get_map_value("cl", 7), y) for x,y in HLDConstants.east_modules.get_pairs()]
+        westmodulecbs = [FullCB(moduleframe, x in savedata.get_map_value("cl", 9), y) for x,y in HLDConstants.west_modules.get_pairs()]
         modulelabel.grid(column=0, row=0, columnspan=4)
         for i in range(len(northmodulecbs)):
             northmodulecbs[i].grid(padx=5, column=0, row=i+2, sticky=W)
