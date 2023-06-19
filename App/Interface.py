@@ -1,6 +1,4 @@
-import os.path
-import math
-import platform
+import os.path, math, platform
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -209,7 +207,7 @@ class Interface():
         return ret
 
 
-    # open a window to choose room by name, write choice into pos_value # TODO - add entrance choosing (or at least set coords to default entrance)
+    # open a window to choose room by name, write choice into pos_value
     def get_entrance(self, pos_entries):
         top = Toplevel(self.tk)
         top.title("Entrance Chooser")
