@@ -479,6 +479,12 @@ class Interface():
                 value = obj.get()
                 print(value)
 
+                if field in ["sword", "cape", "compShell"]:
+                    # add equipped outfit to collected outfits (avoids crash when swapping outfits ingame)
+                    for outfit_part in ["cShells", "cSwords", "cCapes"]:
+                        if value not in savedata.get(outfit_part):
+                            savedata.get(outfit_part).append(value)
+
                 savedata.set_field(field, value)
             elif field == "bosses":
                 value = {}
