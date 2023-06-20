@@ -14,3 +14,7 @@ Menu Options:
 - Save As: Write savedata to a hlds file, no default target.
 - Export: Write savedata to one of the four default savefile slots.
 - Set Header: Detect your machine-specific header by choosing a locally created savefile. This needs to be set before you can export savefiles.
+
+## Other Notes
+
+- Equipping an outfit through the editor also sets it as collected (this avoids an crash when swapping outfits ingame)
