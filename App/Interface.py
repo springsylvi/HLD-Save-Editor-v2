@@ -486,6 +486,11 @@ class Interface():
                         if value not in savedata.get(outfit_part):
                             savedata.get(outfit_part).append(value)
 
+                if field in ["eq00", "eq01"]:
+                    # add equipped weapon to collected weapons
+                    if value not in savedata.get("sc"):
+                        savedata.get("sc").append(value)
+
                 savedata.set_field(field, value)
             elif field == "bosses":
                 value = {}
