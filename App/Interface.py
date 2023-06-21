@@ -142,7 +142,8 @@ class Interface():
     def __init__(self, editor, app):
         self.editor = editor
         self.app = app
-        self.tk = Tk(screenName="Editor")
+        self.tk = Tk()
+        self.tk.title("Editor")
         self.tk.option_add('*tearOff', FALSE)
 
         self.window = Frame(self.tk, width=500, height=500) # main window
