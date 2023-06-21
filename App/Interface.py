@@ -243,6 +243,7 @@ class Interface():
         except:
             pass
         self.notebook = ttk.Notebook(self.window)
+        self.notebook.bind("<<NotebookTabChanged>>", lambda x: self.notebook.update_idletasks())
         collect = Frame(self.notebook)
         current = Frame(self.notebook)
         misc =  Frame(self.notebook)
