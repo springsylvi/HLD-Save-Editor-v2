@@ -1,4 +1,4 @@
-import platform, getpass, os
+import platform, getpass, os, configparser
 from Interface import *
 from Editor import *
 from atexit import register
@@ -8,6 +8,7 @@ class App:
 	Main application class.
 	"""
 	
+    @staticmethod
 	def read_config():
 
 		config = configparser.ConfigParser()
@@ -19,7 +20,7 @@ class App:
 		config_file.close()
 		return config
 
-
+    @staticmethod
 	def get_savefile_path(config):
 
 		savefile_path = config.get("main", "path", fallback=None)

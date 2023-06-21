@@ -24,6 +24,15 @@ class FullCB():
     def grid(self, **kw):
         self.cb.grid(**kw)
 
+    # convert a list of FullCBs to a list of id numbers, using a ListMap of the same length with id numbers as keys
+    @staticmethod
+    def convert_cblist(cblist, ids):
+        ret = []
+        for i in range(len(cblist)):
+            if cblist[i].get():
+                ret.append(ids.get_key(ids[i]))
+        return ret
+
 
 class FullDD():
     """
@@ -197,15 +206,6 @@ class Interface():
         # data stored in display fields; list of (name, object) tuples.
         # type of object depends on display type of field
         self.input_fields = []
-        
-
-    # convert a list of FullCBs to a list of id numbers, using a ListMap of the same length with id numbers as keys
-    def convert_cblist(cblist, ids):
-        ret = []
-        for i in range(len(cblist)):
-            if cblist[i].get():
-                ret.append(ids.get_key(ids[i]))
-        return ret
 
 
     # open a window to choose room by name, write choice into pos_value
@@ -224,7 +224,8 @@ class Interface():
         
 
     # close window and write values after selecting entrance
-    def finish_entrance_selection(self, win, pos_entries, room_num):
+    @staticmethod
+    def finish_entrance_selection(win, pos_entries, room_num):
         pos_entries[0].set_value(-10.0)
         pos_entries[1].set_value(-10.0)
         pos_entries[2].set_value(room_num)
@@ -462,7 +463,7 @@ class Interface():
 
             if displaytype == "checkboxlist":
                 const_data = displayinfo.get_const_data()
-                value = Interface.convert_cblist(obj, const_data)
+                value = FullCB.convert_cblist(obj, const_data)
                 print(value)
 
                 if field[-7:] == "modules":

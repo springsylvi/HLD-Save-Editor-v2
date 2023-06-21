@@ -1,6 +1,6 @@
 from json import loads, dumps
 from os.path import splitext, join
-import datetime, platform, configparser, base64
+import platform, base64
 from HLDConstants import HLDConstants
 
 
@@ -40,6 +40,7 @@ class Savedata():
             return value
 
     # parse data from .hlds file
+    @staticmethod
     def parse_hlds(hldsdata):
         savedata_map = loads(hldsdata)
         # convert string keys to numbers
@@ -61,6 +62,7 @@ class Savedata():
         hldsfile.write(hlds)
 
     # parse data from .sav file
+    @staticmethod
     def parse_savefile(jsondata):
         savedata_map = loads(jsondata)
         # parse list/map structures
@@ -102,6 +104,7 @@ class Savedata():
 
     # convert list/map in savedata format to list/map object
     # TODO - tidy up this function (remove int(float()) casting where possible)
+    @staticmethod
     def parse_savedata_collection(raw, fieldtype):
         if fieldtype[0] == "list":
             sep = "&" if "&" in raw else "+"
@@ -128,6 +131,7 @@ class Savedata():
 
 
     # convert list/map object to savedata format
+    @staticmethod
     def export_savedata_collection(obj, fieldtype, listsep):
         if fieldtype[0] == "list":
             ret = ""
