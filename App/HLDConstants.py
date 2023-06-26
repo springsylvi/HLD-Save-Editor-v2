@@ -285,7 +285,7 @@ class HLDConstants():
               "enemies": ["map", "int", "list", "other"],
               "eq00": ["float"],
               "eq01": ["float"],
-              "events": ["list", "int"],
+              "events": ["list", "int"], # TODO - figure out how to handle float values for this
               "fireplaceSave": ["float"],
               "gameName": ["str"],
               "gear": ["float"],
@@ -447,7 +447,119 @@ class HLDConstants():
         (3.4, (296,272))
         ])
 
+    permastate_flags = ListMap([
+        (-1394233, "???"), # visited drifter's house?
+        (-1387056, "Monolith Room Shortcut"),
+        #(-183353, "MegaHugeLab Exit Barriers (Redundant)"),
+        #(-184569, "MegaHugeLab Bridge Left Switch (Redundant)"),
+        #(-184656, "MegaHugeLab Bridge Right Switch (Redundant)"),
+        #(-188251, "MegaHugeLab Dash Challenge Shortcut Barriers (Redundant)"),
+        (-175738, "??? (meltymash arena)"),
+        (-242197, "PlazaAccessLab Upper Arena"),
+        (-86204, "Frog Arena"),
+        (-92673, "Docks Arena"),
+        (-246520, "Plaza Upper Barriers (To Loop)"),
+        #(-242197, "Plaza Lower Barriers (Redundant)"),
+        (-56294, "???"), #bogtemple arena?
+        (-55230, "???"),
+        (-1805493, "???"),
+        (-1073029, "Cave01 Arena"),
+        (-1052455, "Moon Courtyard Arena"),
+        (-508255, "Pre-Mimic Arena"),
+        (-692232, "Post-Baker Shortcut"),
+        (-697361, "Post-Archer Shortcut")
+        ])
 
+    # coughs, key/module doors, terminals, post-arena twirls, boss first encounter flags
+    event_flags = ListMap([
+        (-1534214, "Broken Shallows Cough"),
+        (-1517669, "Tutorial Final Bridge Raised"),
+        (-1994950, "Tutorial Second Cough"),
+        (-1497664, "Tutorial End Cutscene"),
+        (-1392839, "Drifter's House Map Cutscene"),
+        (-252694, "Water Tunnel Cough"),
+        (-226975, "East Bridge Cough"),
+        (-188673, "MegaHugeLab Entrance Barriers"),
+        (-180659, "MegaHugeLab Exit Barriers"),
+        (-187784, "MegaHugeLab Bridge (Left Switch)"),
+        (-185051, "MegaHugeLab Bridge (Right Switch)"),
+        (-185763, "MegaHugeLab Dash Challenge Shortcut Barriers"),
+        (-172942, "MeltyMash Arena Twirl"),
+        (-174854, "MeltyMash Arena Complete"),
+        (-244595, "Plaza Lower Barriers"),
+        (-121994, "PlazaAccessLab Upper Platforms Raised"),
+        (-128598, "White Outfit Key Door"),
+        (-125492, "PlazaAccessLab Right Platforms Raised"),
+        (-128995, "PlazaAccessLab Lower Platforms Raised"),
+        (-85890, "???"),
+        (-96562, "Docks Arena Twirl"),
+        (-94004, "Docks Lower Barriers"),
+        (-1824533, "East 3 Module Door"),
+        (-66314, "BigBogLab Entrance Barriers"),
+        (-66282, "BigBogLab Key Door"),
+        (-65255, "BigBogLab Right Side Shortcut"),
+        (-67405, "BigBogLab Bridge to Module Raised"),
+        (-66509, "BigBogLab Left Side Shortcut"),
+        (-53690, "BogTempleCamp Bridge Raised"),
+        (-45677, "Toad First Encounter"), # double check this
+        (-12502, "East 8 Module Door"),
+        (-1800136, "LoopLab Bridge Raised"),
+        (-1158731, "North Stairs Cough"),
+        (-1148441, "Blue Outfit Key Door"),
+        (-1132716, "Dark Room Barriers"),
+        (-1054677, "MoonCourtyard Arena Twirl"),
+        (-968585, "CrushBackLoop Terminal"),
+        (-955769, "CrushArena Twirl"),
+        (-1053502, "North 3 Module Door"),
+        (-788906, "Pope First Encounter"),
+        (-1054147, "North 8 Module Door"),
+        (115827, "Deadwood Key Door"),
+        (175246, "West First Cough"),
+        (184694, "TheWood Barriers"),
+        (313712, "Yellow Outfit Key Door"),
+        (336860, "PrisonHallEnd Platforms Raised"),
+        (366136, "TitanFalls Cough"),
+        (363992, "TitanFalls Barriers"),
+        (387085, "West 3 Module Door"),
+        (385501, "Vale Shortcut Barriers"),
+        (422213, "BigBattle Key Door"),
+        (196538, "West 8 Module Door"),
+        (231927, "WestDrifterVault Platforms Raised"),
+        (-528219, "Fuschia Outfit Key Door"),
+        (-1852021, "Bfps Platforms Raised"),
+        (-494802, "Mimic First Encounter"),
+        (-412478, "GauntletLinkup Lower Platforms Raised"),
+        (-623679, "South 1 Module Door (Left Elevator)"),
+        (-602468, "BigOne Barriers"),
+        (-593828, "GateBlock Platforms Raised"),
+        (-455636, "DirkDeluge Exit Barriers"),
+        (-412852, "GauntletLinkup Right Platforms Raised"),
+        (-473230, "South 1 Module Door (Right Elevator)"),
+        (-396272, "PillarBird Platforms Raised"),
+        (-388095, "CSpiral Barriers"),
+        (-344922, "Post-Archer Cough"),
+        (-694234, "South 8 Module Door"),
+        (-667462, "Sky Factory Cough"),
+        (-664831, "Sky Factory Turrets Deactivated"),
+        (-1385828, "Horde Mode Key Door")
+        ])
+
+    # uses events list but can have float values
+    # .1 appended to pink drifter event spawns his body with pink outfit collectable, .2 appended doesn't spawn outfit
+    pink_drifter_flags = ListMap([
+        (-1814186, "East Pink Drifter"),
+        (-1096865, "North Pink Drifter"),
+        (386530, "West Pink Drifter"),
+        (-713661, "South Pink Drifter")
+        ])
+
+    # dog encounters
+    nospawn_flags = ListMap([
+        (-145504, "East"),
+        (-109795, "North"),
+        (385194, "West"),
+        (-1871165, "South")
+        ])
 
     # list of each individual value the user can interact with through the UI (some savedata fields are split across multiple display fields or vice versa)
     # tuple elements are unique name, displayinfo obj

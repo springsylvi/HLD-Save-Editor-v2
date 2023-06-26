@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /App/notes.txt
 /App/config.ini
+/config.ini

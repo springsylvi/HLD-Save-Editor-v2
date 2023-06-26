@@ -449,7 +449,15 @@ class Interface():
             bosscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("bosses", bosscbs))
         bossframe.grid(pady=10, column=0, row=1, sticky=N)
-
+        # dog cutscenes
+        dogcsframe = Frame(misc)
+        dogcslabel = Label(dogcsframe, text="Dog Encounters")
+        dogcscbs = [FullCB(dogcsframe, x in savedata.get("noSpawn"), y) for x,y in HLDConstants.nospawn_flags.get_pairs()]
+        dogcslabel.grid(column=0, row=0)
+        for i in range(len(dogcscbs)):
+            dogcscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        self.input_fields.append(("noSpawn", dogcscbs))
+        dogcsframe.grid(pady=10, column=1, row=1, sticky=N)
             
 
     # copy changes in UI to savedata dict
