@@ -17,4 +17,4 @@ Menu Options:
 
 ## Other Notes
 
-- Equipping an outfit through the editor also sets it as collected (this avoids an crash when swapping outfits ingame)
+- Equipping an outfit/gun through the editor also sets it as collected
