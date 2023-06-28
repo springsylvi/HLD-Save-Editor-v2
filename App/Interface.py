@@ -210,7 +210,7 @@ class Interface():
 
     # open a window to choose room by name, write choice into pos_value
     def get_entrance(self, pos_entries):
-        top = Toplevel(self.tk)
+        top = Toplevel()
         top.title("Entrance Chooser")
         room = IntVar(master=top, value=int(pos_entries[2].get()))
         roomarealabels = [Label(top, text=x) for x in ["Intro + Town", "North", "South", "East", "West", "Abyss + Boss Rush"]]
@@ -229,7 +229,7 @@ class Interface():
                         gridcol = i
                         gridrow = 0
                     roombutton.grid(column=gridcol, row=gridrow+2, padx=5)
-                    gridrow = gridrow + 1
+                    gridrow += 1
                     break
                           
         ok_button = Button(top, text="OK", command=lambda: self.finish_entrance_selection(top, pos_entries, room.get()), width=20)
@@ -471,12 +471,23 @@ class Interface():
             dogcscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("noSpawn", dogcscbs))
         dogcsframe.grid(pady=10, column=1, row=1, sticky=N)
+        # cough cutscenes
+        coughframe = Frame(misc)
+        coughlabel = Label(coughframe, text="Cough Cutscenes")
+        coughcbs = [FullCB(coughframe, x in savedata.get("events"), y) for x, y in HLDConstants.cough_cs_flags.get_pairs()]
+        coughlabel.grid(column=0, row=0)
+        for i in range(len(coughcbs)):
+            coughcbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        self.input_fields.append(("coughs", coughcbs))
+        coughframe.grid(pady=10, column=2, row=1, sticky=N)
             
 
     # copy changes in UI to savedata dict
     def sync_savedata(self):
 
         savedata = self.editor.savedata
+
+        temp_events = [] # build event list across multiple display fields
 
         for field, obj in self.input_fields:
             displayinfo = HLDConstants.display_fields.get(field)
@@ -496,6 +507,9 @@ class Interface():
                     # set all 3 outfit parts
                     for outfit_part in ["cShells", "cSwords", "cCapes"]:
                         savedata.set_field(outfit_part, value)
+                elif field in ["coughs"]: # TODO - add other event flags
+                    # add to events list
+                    temp_events += value
                 else:
                     # set field normally
                     savedata.set_field(field, value)
@@ -528,5 +542,7 @@ class Interface():
                 savedata.set_field(field, value)
             else:
                 raise Exception(f"sync_savedata not implemented for field {field}")
+
+        savedata.set_field("events", temp_events)
                 
 

@@ -45,7 +45,7 @@ class DisplayInfo():
 
     # displaytype is what type of UI element is displayed, const_data type varies based on displaytype, row_num is only used for checkboxlist type
     # displaytype values are [int, float, checkbox, checkboxlist, dropdown, other]
-    def __init__(self, displaytype, displaytitle, const_data, row_num=None):
+    def __init__(self, displaytype, displaytitle, const_data=None, row_num=None):
         self.displaytype = displaytype
         self.displaytitle = displaytitle
         self.const_data = const_data
@@ -541,7 +541,25 @@ class HLDConstants():
         (-694234, "South 8 Module Door"),
         (-667462, "Sky Factory Cough"),
         (-664831, "Sky Factory Turrets Deactivated"),
-        (-1385828, "Horde Mode Key Door")
+        (-1385828, "Horde Mode Key Door"),
+        (586666, "Abyss First Cough"),
+        (626776, "Abyss Second Cough")
+        ])
+
+    # coughs
+    cough_cs_flags = ListMap([
+        (-1534214, "Broken Shallows Cough"),
+        (-1994950, "Tutorial Second Cough"),
+        (-1497664, "Tutorial End Cutscene"),
+        (-252694, "Water Tunnel Cough"),
+        (-226975, "East Bridge Cough"),
+        (-1158731, "North Stairs Cough"),
+        (175246, "West First Cough"),
+        (366136, "TitanFalls Cough"),
+        (-344922, "Post-Archer Cough"),
+        (-667462, "Sky Factory Cough"),
+        (586666, "Abyss First Cough"),
+        (626776, "Abyss Second Cough")
         ])
 
     # uses events list but can have float values
@@ -564,13 +582,14 @@ class HLDConstants():
     # list of each individual value the user can interact with through the UI (some savedata fields are split across multiple display fields or vice versa)
     # tuple elements are unique name, displayinfo obj
     # TODO - add extra elements (i.e. field names in input_fields that aren't in the savefile)
+    # TODO - remove unneccesary fields in displayinfo
     display_fields = ListMap([
-        ("badass", DisplayInfo("int", "Pink Drifter Conversations", None)),
+        ("badass", DisplayInfo("int", "Pink Drifter Conversations")),
         ("bosses", DisplayInfo("other", "Bosses Killed", boss_ids)),
         #"bossGearbits": ["list", "str"],
         ("cape", DisplayInfo("dropdown", "Cape", outfit_ids)),
         ("cCapes", DisplayInfo("checkboxlist", "Capes Owned", outfit_ids, 6)),
-        ("CH", DisplayInfo("checkbox", "Alt Drifter", None)),
+        ("CH", DisplayInfo("checkbox", "Alt Drifter")),
         ("charDeaths", DisplayInfo("int", "Total Deaths", None)),
         ("checkAmmo", DisplayInfo("float", "Grenade Ammo", None)),
         ("checkBat", DisplayInfo("float", "Gun Ammo (%)", None)),
@@ -595,7 +614,7 @@ class HLDConstants():
         #"enemies": ["map", "int", "list", "float"], # TODO - list contains multiple types (int, float, str), needs to handle special case
         ("eq00", DisplayInfo("dropdown", "Gun Slot 1", gun_ids)),
         ("eq01", DisplayInfo("dropdown", "Gun Slot 2", gun_ids)),
-        #"events": ["list", "int"],
+        #("events", DisplayInfo("other", "Event Flags")),
         ("fireplaceSave", DisplayInfo("checkbox", "Game Completed", None)),
         ("gameName", DisplayInfo("str", "Savefile Name", None)),
         ("gear", DisplayInfo("int", "Unspent Gearbits", None)),
@@ -607,7 +626,7 @@ class HLDConstants():
         ("healthUp", DisplayInfo("int", "Extra Medkit Slots", None)),
         #"mapMod": ["map", "int", "list", "int"],
         #"newcomerHoardeMessageShown": ["float"],
-        #"noSpawn": ["list", "int"],
+        ("noSpawn", DisplayInfo("checkboxlist", "Dog Encounters")),
         ("noviceMode", DisplayInfo("checkbox", "Novice Mode", None)),
         #"permaS": ["map", "int", "int"],
         #"playT": ["float"],
@@ -627,5 +646,6 @@ class HLDConstants():
         ("warp", DisplayInfo("checkboxlist", "Warp Points", area_ids, 5)),
         ("well", DisplayInfo("checkboxlist", "Pillars", well_ids, 4)),
         #"wellMap": ["list", "int"]
-        ("outfits", DisplayInfo("checkboxlist", "Outfits", outfit_ids, 6))
+        ("outfits", DisplayInfo("checkboxlist", "Outfits", outfit_ids, 6)),
+        ("coughs", DisplayInfo("checkboxlist", "Cough Cutscenes", cough_cs_flags))
         ])
