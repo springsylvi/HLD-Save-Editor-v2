@@ -213,14 +213,27 @@ class Interface():
         top = Toplevel(self.tk)
         top.title("Entrance Chooser")
         room = IntVar(master=top, value=int(pos_entries[2].get()))
+        roomarealabels = [Label(top, text=x) for x in ["Intro + Town", "North", "South", "East", "West", "Abyss + Boss Rush"]]
+        for i, label in enumerate(roomarealabels):
+            label.grid(column=i, row=1, pady=10)
         print(pos_entries[2].get())
-        i = 0
+        gridrow = 0
+        gridcol = 0
+
+        room_display_column_ids = [79, 124, 165, 205, 253, 273] # last room id of area
         for room_id, (room_iname, room_cname) in HLDConstants.roomNames.items():
-            x = Radiobutton(top, text=room_cname, variable=room, value=room_id)
-            x.grid(column=i//31, row=i%31)
-            i = i+1
+            roombutton = Radiobutton(top, text=room_cname, variable=room, value=room_id)
+            for i, x in enumerate(room_display_column_ids):
+                if room_id <= x: # i has reached correct column
+                    if gridcol != i: # start of new column
+                        gridcol = i
+                        gridrow = 0
+                    roombutton.grid(column=gridcol, row=gridrow+2, padx=5)
+                    gridrow = gridrow + 1
+                    break
+                          
         ok_button = Button(top, text="OK", command=lambda: self.finish_entrance_selection(top, pos_entries, room.get()), width=20)
-        ok_button.grid(pady=10, column=0, row=31, columnspan=6)
+        ok_button.grid(pady=10, column=0, row=0, columnspan=6)
         
 
     # close window and write values after selecting entrance
