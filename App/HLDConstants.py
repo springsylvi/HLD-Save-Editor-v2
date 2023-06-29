@@ -447,29 +447,27 @@ class HLDConstants():
         (3.4, (296,272))
         ])
 
-    permastate_flags = ListMap([
+    misc_permastate_flags = ListMap([
         (-1394233, "Drifter's House Mirror"), # 2 is unbroken, 0 is broken
-        (-1387056, "Monolith Room Shortcut"),
-        (-183353, "MegaHugeLab Exit Barriers (Redundant)"),
-        (-184569, "MegaHugeLab Bridge Left Switch (Redundant)"),
-        (-184656, "MegaHugeLab Bridge Right Switch (Redundant)"),
-        (-188251, "MegaHugeLab Dash Challenge Shortcut Barriers (Redundant)"),
         (-175738, "MeltyMash Arena Complete"),
-        (-242197, "Plaza Lower Barriers (Redundant)"),
         (-242197, "PlazaAccessLab Upper Arena"),
         (-86204, "Frog Arena"),
         (-92673, "Docks Arena"),
-        (-246520, "Plaza Upper Barriers (To Loop)"),
-        (-56294, "BogTempleCamp Bridge Raised (Redundant)"),
-        (-55230, "BogTempleCamp Left Side Lower Barriers (Redundant)"),
-        (-1805493, "BogTempleCamp Left Side Upper Barriers (Redundant)"),
         (-1073029, "Cave01 Arena"),
         (-1052455, "Moon Courtyard Arena"),
         (261353, "CliffsideCells Exit Arena"),
         (-508255, "Pre-Mimic Arena"),
-        (-692232, "Post-Baker Shortcut"),
-        (-697361, "Post-Archer Shortcut")
         ])
+
+    shortcut_permastate_flags = ListMap([
+        (-1387056, "Monolith Room from Town"),
+        (-246520, "Docks/Loop from Plaza"),
+        (-692232, "Baker Module/Monolith from Warp"),
+        (-697361, "South Pillar from Warp")
+        ])
+
+    # TODO - arena permastate/event flags
+
 
     # event flags for key/module doors, post-arena twirls, boss first encounter flags, etc.
     misc_event_flags = ListMap([
@@ -657,5 +655,6 @@ class HLDConstants():
         #"wellMap": ["list", "int"]
         ("outfits", DisplayInfo("checkboxlist", "Outfits", outfit_ids, 6)),
         ("coughs", DisplayInfo("checkboxlist", "Cough Cutscenes", cough_cs_flags)),
-        ("terminals", DisplayInfo("checkboxlist", "Terminals", terminal_flags))
+        ("terminals", DisplayInfo("checkboxlist", "Terminals", terminal_flags)),
+        ("shortcuts", DisplayInfo("checkboxlist", "Shortcuts", shortcut_permastate_flags))
         ])

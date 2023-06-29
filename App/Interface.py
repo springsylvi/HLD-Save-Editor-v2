@@ -489,7 +489,15 @@ class Interface():
             self.input_fields.append((miscintsfields[i], miscintsentries[i]))
         miscintsframe.grid(pady=10, column=2, row=1, sticky=N)
         # TODO - add values
-        
+        # shortcuts
+        shortcutframe = Frame(misc)
+        shortcutlabel = Label(shortcutframe, text="Other Shortcuts")
+        shortcutcbs = [FullCB(shortcutframe, x in savedata.get("permaS"), y) for x, y in HLDConstants.shortcut_permastate_flags.get_pairs()]
+        shortcutlabel.grid(column=0, row=0)
+        for i in range(len(shortcutcbs)):
+            shortcutcbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        self.input_fields.append(("shortcuts", shortcutcbs))
+        shortcutframe.grid(pady=10, column=3, row=1, sticky=N)
 
     # copy changes in UI to savedata dict
     def sync_savedata(self):
@@ -525,8 +533,11 @@ class Interface():
                     if field == "terminals":
                         # set corresponding permastate flags
                         for event_id, permastate_id in HLDConstants.terminal_permastate_flags.get_pairs():
-                            if event_id in values:
+                            if event_id in value:
                                 temp_permastate.append(permastate_id)
+                elif field in ["shortcuts"]:
+                    # add to permastate list
+                    temp_permastate += value
                 else:
                     # set field normally
                     savedata.set_field(field, value)
