@@ -421,6 +421,42 @@ class Interface():
             self.input_fields.append((drifterstatsfields[i], drifterstatsentries[i]))
         drifterstatsframe.grid(pady=10, column=2, row=1, sticky=N)
 
+        # bosses
+        bossframe = Frame(misc)
+        bosslabel = Label(bossframe, text="Bosses Killed")
+        bosscbs = [FullCB(bossframe, x in savedata.get("bosses"), y) for x,y in HLDConstants.boss_ids.get_pairs()]
+        bosslabel.grid(column=0, row=0)
+        for i in range(len(bosscbs)):
+            bosscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        self.input_fields.append(("bosses", bosscbs))
+        bossframe.grid(pady=10, column=0, row=0, sticky=N)
+        # dog cutscenes
+        dogcsframe = Frame(misc)
+        dogcslabel = Label(dogcsframe, text="Dog Encounters")
+        dogcscbs = [FullCB(dogcsframe, x in savedata.get("noSpawn"), y) for x,y in HLDConstants.nospawn_flags.get_pairs()]
+        dogcslabel.grid(column=0, row=0)
+        for i in range(len(dogcscbs)):
+            dogcscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        self.input_fields.append(("noSpawn", dogcscbs))
+        dogcsframe.grid(pady=10, column=1, row=0, sticky=N)
+        # cough cutscenes
+        coughframe = Frame(misc)
+        coughlabel = Label(coughframe, text="Cough Cutscenes")
+        coughcbs = [FullCB(coughframe, x in savedata.get("events"), y) for x, y in HLDConstants.cough_cs_flags.get_pairs()]
+        coughlabel.grid(column=0, row=0)
+        for i in range(len(coughcbs)):
+            coughcbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        self.input_fields.append(("coughs", coughcbs))
+        coughframe.grid(pady=10, column=2, row=0, sticky=N)
+        # terminals
+        terminalframe = Frame(misc)
+        terminallabel = Label(terminalframe, text="Terminals")
+        terminalcbs = [FullCB(terminalframe, x in savedata.get("events"), y) for x, y in HLDConstants.terminal_flags.get_pairs()]
+        terminallabel.grid(column=0, row=0, columnspan=3)
+        for i in range(len(terminalcbs)):
+            terminalcbs[i].grid(padx=5, column=i//12, row=(i%12)+1, sticky=W)
+        self.input_fields.append(("terminals", terminalcbs))
+        terminalframe.grid(pady=10, column=3, row=0, columnspan=3, sticky=N)
         # gamemode
         gamemodeframe = Frame(misc)
         gamemodefields = ["CH", "noviceMode"]
@@ -430,7 +466,7 @@ class Interface():
         for i in range(len(gamemodefields)):
             gamemodecbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
             self.input_fields.append((gamemodefields[i], gamemodecbs[i]))
-        gamemodeframe.grid(pady=10, column=0, row=0, sticky=N)
+        gamemodeframe.grid(pady=10, column=0, row=1, sticky=N)
         # misc bools
         miscboolsframe = Frame(misc)
         miscboolsfields = ["hasMap", "fireplaceSave"]
@@ -440,7 +476,7 @@ class Interface():
         for i in range(len(miscboolsfields)):
             miscboolscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
             self.input_fields.append((miscboolsfields[i], miscboolscbs[i]))
-        miscboolsframe.grid(pady=10, column=1, row=0, sticky=N)
+        miscboolsframe.grid(pady=10, column=1, row=1, sticky=N)
         # misc ints
         miscintsframe = Frame(misc)
         miscintsfields = ["badass", "charDeaths"]
@@ -451,36 +487,9 @@ class Interface():
             miscintsentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
             miscintsentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
             self.input_fields.append((miscintsfields[i], miscintsentries[i]))
-        miscintsframe.grid(pady=10, column=2, row=0, sticky=N)
+        miscintsframe.grid(pady=10, column=2, row=1, sticky=N)
         # TODO - add values
-        # bosses
-        bossframe = Frame(misc)
-        bosslabel = Label(bossframe, text="Bosses Killed")
-        bosscbs = [FullCB(bossframe, x in savedata.get("bosses"), y) for x,y in HLDConstants.boss_ids.get_pairs()]
-        bosslabel.grid(column=0, row=0)
-        for i in range(len(bosscbs)):
-            bosscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
-        self.input_fields.append(("bosses", bosscbs))
-        bossframe.grid(pady=10, column=0, row=1, sticky=N)
-        # dog cutscenes
-        dogcsframe = Frame(misc)
-        dogcslabel = Label(dogcsframe, text="Dog Encounters")
-        dogcscbs = [FullCB(dogcsframe, x in savedata.get("noSpawn"), y) for x,y in HLDConstants.nospawn_flags.get_pairs()]
-        dogcslabel.grid(column=0, row=0)
-        for i in range(len(dogcscbs)):
-            dogcscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
-        self.input_fields.append(("noSpawn", dogcscbs))
-        dogcsframe.grid(pady=10, column=1, row=1, sticky=N)
-        # cough cutscenes
-        coughframe = Frame(misc)
-        coughlabel = Label(coughframe, text="Cough Cutscenes")
-        coughcbs = [FullCB(coughframe, x in savedata.get("events"), y) for x, y in HLDConstants.cough_cs_flags.get_pairs()]
-        coughlabel.grid(column=0, row=0)
-        for i in range(len(coughcbs)):
-            coughcbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
-        self.input_fields.append(("coughs", coughcbs))
-        coughframe.grid(pady=10, column=2, row=1, sticky=N)
-            
+        
 
     # copy changes in UI to savedata dict
     def sync_savedata(self):
@@ -488,6 +497,7 @@ class Interface():
         savedata = self.editor.savedata
 
         temp_events = [] # build event list across multiple display fields
+        temp_permastate = [] # TODO - add uneditable flags directly from savedata (these flags are currently deleted whenever saving a file)
 
         # TODO - fix bossgearbits
 
@@ -509,9 +519,14 @@ class Interface():
                     # set all 3 outfit parts
                     for outfit_part in ["cShells", "cSwords", "cCapes"]:
                         savedata.set_field(outfit_part, value)
-                elif field in ["coughs"]: # TODO - add other event flags
+                elif field in ["coughs", "terminals"]: # TODO - add other event flags
                     # add to events list
                     temp_events += value
+                    if field == "terminals":
+                        # set corresponding permastate flags
+                        for event_id, permastate_id in HLDConstants.terminal_permastate_flags.get_pairs():
+                            if event_id in values:
+                                temp_permastate.append(permastate_id)
                 else:
                     # set field normally
                     savedata.set_field(field, value)
@@ -546,5 +561,6 @@ class Interface():
                 raise Exception(f"sync_savedata not implemented for field {field}")
 
         savedata.set_field("events", temp_events)
+        savedata.set_field("permaS", temp_permastate)
                 
 

@@ -455,14 +455,14 @@ class HLDConstants():
         (-184656, "MegaHugeLab Bridge Right Switch (Redundant)"),
         (-188251, "MegaHugeLab Dash Challenge Shortcut Barriers (Redundant)"),
         (-175738, "MeltyMash Arena Complete"),
+        (-242197, "Plaza Lower Barriers (Redundant)"),
         (-242197, "PlazaAccessLab Upper Arena"),
         (-86204, "Frog Arena"),
         (-92673, "Docks Arena"),
         (-246520, "Plaza Upper Barriers (To Loop)"),
-        (-242197, "Plaza Lower Barriers (Redundant)"),
         (-56294, "BogTempleCamp Bridge Raised (Redundant)"),
-        (-55230, "BogTempleCamp Left Side Lower Barriers Lowered (Redundant)"),
-        (-1805493, "BogTempleCamp Left Side Upper Barriers Lowered (Redundant)"),
+        (-55230, "BogTempleCamp Left Side Lower Barriers (Redundant)"),
+        (-1805493, "BogTempleCamp Left Side Upper Barriers (Redundant)"),
         (-1073029, "Cave01 Arena"),
         (-1052455, "Moon Courtyard Arena"),
         (261353, "CliffsideCells Exit Arena"),
@@ -471,87 +471,39 @@ class HLDConstants():
         (-697361, "Post-Archer Shortcut")
         ])
 
-    # coughs, key/module doors, terminals, post-arena twirls, boss first encounter flags
-    event_flags = ListMap([
-        (-1534214, "Broken Shallows Cough"),
-        (-1517669, "Tutorial Final Bridge Raised"),
-        (-1994950, "Tutorial Second Cough"),
-        (-1497664, "Tutorial End Cutscene"),
+    # event flags for key/module doors, post-arena twirls, boss first encounter flags, etc.
+    misc_event_flags = ListMap([
         (-1392839, "Drifter's House Map Cutscene"),
-        (-252694, "Water Tunnel Cough"),
-        (-226975, "East Bridge Cough"),
-        (-188673, "MegaHugeLab Entrance Barriers"),
-        (-180659, "MegaHugeLab Exit Barriers"),
-        (-187784, "MegaHugeLab Bridge (Left Switch)"),
-        (-185051, "MegaHugeLab Bridge (Right Switch)"),
-        (-185763, "MegaHugeLab Dash Challenge Shortcut Barriers"),
         (-172942, "MeltyMash Arena Twirl"),
         (-174854, "FlamePitLab Key Door"),
-        (-244595, "Plaza Lower Barriers"),
-        (-121994, "PlazaAccessLab Upper Platforms Raised"),
         (-128598, "White Outfit Key Door"),
-        (-125492, "PlazaAccessLab Right Platforms Raised"),
-        (-128995, "PlazaAccessLab Lower Platforms Raised"),
         (-85890, "Frog Arena Twirl"),
         (-96562, "Docks Arena Twirl"),
-        (-94004, "Docks Lower Barriers"),
         (-1824533, "East 3 Module Door"),
-        (-66314, "BigBogLab Entrance Barriers"),
         (-66282, "BigBogLab Key Door"),
-        (-65255, "BigBogLab Right Side Shortcut"),
-        (-67405, "BigBogLab Bridge to Module Raised"),
-        (-66509, "BigBogLab Left Side Shortcut"),
-        (-53690, "BogTempleCamp Bridge Raised"),
         (-45677, "Toad First Encounter"), # double check this
         (-12502, "East 8 Module Door"),
-        (-1800136, "LoopLab Bridge Raised"),
-        (-1158731, "North Stairs Cough"),
         (-1148441, "Blue Outfit Key Door"),
-        (-1132716, "Dark Room Barriers"),
         (-1054677, "MoonCourtyard Arena Twirl"),
-        (-968585, "CrushBackLoop Terminal"),
         (-955769, "CrushArena Twirl"),
         (-1053502, "North 3 Module Door"),
         (-788906, "Pope First Encounter"),
         (-1054147, "North 8 Module Door"),
         (115827, "Deadwood Key Door"),
-        (175246, "West First Cough"),
-        (184694, "TheWood Barriers"),
-        (257205, "SlowLab Key Barriers"),
         (274785, "PrisonHall Arena Twirl"),
-        (253426, "SlowLab Exit Barriers"),
-        (383989, "Vale Barriers from SlowLab"),
         (313712, "Yellow Outfit Key Door"),
-        (336860, "PrisonHallEnd Platforms Raised"),
-        (366136, "TitanFalls Cough"),
-        (363992, "TitanFalls Barriers"),
         (387085, "West 3 Module Door"),
-        (385501, "Vale Shortcut Barriers"),
         (422213, "BigBattle Key Door"),
         (196538, "West 8 Module Door"),
-        (231927, "WestDrifterVault Platforms Raised"),
         (-528219, "Fuschia Outfit Key Door"),
-        (-1852021, "Bfps Platforms Raised"),
         (-494802, "Mimic First Encounter"),
-        (-412478, "GauntletLinkup Lower Platforms Raised"),
         (-623679, "South 1 Module Door (Left Elevator)"),
-        (-602468, "BigOne Barriers"),
-        (-593828, "GateBlock Platforms Raised"),
-        (-455636, "DirkDeluge Exit Barriers"),
-        (-412852, "GauntletLinkup Right Platforms Raised"),
         (-473230, "South 1 Module Door (Right Elevator)"),
-        (-396272, "PillarBird Platforms Raised"),
-        (-388095, "CSpiral Barriers"),
-        (-344922, "Post-Archer Cough"),
         (-694234, "South 8 Module Door"),
-        (-667462, "Sky Factory Cough"),
-        (-664831, "Sky Factory Turrets Deactivated"),
         (-1385828, "Horde Mode Key Door"),
-        (586666, "Abyss First Cough"),
-        (626776, "Abyss Second Cough")
         ])
 
-    # coughs
+    # event flags for coughs and judgement cutscenes
     cough_cs_flags = ListMap([
         (-1534214, "Broken Shallows Cough"),
         (-1994950, "Tutorial Second Cough"),
@@ -566,6 +518,57 @@ class HLDConstants():
         (-667462, "Sky Factory Cough"),
         (586666, "Abyss First Cough"),
         (626776, "Abyss Second Cough")
+        ])
+
+    # event flags for terminals
+    terminal_flags = ListMap([
+        (-1517669, "Tutorial Final Bridge Raised"),
+        (-188673, "MegaHugeLab Entrance Barriers"),
+        (-180659, "MegaHugeLab Exit Barriers"),
+        (-187784, "MegaHugeLab Bridge (Left Switch)"),
+        (-185051, "MegaHugeLab Bridge (Right Switch)"),
+        (-185763, "MegaHugeLab Dash Challenge Shortcut Barriers"),
+        (-244595, "Plaza Lower Barriers"),
+        (-121994, "PlazaAccessLab Upper Platforms Raised"),
+        (-125492, "PlazaAccessLab Right Platforms Raised"),
+        (-128995, "PlazaAccessLab Lower Platforms Raised"),
+        (-94004, "Docks Lower Barriers"),
+        (-66314, "BigBogLab Entrance Barriers"),
+        (-65255, "BigBogLab Right Side Shortcut"),
+        (-67405, "BigBogLab Bridge to Module Raised"),
+        (-66509, "BigBogLab Left Side Shortcut"),
+        (-53690, "BogTempleCamp Bridge Raised"),
+        (-1800136, "LoopLab Bridge Raised"),
+        (-1132716, "Dark Room Barriers"),
+        (-968585, "CrushBackLoop Terminal"),
+        (184694, "TheWood Barriers"),
+        (257205, "SlowLab Key Barriers"),
+        (253426, "SlowLab Exit Barriers"),
+        (383989, "Vale Barriers from SlowLab"),
+        (336860, "PrisonHallEnd Platforms Raised"),
+        (363992, "TitanFalls Barriers"),
+        (385501, "Vale Shortcut Barriers"),
+        (231927, "WestDrifterVault Platforms Raised"),
+        (-1852021, "Bfps Platforms Raised"),
+        (-412478, "GauntletLinkup Lower Platforms Raised"),
+        (-602468, "BigOne Barriers"),
+        (-593828, "GateBlock Platforms Raised"),
+        (-455636, "DirkDeluge Exit Barriers"),
+        (-412852, "GauntletLinkup Right Platforms Raised"),
+        (-396272, "PillarBird Platforms Raised"),
+        (-388095, "CSpiral Barriers"),
+        (-664831, "Sky Factory Turrets Deactivated"),
+        ])
+    # permastate flags for terminals (tuples of event_id, permastate_id)
+    terminal_permastate_flags = ListMap([
+        (-180659, -183353), # MegaHugeLab Exit Barriers
+        (-187784, -184569), # MegaHugeLab Bridge (Left Switch)
+        (-185051, -184656), # MegaHugeLab Bridge (Right Switch)
+        (-185763, -188251), # MegaHugeLab Dash Challenge Shortcut Barriers
+        (-244595, -242197), # Plaza Lower Barriers
+        (-53690, -56294), # BogTempleCamp Bridge Raised
+        (-53690, -55230), # BogTempleCamp Left Side Lower Barriers
+        (-53690, -1805493), # BogTempleCamp Left Side Upper Barriers
         ])
 
     # uses events list but can have float values
@@ -653,5 +656,6 @@ class HLDConstants():
         ("well", DisplayInfo("checkboxlist", "Pillars", well_ids, 4)),
         #"wellMap": ["list", "int"]
         ("outfits", DisplayInfo("checkboxlist", "Outfits", outfit_ids, 6)),
-        ("coughs", DisplayInfo("checkboxlist", "Cough Cutscenes", cough_cs_flags))
+        ("coughs", DisplayInfo("checkboxlist", "Cough Cutscenes", cough_cs_flags)),
+        ("terminals", DisplayInfo("checkboxlist", "Terminals", terminal_flags))
         ])
