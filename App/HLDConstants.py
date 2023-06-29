@@ -449,14 +449,6 @@ class HLDConstants():
 
     misc_permastate_flags = ListMap([
         (-1394233, "Drifter's House Mirror"), # 2 is unbroken, 0 is broken
-        (-175738, "MeltyMash Arena Complete"),
-        (-242197, "PlazaAccessLab Upper Arena"),
-        (-86204, "Frog Arena"),
-        (-92673, "Docks Arena"),
-        (-1073029, "Cave01 Arena"),
-        (-1052455, "Moon Courtyard Arena"),
-        (261353, "CliffsideCells Exit Arena"),
-        (-508255, "Pre-Mimic Arena"),
         ])
 
     shortcut_permastate_flags = ListMap([
@@ -466,29 +458,33 @@ class HLDConstants():
         (-697361, "South Pillar from Warp")
         ])
 
-    # TODO - arena permastate/event flags
-
+    # (permastate id, twirl event id, name) for arenas
+    arena_flags = [
+        (-175738, -172942, "MeltyMash Arena"),
+        (-86204, -85890, "Frog Arena"),
+        (-92673, -96562, "Docks Arena"),
+        (-1073029, None, "Cave01 Arena"),
+        (-1052455, -1054677, "Moon Courtyard Arena"),
+        (None, -955769, "Crush Arena"),
+        (261353, None, "CliffsideCells Exit Arena"),
+        (None, 274785, "PrisonHall Arena"),
+        (-508255, None, "Pre-Mimic Arena")
+        ]
 
     # event flags for key/module doors, post-arena twirls, boss first encounter flags, etc.
     misc_event_flags = ListMap([
         (-1392839, "Drifter's House Map Cutscene"),
-        (-172942, "MeltyMash Arena Twirl"),
         (-174854, "FlamePitLab Key Door"),
         (-128598, "White Outfit Key Door"),
-        (-85890, "Frog Arena Twirl"),
-        (-96562, "Docks Arena Twirl"),
         (-1824533, "East 3 Module Door"),
         (-66282, "BigBogLab Key Door"),
         (-45677, "Toad First Encounter"), # double check this
         (-12502, "East 8 Module Door"),
         (-1148441, "Blue Outfit Key Door"),
-        (-1054677, "MoonCourtyard Arena Twirl"),
-        (-955769, "CrushArena Twirl"),
         (-1053502, "North 3 Module Door"),
         (-788906, "Pope First Encounter"),
         (-1054147, "North 8 Module Door"),
         (115827, "Deadwood Key Door"),
-        (274785, "PrisonHall Arena Twirl"),
         (313712, "Yellow Outfit Key Door"),
         (387085, "West 3 Module Door"),
         (422213, "BigBattle Key Door"),
@@ -581,7 +577,7 @@ class HLDConstants():
     # dog encounters
     nospawn_flags = ListMap([
         (-145504, "East"),
-        (-109795, "North"),
+        (-1097954, "North"),
         (385194, "West"),
         (-1871165, "South")
         ])
@@ -656,5 +652,6 @@ class HLDConstants():
         ("outfits", DisplayInfo("checkboxlist", "Outfits", outfit_ids, 6)),
         ("coughs", DisplayInfo("checkboxlist", "Cough Cutscenes", cough_cs_flags)),
         ("terminals", DisplayInfo("checkboxlist", "Terminals", terminal_flags)),
-        ("shortcuts", DisplayInfo("checkboxlist", "Shortcuts", shortcut_permastate_flags))
+        ("shortcuts", DisplayInfo("checkboxlist", "Shortcuts", shortcut_permastate_flags)),
+        ("arenas", DisplayInfo("other", "Arenas"))
         ])

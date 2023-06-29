@@ -274,8 +274,8 @@ class Interface():
         welllabel = Label(wellframe, text="Pillars")
         wellcbs = [FullCB(wellframe, x in savedata.get("well"), HLDConstants.well_ids.get(x)) for x in range(4)]
         welllabel.grid(column=0, row=0)
-        for i in range(len(wellcbs)):
-            wellcbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        for i, x in enumerate(wellcbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("well", wellcbs))
         wellframe.grid(pady=10, column=0, row=0, sticky=N)
         # warp
@@ -283,8 +283,8 @@ class Interface():
         warplabel = Label(warpframe, text="Warps")
         warpcbs = [FullCB(warpframe, x in savedata.get("warp"), HLDConstants.area_ids.get(x)) for x in range(5)]
         warplabel.grid(column=0, row=0)
-        for i in range(len(warpcbs)):
-            warpcbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        for i, x in enumerate(warpcbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("warp", warpcbs))
         warpframe.grid(pady=10, column=1, row=0, sticky=N)
         # skill
@@ -292,8 +292,8 @@ class Interface():
         skilllabel = Label(skillframe, text="Skills")
         skillcbs = [FullCB(skillframe, x in savedata.get("skill"), HLDConstants.skill_ids.get(x)) for x in range(1,7)]
         skilllabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(skillcbs)):
-            skillcbs[i].grid(padx=5, column=i//3, row=i%3+1, sticky=W)
+        for i, x in enumerate(skillcbs):
+            x.grid(padx=5, column=i//3, row=i%3+1, sticky=W)
         self.input_fields.append(("skill", skillcbs))
         skillframe.grid(pady=10, column=2, row=0, sticky=N)
         # modules
@@ -323,8 +323,8 @@ class Interface():
         outfitlabel = Label(outfitframe, text="Outfits")
         outfitcbs = [FullCB(outfitframe, x in savedata.get("cShells"), y) for x,y in HLDConstants.outfit_ids.get_pairs()]
         outfitlabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(outfitcbs)):
-            outfitcbs[i].grid(padx=5, column=i//6, row=i%6+1, sticky=W)
+        for i, x in enumerate(outfitcbs):
+            x.grid(padx=5, column=i//6, row=i%6+1, sticky=W)
         self.input_fields.append(("outfits", outfitcbs))
         outfitframe.grid(pady=10, column=0, row=1, columnspan=2, sticky=N)
         # sc + scUp
@@ -333,8 +333,8 @@ class Interface():
         sccbs = [FullCB(scframe, x in savedata.get("sc"), y) for x,y in HLDConstants.gun_ids.get_pairs()]
         scupcbs = [FullCB(scframe, x in savedata.get("scUp"), y + " Upgrade") for x,y in HLDConstants.gun_ids.get_pairs()]
         sclabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(sccbs)):
-            sccbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        for i, x in enumerate(sccbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
             scupcbs[i].grid(padx=5, column=1, row=i+1, sticky=W)
         self.input_fields.append(("sc", sccbs))
         self.input_fields.append(("scUp", scupcbs))
@@ -345,10 +345,10 @@ class Interface():
         tabletarealabels = [Label(tabletframe, text=x) for x in ["North", "South", "East", "West"]]
         tabletcbs = [FullCB(tabletframe, x in savedata.get("tablet"), y) for x,y in HLDConstants.tablet_ids.get_pairs()]
         tabletlabel.grid(column=0, row=0, columnspan=4)
-        for i in range(len(tabletcbs)):
-            tabletcbs[i].grid(padx=5, column=i//4, row=i%4+2, sticky=W)
-        for i in range(len(tabletarealabels)):
-            tabletarealabels[i].grid(padx=5, column=i, row=1)
+        for i, x in enumerate(tabletcbs):
+            x.grid(padx=5, column=i//4, row=i%4+2, sticky=W)
+        for i, x in enumerate(tabletarealabels):
+            x.grid(padx=5, column=i, row=1)
         self.input_fields.append(("tablet", tabletcbs))
         tabletframe.grid(pady=10, column=4, row=1, columnspan=4, sticky=N)
 
@@ -358,10 +358,10 @@ class Interface():
         upgradeslabel = Label(upgradesframe, text="Upgrades")
         upgradesentries = [FullEntry(upgradesframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in upgradesfields]
         upgradeslabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(upgradesfields)):
-            upgradesentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
-            upgradesentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
-            self.input_fields.append((upgradesfields[i], upgradesentries[i]))
+        for i, x in enumerate(upgradesentries):
+            x.entry.grid(padx=5, column=0, row=i+1, sticky=W)
+            x.label.grid(padx=5, column=1, row=i+1, sticky=W)
+            self.input_fields.append((upgradesfields[i], x))
         upgradesframe.grid(pady=10, column=0, row=2, columnspan=2, sticky=N)
         # misc_collect
         misccollectframe = Frame(collect)
@@ -369,10 +369,10 @@ class Interface():
         misccollectlabel = Label(misccollectframe, text="Other Collectables")
         misccollectentries = [FullEntry(misccollectframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in misccollectfields]
         misccollectlabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(misccollectfields)):
-            misccollectentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
-            misccollectentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
-            self.input_fields.append((misccollectfields[i], misccollectentries[i]))
+        for i, x in enumerate(misccollectentries):
+            x.entry.grid(padx=5, column=0, row=i+1, sticky=W)
+            x.label.grid(padx=5, column=1, row=i+1, sticky=W)
+            self.input_fields.append((misccollectfields[i], x))
         misccollectframe.grid(pady=10, column=2, row=2, columnspan=2, sticky=N)
 
         # equipped outfit
@@ -381,10 +381,10 @@ class Interface():
         outfiteqlabel = Label(outfiteqframe, text="Equipped Outfit")
         outfiteqdds = [FullDD(outfiteqframe, HLDConstants.outfit_ids.get(savedata.get(x)), HLDConstants.outfit_ids, HLDConstants.display_fields.get(x).get_title()) for x in outfiteqfields]
         outfiteqlabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(outfiteqdds)):
-            outfiteqdds[i].dd.grid(column=0, row=1+i, sticky=E)
-            outfiteqdds[i].label.grid(column=1, row=1+i, sticky=W)
-            self.input_fields.append((outfiteqfields[i], outfiteqdds[i]))
+        for i, x in enumerate(outfiteqdds):
+            x.dd.grid(column=0, row=1+i, sticky=E)
+            x.label.grid(column=1, row=1+i, sticky=W)
+            self.input_fields.append((outfiteqfields[i], x))
         outfiteqframe.grid(pady=10, column=0, row=0, columnspan=2, sticky=N)
         # equipped guns
         sceqframe = Frame(current)
@@ -392,10 +392,10 @@ class Interface():
         sceqlabel = Label(sceqframe, text="Equipped Guns")
         sceqdds = [FullDD(sceqframe, HLDConstants.gun_ids.get(savedata.get(x)), HLDConstants.gun_ids, HLDConstants.display_fields.get(x).get_title()) for x in sceqfields]
         sceqlabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(sceqdds)):
-            sceqdds[i].dd.grid(column=0, row=1+i, sticky=E)
-            sceqdds[i].label.grid(column=1, row=1+i, sticky=W)
-            self.input_fields.append((sceqfields[i], sceqdds[i]))
+        for i, x in enumerate(sceqdds):
+            x.dd.grid(column=0, row=1+i, sticky=E)
+            x.label.grid(column=1, row=1+i, sticky=W)
+            self.input_fields.append((sceqfields[i], x))
         sceqframe.grid(pady=10, column=2, row=0, columnspan=2, sticky=N)
         # checkX/checkY/checkRoom + entrance warp
         drifter_pos = Frame(current)
@@ -404,10 +404,10 @@ class Interface():
         drifter_pos_label.grid(column=0, row=0, columnspan=2)
         drifter_posentries = [FullEntry(drifter_pos, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in drifter_posfields]
         drifter_pos_button = Button(drifter_pos, text="Choose Room", command=lambda: self.get_entrance(drifter_posentries))
-        for i in range(len(drifter_posentries)):
-            drifter_posentries[i].entry.grid(column=0, row=1+i, sticky=E)
-            drifter_posentries[i].label.grid(column=1, row=1+i, sticky=W)
-            self.input_fields.append((drifter_posfields[i], drifter_posentries[i]))
+        for i, x in enumerate(drifter_posentries):
+            x.entry.grid(column=0, row=1+i, sticky=E)
+            x.label.grid(column=1, row=1+i, sticky=W)
+            self.input_fields.append((drifter_posfields[i], x))
         drifter_pos_button.grid(column=0, row=4, columnspan=2)
         drifter_pos.grid(pady=10, column=0, row=1)
         # drifterstats (health + ammo)
@@ -416,10 +416,10 @@ class Interface():
         drifterstatslabel = Label(drifterstatsframe, text="Health/Ammo")
         drifterstatsentries = [FullEntry(drifterstatsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in drifterstatsfields]
         drifterstatslabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(drifterstatsfields)):
-            drifterstatsentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
-            drifterstatsentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
-            self.input_fields.append((drifterstatsfields[i], drifterstatsentries[i]))
+        for i, x in enumerate(drifterstatsentries):
+            x.entry.grid(padx=5, column=0, row=i+1, sticky=W)
+            x.label.grid(padx=5, column=1, row=i+1, sticky=W)
+            self.input_fields.append((drifterstatsfields[i], x))
         drifterstatsframe.grid(pady=10, column=2, row=1, sticky=N)
 
         # bosses
@@ -427,8 +427,8 @@ class Interface():
         bosslabel = Label(bossframe, text="Bosses Killed")
         bosscbs = [FullCB(bossframe, x in savedata.get("bosses"), y) for x,y in HLDConstants.boss_ids.get_pairs()]
         bosslabel.grid(column=0, row=0)
-        for i in range(len(bosscbs)):
-            bosscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        for i, x in enumerate(bosscbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("bosses", bosscbs))
         bossframe.grid(pady=10, column=0, row=0, sticky=N)
         # dog cutscenes
@@ -436,8 +436,8 @@ class Interface():
         dogcslabel = Label(dogcsframe, text="Dog Encounters")
         dogcscbs = [FullCB(dogcsframe, x in savedata.get("noSpawn"), y) for x,y in HLDConstants.nospawn_flags.get_pairs()]
         dogcslabel.grid(column=0, row=0)
-        for i in range(len(dogcscbs)):
-            dogcscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        for i, x in enumerate(dogcscbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("noSpawn", dogcscbs))
         dogcsframe.grid(pady=10, column=1, row=0, sticky=N)
         # cough cutscenes
@@ -445,8 +445,8 @@ class Interface():
         coughlabel = Label(coughframe, text="Cough Cutscenes")
         coughcbs = [FullCB(coughframe, x in savedata.get("events"), y) for x, y in HLDConstants.cough_cs_flags.get_pairs()]
         coughlabel.grid(column=0, row=0)
-        for i in range(len(coughcbs)):
-            coughcbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        for i, x in enumerate(coughcbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("coughs", coughcbs))
         coughframe.grid(pady=10, column=2, row=0, sticky=N)
         # terminals
@@ -454,8 +454,8 @@ class Interface():
         terminallabel = Label(terminalframe, text="Terminals")
         terminalcbs = [FullCB(terminalframe, x in savedata.get("events"), y) for x, y in HLDConstants.terminal_flags.get_pairs()]
         terminallabel.grid(column=0, row=0, columnspan=3)
-        for i in range(len(terminalcbs)):
-            terminalcbs[i].grid(padx=5, column=i//12, row=(i%12)+1, sticky=W)
+        for i, x in enumerate(terminalcbs):
+            x.grid(padx=5, column=i//12, row=(i%12)+1, sticky=W)
         self.input_fields.append(("terminals", terminalcbs))
         terminalframe.grid(pady=10, column=3, row=0, columnspan=3, sticky=N)
         # gamemode
@@ -464,9 +464,9 @@ class Interface():
         gamemodelabel = Label(gamemodeframe, text="Game Mode")
         gamemodecbs = [FullCB(gamemodeframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in gamemodefields]
         gamemodelabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(gamemodefields)):
-            gamemodecbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
-            self.input_fields.append((gamemodefields[i], gamemodecbs[i]))
+        for i, x in enumerate(gamemodecbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
+            self.input_fields.append((gamemodefields[i], x))
         gamemodeframe.grid(pady=10, column=0, row=1, sticky=N)
         # misc bools
         miscboolsframe = Frame(misc)
@@ -474,9 +474,9 @@ class Interface():
         miscboolslabel = Label(miscboolsframe, text="Misc Values 1")
         miscboolscbs = [FullCB(miscboolsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title()) for x in miscboolsfields]
         miscboolslabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(miscboolsfields)):
-            miscboolscbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
-            self.input_fields.append((miscboolsfields[i], miscboolscbs[i]))
+        for i, x in enumerate(miscboolscbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
+            self.input_fields.append((miscboolsfields[i], x))
         miscboolsframe.grid(pady=10, column=1, row=1, sticky=N)
         # misc ints
         miscintsframe = Frame(misc)
@@ -484,10 +484,10 @@ class Interface():
         miscintslabel = Label(miscintsframe, text="Misc Values 2")
         miscintsentries = [FullEntry(miscintsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in miscintsfields]
         miscintslabel.grid(column=0, row=0, columnspan=2)
-        for i in range(len(miscintsfields)):
-            miscintsentries[i].entry.grid(padx=5, column=0, row=i+1, sticky=W)
-            miscintsentries[i].label.grid(padx=5, column=1, row=i+1, sticky=W)
-            self.input_fields.append((miscintsfields[i], miscintsentries[i]))
+        for i, x in enumerate(miscintsentries):
+            x.entry.grid(padx=5, column=0, row=i+1, sticky=W)
+            x.label.grid(padx=5, column=1, row=i+1, sticky=W)
+            self.input_fields.append((miscintsfields[i], x))
         miscintsframe.grid(pady=10, column=2, row=1, sticky=N)
         # TODO - add values
         # shortcuts
@@ -495,10 +495,20 @@ class Interface():
         shortcutlabel = Label(shortcutframe, text="Other Shortcuts")
         shortcutcbs = [FullCB(shortcutframe, x in savedata.get("permaS"), y) for x, y in HLDConstants.shortcut_permastate_flags.get_pairs()]
         shortcutlabel.grid(column=0, row=0)
-        for i in range(len(shortcutcbs)):
-            shortcutcbs[i].grid(padx=5, column=0, row=i+1, sticky=W)
+        for i, x in enumerate(shortcutcbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("shortcuts", shortcutcbs))
         shortcutframe.grid(pady=10, column=3, row=1, sticky=N)
+        # arenas
+        arenaframe = Frame(misc)
+        arenalabel = Label(arenaframe, text="Arenas")
+        arenacbs = [FullCB(arenaframe, (x in savedata.get("permaS") if x is not None else y in savedata.get("events")), z) for x, y, z in HLDConstants.arena_flags]
+        arenalabel.grid(column=0, row=0)
+        for i, x in enumerate(arenacbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
+        self.input_fields.append(("arenas", arenacbs))
+        arenaframe.grid(pady=10, column=4, row=1, sticky=N)
+
 
     # copy changes in UI to savedata dict
     def sync_savedata(self):
@@ -569,6 +579,13 @@ class Interface():
                         value[boss_id] = boss_coords
                 print(value)
                 savedata.set_field(field, value)
+            elif field == "arenas":
+                for i, (permastate_id, event_id, x) in enumerate(HLDConstants.arena_flags):
+                    if obj[i].get():
+                        if permastate_id is not None:
+                            temp_permastate.append(permastate_id)
+                        if event_id is not None:
+                            temp_events.append(event_id)
             else:
                 raise Exception(f"sync_savedata not implemented for field {field}")
 
