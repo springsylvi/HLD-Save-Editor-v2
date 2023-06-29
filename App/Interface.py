@@ -489,6 +489,8 @@ class Interface():
 
         temp_events = [] # build event list across multiple display fields
 
+        # TODO - fix bossgearbits
+
         for field, obj in self.input_fields:
             displayinfo = HLDConstants.display_fields.get(field)
             displaytype = displayinfo.get_displaytype()
