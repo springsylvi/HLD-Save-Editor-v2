@@ -139,7 +139,8 @@ class Interface():
     def import_header(self):
         try:
             filename = filedialog.askopenfilename(initialdir=self.app.savefile_path, filetypes=[("Savefile", "*.sav")])
-            self.editor.get_header(filename)
+            header = self.editor.get_header(filename)
+            self.set_status_message(f"local header set to {header}")
         except Exception as e:
             showerror(title=type(e), message=e)
 

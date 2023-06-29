@@ -203,9 +203,9 @@ class Editor():
         savefile = open(filename, "rb", buffering=0)
         header = base64.standard_b64decode(savefile.read())[0:60]
         header_text = base64.standard_b64encode(header).decode()
-        print(header_text)
         self.config["main"]["header"] = header_text
         savefile.close()
+        return header_text
         
     def __str__(self):
         if self.savedata:
