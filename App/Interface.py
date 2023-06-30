@@ -526,7 +526,19 @@ class Interface():
         savedata = self.editor.savedata
 
         temp_events = [] # build event list across multiple display fields
-        temp_permastate = [] # TODO - add uneditable flags directly from savedata (these flags are currently deleted whenever saving a file)
+        temp_permastate = []
+
+        # add uneditable flags directly from savedata
+        for event_id, x in HLDConstants.misc_event_flags.get_pairs():
+            if event_id in savedata.get("events"):
+                temp_events.append(event_id)
+        for permastate_id, x in HLDConstants.misc_permastate_flags.get_pairs():
+            if permastate_id in savedata.get("events"):
+                temp_events.append(permastate_id)
+        print("misc_events : uneditable")
+        print(temp_events)
+        print("misc_permastate : uneditable")
+        print(temp_permastate)
 
         # TODO - fix bossgearbits
 
