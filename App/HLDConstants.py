@@ -471,18 +471,23 @@ class HLDConstants():
         (-508255, None, "Pre-Mimic Arena")
         ]
 
-    # event flags for key/module doors, post-arena twirls, boss first encounter flags, etc.
+    # event flags for boss first encounter flags, map cs
     misc_event_flags = ListMap([
         (-1392839, "Drifter's House Map Cutscene"),
-        (-174854, "FlamePitLab Key Door"),
+        (-45677, "Toad First Encounter"), # double check this
+        (-788906, "Pope First Encounter"),
+        (-494802, "Mimic First Encounter")
+        ])
+
+    # event flags for doors being opened
+    door_flags = ListMap([
+        (-174854, "MeltyMashArena Key Door"),
         (-128598, "White Outfit Key Door"),
         (-1824533, "East 3 Module Door"),
         (-66282, "BigBogLab Key Door"),
-        (-45677, "Toad First Encounter"), # double check this
         (-12502, "East 8 Module Door"),
         (-1148441, "Blue Outfit Key Door"),
         (-1053502, "North 3 Module Door"),
-        (-788906, "Pope First Encounter"),
         (-1054147, "North 8 Module Door"),
         (115827, "Deadwood Key Door"),
         (313712, "Yellow Outfit Key Door"),
@@ -490,11 +495,10 @@ class HLDConstants():
         (422213, "BigBattle Key Door"),
         (196538, "West 8 Module Door"),
         (-528219, "Fuschia Outfit Key Door"),
-        (-494802, "Mimic First Encounter"),
         (-623679, "South 1 Module Door (Left Elevator)"),
         (-473230, "South 1 Module Door (Right Elevator)"),
         (-694234, "South 8 Module Door"),
-        (-1385828, "Horde Mode Key Door"),
+        (-1385828, "Horde Mode Key Door")
         ])
 
     # event flags for coughs and judgement cutscenes
@@ -653,5 +657,6 @@ class HLDConstants():
         ("coughs", DisplayInfo("checkboxlist", "Cough Cutscenes", cough_cs_flags)),
         ("terminals", DisplayInfo("checkboxlist", "Terminals", terminal_flags)),
         ("shortcuts", DisplayInfo("checkboxlist", "Shortcuts", shortcut_permastate_flags)),
-        ("arenas", DisplayInfo("other", "Arenas"))
+        ("arenas", DisplayInfo("other", "Arenas")),
+        ("doors", DisplayInfo("checkboxlist", "Doors Unlocked", door_flags))
         ])
