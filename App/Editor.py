@@ -158,6 +158,7 @@ class Editor():
         self.filename = None # name of loaded .hlds file
         self.savedata = None
 
+
     def load(self, filename):
         ext = splitext(filename)[1]
         if ext == ".hlds":
@@ -176,15 +177,12 @@ class Editor():
 
         
     def save(self, filename):
-        if self.savedata is None:
-            raise Exception("No Savefile Loaded")
         with open(filename, "wt") as hldsfile:
             self.savedata.save_hlds(hldsfile)
+        self.filename = filename
 
 
     def export(self, slot):
-        if self.savedata is None:
-            raise Exception("No Savefile Loaded")
         header_text = self.config.get("main", "header", fallback=None)
         if header_text is None:
             raise Exception("Cannot export savefile without header. Set header from the options menu first.")

@@ -39,7 +39,6 @@ class ListMap():
         return len(self.ilist)
 
 
-# TODO - use keyword arguments more
 class DisplayInfo():
     """
     Contains info about how to display a type of display field.
@@ -47,11 +46,10 @@ class DisplayInfo():
 
     # displaytype is what type of UI element is displayed, const_data type varies based on displaytype, row_num is only used for checkboxlist type
     # displaytype values are [int, float, checkbox, checkboxlist, dropdown, other]
-    def __init__(self, displaytype, displaytitle, const_data=None, row_num=None):
+    def __init__(self, displaytype, displaytitle, const_data=None):
         self.displaytype = displaytype
         self.displaytitle = displaytitle
         self.const_data = const_data
-        self.row_num = row_num
 
     def get_displaytype(self):
         return self.displaytype
@@ -597,7 +595,7 @@ class HLDConstants():
         ("bosses", DisplayInfo("other", "Bosses Killed", boss_ids)),
         #"bossGearbits": ["list", "str"],
         ("cape", DisplayInfo("dropdown", "Cape", outfit_ids)),
-        ("cCapes", DisplayInfo("checkboxlist", "Capes Owned", outfit_ids, 6)),
+        ("cCapes", DisplayInfo("checkboxlist", "Capes Owned", outfit_ids)),
         ("CH", DisplayInfo("checkbox", "Alt Drifter")),
         ("charDeaths", DisplayInfo("int", "Total Deaths", None)),
         ("checkAmmo", DisplayInfo("float", "Grenade Ammo", None)),
@@ -609,13 +607,13 @@ class HLDConstants():
         ("checkX", DisplayInfo("float", "X Position", None)),
         ("checkY", DisplayInfo("float", "Y Position", None)),
         #"cl": ["map", "int", "list", "int"],
-        ("eastmodules", DisplayInfo("checkboxlist", "East Modules", east_modules, 8)),
-        ("northmodules", DisplayInfo("checkboxlist", "North Modules", north_modules, 8)),
-        ("westmodules", DisplayInfo("checkboxlist", "West Modules", west_modules, 8)),
-        ("southmodules", DisplayInfo("checkboxlist", "South Modules", south_modules, 8)),
+        ("eastmodules", DisplayInfo("checkboxlist", "East Modules", east_modules)),
+        ("northmodules", DisplayInfo("checkboxlist", "North Modules", north_modules)),
+        ("westmodules", DisplayInfo("checkboxlist", "West Modules", west_modules)),
+        ("southmodules", DisplayInfo("checkboxlist", "South Modules", south_modules)),
         ("compShell", DisplayInfo("dropdown", "Droid", outfit_ids)),
-        ("cShells", DisplayInfo("checkboxlist", "Droids Owned", outfit_ids, 6)),
-        ("cSwords", DisplayInfo("checkboxlist", "Swords Owned", outfit_ids, 6)),
+        ("cShells", DisplayInfo("checkboxlist", "Droids Owned", outfit_ids)),
+        ("cSwords", DisplayInfo("checkboxlist", "Swords Owned", outfit_ids)),
         #("cCues", lambda sd: sd.get("cues"), DisplayInfo("?", "?", None)),
         #"dateTime": ["float"],
         #"destruct": ["map", "int", "list", "float"],
@@ -623,7 +621,6 @@ class HLDConstants():
         #"enemies": ["map", "int", "list", "float"], # TODO - list contains multiple types (int, float, str), needs to handle special case
         ("eq00", DisplayInfo("dropdown", "Gun Slot 1", gun_ids)),
         ("eq01", DisplayInfo("dropdown", "Gun Slot 2", gun_ids)),
-        #("events", DisplayInfo("other", "Event Flags")),
         ("fireplaceSave", DisplayInfo("checkbox", "Game Completed", None)),
         ("gameName", DisplayInfo("str", "Savefile Name", None)),
         ("gear", DisplayInfo("int", "Unspent Gearbits", None)),
@@ -635,27 +632,26 @@ class HLDConstants():
         ("healthUp", DisplayInfo("int", "Extra Medkit Slots", None)),
         #"mapMod": ["map", "int", "list", "int"],
         #"newcomerHoardeMessageShown": ["float"],
-        ("noSpawn", DisplayInfo("checkboxlist", "Dog Encounters")),
+        ("noSpawn", DisplayInfo("checkboxlist", "Dog Encounters", nospawn_flags)),
         ("noviceMode", DisplayInfo("checkbox", "Novice Mode", None)),
-        #"permaS": ["map", "int", "int"],
         #"playT": ["float"],
         #"rooms": ["list", "int"],
-        ("sc", DisplayInfo("checkboxlist", "Guns Owned", gun_ids, 6)),
-        ("scUp", DisplayInfo("checkboxlist", "Guns Upgraded", gun_ids, 6)),
+        ("sc", DisplayInfo("checkboxlist", "Guns Owned", gun_ids)),
+        ("scUp", DisplayInfo("checkboxlist", "Guns Upgraded", gun_ids)),
         #"scK": ["map", "int", "int"],
-        ("skill", DisplayInfo("checkboxlist", "Skills", skill_ids, 6)),
+        ("skill", DisplayInfo("checkboxlist", "Skills", skill_ids)),
         ("specialUp", DisplayInfo("int", "Max Grenades", None)),
         #"successfulCollectTimes": ["float"],
         #"successfulHealTimes": ["float"],
         #"successfulWarpTimes": ["float"],
         ("sword", DisplayInfo("dropdown", "Sword", None)),
-        ("tablet", DisplayInfo("checkboxlist", "Monoliths", tablet_ids, 4)),
+        ("tablet", DisplayInfo("checkboxlist", "Monoliths", tablet_ids)),
         #"tutHeal": ["float"],
         #"values": ["map", "str", "int"],
-        ("warp", DisplayInfo("checkboxlist", "Warp Points", area_ids, 5)),
-        ("well", DisplayInfo("checkboxlist", "Pillars", well_ids, 4)),
+        ("warp", DisplayInfo("checkboxlist", "Warp Points", area_ids)),
+        ("well", DisplayInfo("checkboxlist", "Pillars", well_ids)),
         #"wellMap": ["list", "int"]
-        ("outfits", DisplayInfo("checkboxlist", "Outfits", outfit_ids, 6)),
+        ("outfits", DisplayInfo("checkboxlist", "Outfits", outfit_ids)),
         ("coughs", DisplayInfo("checkboxlist", "Cough Cutscenes", cough_cs_flags)),
         ("terminals", DisplayInfo("checkboxlist", "Terminals", terminal_flags)),
         ("shortcuts", DisplayInfo("checkboxlist", "Shortcuts", shortcut_permastate_flags)),

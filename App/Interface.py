@@ -84,6 +84,8 @@ class Interface():
     GUI manager
     """
 
+    DEBUG = True
+
     # file -> load
     def load(self, event=None):
         try:
@@ -94,12 +96,16 @@ class Interface():
             self.init_editor_ui(self.editor)
             self.set_status_message(f"loaded data from {os.path.basename(filename)}")
         except Exception as e:
+            if Interface.DEBUG:
+                raise e
             showerror(title=type(e), message=e)
 
 
     # file -> save
     def save(self, event=None):
         try:
+            if self.editor.savedata is None:
+                raise Exception("No Savefile Loaded")
             filename = self.editor.filename
             if filename is None:
                 filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
@@ -109,12 +115,16 @@ class Interface():
             self.editor.save(filename)
             self.set_status_message(f"saved data to {os.path.basename(filename)}")
         except Exception as e:
+            if Interface.DEBUG:
+                raise e
             showerror(title=type(e), message=e)
 
 
     # file -> save as
     def saveas(self):
         try:
+            if self.editor.savedata is None:
+                raise Exception("No Savefile Loaded")
             filename = filedialog.asksaveasfilename(initialdir=self.app.savefile_path, defaultextension=".hlds", filetypes=[("HLDS File", "*.hlds")])
             if filename is None or filename == "":
                 return
@@ -122,16 +132,22 @@ class Interface():
             self.editor.save(filename)
             self.set_status_message(f"saved data to {os.path.basename(filename)}")
         except Exception as e:
+            if Interface.DEBUG:
+                raise e
             showerror(title=type(e), message=e)
 
     
     # file -> export
     def export(self, slot):
         try:
+            if self.editor.savedata is None:
+                raise Exception("No Savefile Loaded")
             self.sync_savedata()
             self.editor.export(slot)
             self.set_status_message(f"exported data to slot {slot}")
         except Exception as e:
+            if Interface.DEBUG:
+                raise e
             showerror(title=type(e), message=e)
 
 
@@ -142,6 +158,8 @@ class Interface():
             header = self.editor.get_header(filename)
             self.set_status_message(f"local header set to {header}")
         except Exception as e:
+            if Interface.DEBUG:
+                raise e
             showerror(title=type(e), message=e)
 
 
@@ -268,6 +286,7 @@ class Interface():
         self.notebook.add(current, text="Current State")
         self.notebook.add(misc, text="Misc")
         self.notebook.pack(padx=5, pady=5)
+        self.input_fields = [] # remove entries from previous instances
 
         # well
         wellframe = Frame(collect)
@@ -526,15 +545,15 @@ class Interface():
         savedata = self.editor.savedata
 
         temp_events = [] # build event list across multiple display fields
-        temp_permastate = []
+        temp_permastate = {}
 
         # add uneditable flags directly from savedata
         for event_id, x in HLDConstants.misc_event_flags.get_pairs():
             if event_id in savedata.get("events"):
                 temp_events.append(event_id)
         for permastate_id, x in HLDConstants.misc_permastate_flags.get_pairs():
-            if permastate_id in savedata.get("events"):
-                temp_events.append(permastate_id)
+            if permastate_id in savedata.get("permaS"):
+                temp_permastate[permastate_id] = savedata.get("permaS")[permastate_id]
         print("misc_events : uneditable")
         print(temp_events)
         print("misc_permastate : uneditable")
@@ -567,10 +586,11 @@ class Interface():
                         # set corresponding permastate flags
                         for event_id, permastate_id in HLDConstants.terminal_permastate_flags.get_pairs():
                             if event_id in value:
-                                temp_permastate.append(permastate_id)
+                                temp_permastate[permastate_id] = 2
                 elif field in ["shortcuts"]:
                     # add to permastate list
-                    temp_permastate += value
+                    for permastate_id in value:
+                        temp_permastate[permastate_id] = 2
                 else:
                     # set field normally
                     savedata.set_field(field, value)
@@ -605,7 +625,7 @@ class Interface():
                 for i, (permastate_id, event_id, x) in enumerate(HLDConstants.arena_flags):
                     if obj[i].get():
                         if permastate_id is not None:
-                            temp_permastate.append(permastate_id)
+                            temp_permastate[permastate_id] = 2
                         if event_id is not None:
                             temp_events.append(event_id)
             else:
