@@ -3,8 +3,6 @@ class ListMap():
     A map with a defined ordering which can be indexed into. Values are assumed to be unique.
     """
 
-    # TODO - can maybe remove this class for enumerate(dict)?
-
     # data : list of pairs, first element of each tuple is the map key, second is the value
     def __init__(self, data):
         self.ilist = [x[1] for x in data]
@@ -18,10 +16,6 @@ class ListMap():
     # return key from value
     def get_key(self, value):
         return self.reverse_imap.get(value)
-
-    # return key from index
-    def get_key_from_index(self, index):
-        return self.get_key(self[index])
 
     # return list of values
     def get_values(self):

@@ -536,7 +536,7 @@ class Interface():
             x.label.grid(padx=5, column=1, row=i+1, sticky=W)
             self.input_fields.append((miscintsfields[i], x))
         miscintsframe.grid(pady=10, column=2, row=2, sticky=N)
-        # TODO - add values
+        # TODO - add values & pink drifter events
 
 
     # copy changes in UI to savedata dict
@@ -612,8 +612,7 @@ class Interface():
                 savedata.set_field(field, value)
             elif field == "bosses":
                 value = {}
-                for i in range(len(HLDConstants.boss_ids)):
-                    boss_id = HLDConstants.boss_ids.get_key_from_index(i)
+                for i, (boss_id, boss_name) in enumerate(HLDConstants.boss_ids.get_pairs()):
                     if obj[i].get():
                         boss_coords = savedata.get("bosses").get(boss_id)
                         if boss_coords is None:

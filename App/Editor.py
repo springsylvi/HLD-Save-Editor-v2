@@ -86,17 +86,16 @@ class Savedata():
     # export data to .sav file
     def export_savefile(self, savefile, header):
         temp_sdmap = self.savedata_map.copy()
-        # handle special cases
-        try:
-            # bossGearbit format is "G(room_id)(boss_instance_id)(bit_num)"
-            temp_sdmap["bossGearbits"] = ["G" + str(x[0]) + str(x[1]) + str(x[2]) for x in self.savedata_map["bossGearbits"]]
-        except:
-            pass
+
+        # bossGearbit format is "G(room_id)(boss_instance_id)(bit_num)"
+        temp_sdmap["bossGearbits"] = ["G" + str(x[0]) + str(x[1]) + str(x[2]) for x in self.savedata_map["bossGearbits"]]
+
         # format list/map objects
-        for key, value in self.savedata_map.items():
+        for key, value in temp_sdmap.items():
             fieldtype = HLDConstants.fields[key]
             if len(fieldtype) > 1:
                 temp_sdmap[key] = Savedata.export_savedata_collection(value, fieldtype, "+")
+
         savedata_text = dumps(temp_sdmap) + " "
         savedata_enc = base64.standard_b64encode(header + savedata_text.encode())
         savefile.write(savedata_enc)
