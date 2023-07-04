@@ -527,7 +527,7 @@ class Interface():
         miscboolsframe.grid(pady=10, column=1, row=2, sticky=N)
         # misc ints
         miscintsframe = Frame(misc)
-        miscintsfields = ["badass", "charDeaths"]
+        miscintsfields = ["badass", "halluc", "charDeaths"]
         miscintslabel = Label(miscintsframe, text="Misc Values 2")
         miscintsentries = [FullEntry(miscintsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in miscintsfields]
         miscintslabel.grid(column=0, row=0, columnspan=2)
@@ -558,8 +558,6 @@ class Interface():
         print(temp_events)
         print("misc_permastate : uneditable")
         print(temp_permastate)
-
-        # TODO - fix bossgearbits
 
         for field, obj in self.input_fields:
             displayinfo = HLDConstants.display_fields.get(field)
