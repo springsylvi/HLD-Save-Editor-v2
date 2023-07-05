@@ -100,30 +100,34 @@ class Savedata():
         savedata_enc = base64.standard_b64encode(header + savedata_text.encode())
         savefile.write(savedata_enc)
 
+    # parse value according to num_type (for numeric types only)
+    @staticmethod
+    def parse_num_type(value, num_type):
+        if num_type == "int":
+            return int(value)
+        elif num_type == "float":
+            return float(value)
+        elif num_type == "num":
+            return int(value) if float(value) % 1 == 0 else float(value)
+        else:
+            raise Exception(f"non-numeric value '{value}' given to parse_num_type")
 
     # convert list/map in savedata format to list/map object
-    # TODO - tidy up this function (remove int(float()) casting where possible)
     @staticmethod
     def parse_savedata_collection(raw, fieldtype):
         if fieldtype[0] == "list":
             sep = "&" if "&" in raw else "+"
             list_obj = raw.split(sep)[:-1]
-            if fieldtype[1] == "float":
-                list_obj = [float(x) for x in list_obj]
-            if fieldtype[1] == "int":
-                list_obj = [int(x) for x in list_obj]
+            if fieldtype[1] in ["int", "float", "num"]:
+                list_obj = [Savedata.parse_num_type(x, fieldtype[1]) for x in list_obj]
             return list_obj
         if fieldtype[0] == "map":
             raw = raw.replace("'", "") # picking up keys sometimes creates stray ' characters
             map_obj = {x.split("=")[0] : x.split("=")[1] for x in raw.split(">")[:-1]}
-            if fieldtype[1] == "float":
-                map_obj = {float(a) : b for a, b in map_obj.items()}
-            if fieldtype[1] == "int":
-                map_obj = {int(float(a)) : b for a, b in map_obj.items()}
-            if fieldtype[2] == "float":
-                map_obj = {a : float(b) for a, b in map_obj.items()}
-            if fieldtype[2] == "int":
-                map_obj = {a : int(float(b)) for a, b in map_obj.items()}
+            if fieldtype[1] in ["int", "float", "num"]:
+                map_obj = {Savedata.parse_num_type(a, fieldtype[1]) : b for a, b in map_obj.items()}
+            if fieldtype[2] in ["int", "float", "num"]:
+                map_obj = {a : Savedata.parse_num_type(b, fieldtype[2]) for a, b in map_obj.items()}
             if fieldtype[2] == "list":
                 map_obj = {a : Savedata.parse_savedata_collection(b, fieldtype[2:4]) for a, b in map_obj.items()}
             return map_obj

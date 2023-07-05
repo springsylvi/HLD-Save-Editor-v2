@@ -250,8 +250,9 @@ class HLDConstants():
         }
 
     # all valid savedata fields and their types.
-    # types are a sequence of any of str, int, float, list, map, other.
+    # types are a sequence of any of str, int, float, num, list, map, other.
     # list takes 1 arg, map takes 2.
+    # num is generic numberic type (can be either int or float)
     # used for converting between Savedata and .sav/.hlds files
     fields = {"badass": ["float"],
               "bosses": ["map", "float", "list", "int"],
@@ -268,7 +269,7 @@ class HLDConstants():
               "checkStash": ["float"],
               "checkX": ["float"],
               "checkY": ["float"],
-              "cl": ["map", "int", "list", "int"], # TODO - figure out how to handle float values for this
+              "cl": ["map", "int", "list", "num"],
               "compShell": ["float"],
               "cShells": ["list", "int"],
               "cSwords": ["list", "int"],
@@ -279,7 +280,7 @@ class HLDConstants():
               "enemies": ["map", "int", "list", "other"],
               "eq00": ["float"],
               "eq01": ["float"],
-              "events": ["list", "int"], # TODO - figure out how to handle float values for this
+              "events": ["list", "num"],
               "fireplaceSave": ["float"],
               "gameName": ["str"],
               "gear": ["float"],
