@@ -505,6 +505,15 @@ class Interface():
             x.grid(padx=5, column=0, row=i+1, sticky=W)
         self.input_fields.append(("noSpawn", dogcscbs))
         dogcsframe.grid(pady=10, column=3, row=2, sticky=N)
+        # pink drifter encounters
+        badassencframe = Frame(misc)
+        badassenclabel = Label(badassencframe, text="Pink Drifter Encounters")
+        badassenccbs = [FullCB(badassencframe, x in savedata.get("events"), y) for x,y in HLDConstants.pink_drifter_flags.get_pairs()]
+        badassenclabel.grid(column=0, row=0)
+        for i, x in enumerate(badassenccbs):
+            x.grid(padx=5, column=0, row=i+1, sticky=W)
+        self.input_fields.append(("badassenc", badassenccbs))
+        badassencframe.grid(pady=10, column=4, row=2, sticky=N)
         # gamemode
         gamemodeframe = Frame(misc)
         gamemodefields = ["CH", "noviceMode"]
@@ -527,7 +536,7 @@ class Interface():
         miscboolsframe.grid(pady=10, column=1, row=2, sticky=N)
         # misc ints
         miscintsframe = Frame(misc)
-        miscintsfields = ["badass", "halluc", "charDeaths"]
+        miscintsfields = ["halluc", "charDeaths"]
         miscintslabel = Label(miscintsframe, text="Misc Values 2")
         miscintsentries = [FullEntry(miscintsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in miscintsfields]
         miscintslabel.grid(column=0, row=0, columnspan=2)
@@ -536,7 +545,7 @@ class Interface():
             x.label.grid(padx=5, column=1, row=i+1, sticky=W)
             self.input_fields.append((miscintsfields[i], x))
         miscintsframe.grid(pady=10, column=2, row=2, sticky=N)
-        # TODO - add values & pink drifter events
+        # TODO - add values
 
 
     # copy changes in UI to savedata dict
@@ -548,6 +557,9 @@ class Interface():
         temp_permastate = {}
 
         # add uneditable flags directly from savedata
+        for event_id in savedata.get("events"):
+            if event_id % 1 != 0:
+                temp_events.append(event_id)
         for event_id, x in HLDConstants.misc_event_flags.get_pairs():
             if event_id in savedata.get("events"):
                 temp_events.append(event_id)
@@ -577,9 +589,12 @@ class Interface():
                     # set all 3 outfit parts
                     for outfit_part in ["cShells", "cSwords", "cCapes"]:
                         savedata.set_field(outfit_part, value)
-                elif field in ["coughs", "terminals", "doors"]:
+                elif field in ["coughs", "terminals", "doors", "badassenc"]:
                     # add to events list
                     temp_events += value
+                    if field == "badassenc":
+                        # set badass to number of pink drifter events
+                        savedata.set_field("badass", len(value))
                     if field == "terminals":
                         # set corresponding permastate flags
                         for event_id, permastate_id in HLDConstants.terminal_permastate_flags.get_pairs():

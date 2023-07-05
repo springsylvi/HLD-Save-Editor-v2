@@ -649,5 +649,6 @@ class HLDConstants():
         ("terminals", DisplayInfo("checkboxlist", "Terminals", terminal_flags)),
         ("shortcuts", DisplayInfo("checkboxlist", "Shortcuts", shortcut_permastate_flags)),
         ("arenas", DisplayInfo("other", "Arenas")),
-        ("doors", DisplayInfo("checkboxlist", "Doors Unlocked", door_flags))
+        ("doors", DisplayInfo("checkboxlist", "Doors Unlocked", door_flags)),
+        ("badassenc", DisplayInfo("checkboxlist", "Pink Drifter Encounters", pink_drifter_flags))
         ])
