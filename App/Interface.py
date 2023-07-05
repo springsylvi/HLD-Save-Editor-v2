@@ -539,13 +539,17 @@ class Interface():
         miscintsfields = ["halluc", "charDeaths"]
         miscintslabel = Label(miscintsframe, text="Misc Values 2")
         miscintsentries = [FullEntry(miscintsframe, savedata.get(x), HLDConstants.display_fields.get(x).get_title(), x) for x in miscintsfields]
+        valuesentries = [FullEntry(miscintsframe, savedata.get("values").get(x) if x in savedata.get("values") else 0, y, x) for x, y in HLDConstants.values_names.get_pairs()]
         miscintslabel.grid(column=0, row=0, columnspan=2)
         for i, x in enumerate(miscintsentries):
             x.entry.grid(padx=5, column=0, row=i+1, sticky=W)
             x.label.grid(padx=5, column=1, row=i+1, sticky=W)
             self.input_fields.append((miscintsfields[i], x))
+        for i, x in enumerate(valuesentries):
+            x.entry.grid(padx=5, column=0, row=i+2, sticky=W)
+            x.label.grid(padx=5, column=1, row=i+2, sticky=W)
+        self.input_fields.append(("values", valuesentries))
         miscintsframe.grid(pady=10, column=2, row=2, sticky=N)
-        # TODO - add values
 
 
     # copy changes in UI to savedata dict
@@ -625,7 +629,7 @@ class Interface():
                 savedata.set_field(field, value)
             elif field == "bosses":
                 value = {}
-                for i, (boss_id, boss_name) in enumerate(HLDConstants.boss_ids.get_pairs()):
+                for i, boss_id in enumerate(HLDConstants.boss_ids.get_keys()):
                     if obj[i].get():
                         boss_coords = savedata.get("bosses").get(boss_id)
                         if boss_coords is None:
@@ -640,6 +644,9 @@ class Interface():
                             temp_permastate[permastate_id] = 2
                         if event_id is not None:
                             temp_events.append(event_id)
+            elif field == "values":
+                for i, value_name in enumerate(HLDConstants.values_names.get_keys()):
+                    savedata.set_map_value("values", value_name, obj[i].get())
             else:
                 raise Exception(f"sync_savedata not implemented for field {field}")
 

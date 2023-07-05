@@ -21,6 +21,10 @@ class ListMap():
     def get_values(self):
         return self.ilist
 
+    # return list of keys
+    def get_keys(self):
+        return self.imap.keys()
+
     # return list of pairs
     def get_pairs(self):
         return [(a,b) for a,b in self.imap.items()]
@@ -567,10 +571,10 @@ class HLDConstants():
     # uses events list but can have float values
     # .1 appended to pink drifter event spawns his body with pink outfit collectable, .2 appended doesn't spawn outfit
     pink_drifter_flags = ListMap([
-        (-1814186, "East Pink Drifter"),
-        (-1096865, "North Pink Drifter"),
-        (386530, "West Pink Drifter"),
-        (-713661, "South Pink Drifter")
+        (-1814186, "East"),
+        (-1096865, "North"),
+        (386530, "West"),
+        (-713661, "South")
         ])
 
     # dog encounters
@@ -580,6 +584,15 @@ class HLDConstants():
         (385194, "West"),
         (-1871165, "South")
         ])
+    
+    # misc value names (under field 'values')
+    values_names = ListMap([
+        ("ValueaptLight", "Drifter's House Light Switch"),
+        ("ValuedashHS", "Dash Challenge High Score"),
+        ("ValueSoccerLosses", "Soccer Minigame Losses"),
+        ("ValueSoccerWins", "Soccer Minigame Wins"),
+        ("ValuebadassOfficeState", "???")
+    ])
 
     # list of each individual value the user can interact with through the UI (some savedata fields are split across multiple display fields or vice versa)
     # tuple elements are unique name, displayinfo obj
@@ -640,7 +653,7 @@ class HLDConstants():
         ("sword", DisplayInfo("dropdown", "Sword")),
         ("tablet", DisplayInfo("checkboxlist", "Monoliths", tablet_ids)),
         #"tutHeal": ["float"],
-        #"values": ["map", "str", "int"],
+        ("values", DisplayInfo("other", "Misc Int Values", values_names)),
         ("warp", DisplayInfo("checkboxlist", "Warp Points", area_ids)),
         ("well", DisplayInfo("checkboxlist", "Pillars", well_ids)),
         #"wellMap": ["list", "int"]
@@ -650,5 +663,10 @@ class HLDConstants():
         ("shortcuts", DisplayInfo("checkboxlist", "Shortcuts", shortcut_permastate_flags)),
         ("arenas", DisplayInfo("other", "Arenas")),
         ("doors", DisplayInfo("checkboxlist", "Doors Unlocked", door_flags)),
-        ("badassenc", DisplayInfo("checkboxlist", "Pink Drifter Encounters", pink_drifter_flags))
+        ("badassenc", DisplayInfo("checkboxlist", "Pink Drifter Encounters", pink_drifter_flags)),
+        ("ValueaptLight", DisplayInfo("int", "Drifter's House Light Switch")),
+        ("ValuedashHS", DisplayInfo("int", "Dash Challenge High Score")),
+        ("ValueSoccerLosses", DisplayInfo("int", "Soccer Minigame Losses")),
+        ("ValueSoccerWins", DisplayInfo("int", "Soccer Minigame Wins")),
+        ("ValuebadassOfficeState", DisplayInfo("int", "???"))
         ])
